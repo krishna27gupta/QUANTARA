@@ -88,38 +88,38 @@ export function StockCard({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ 
-        y: -4, 
-        borderColor: "rgba(59, 130, 246, 0.4)",
+        y: -3, 
+        borderColor: "rgba(0, 255, 135, 0.4)",
         boxShadow: "var(--shadow-soft-val)"
       }}
       transition={{ duration: 0.2 }}
       onClick={() => setIsExpanded(!isExpanded)}
       className={cn(
-        "p-5 rounded-[20px] bg-card border border-border flex flex-col w-full hover:border-accent/40 glass cursor-pointer select-none overflow-hidden relative transition-all duration-300",
+        "p-3.5 rounded-xl bg-card border border-border flex flex-col w-full hover:border-accent/40 glass cursor-pointer select-none overflow-hidden relative transition-all duration-300",
         isExpanded && "border-accent/60 bg-secondary/10 shadow-soft",
         className
       )}
     >
       {/* Glow highlight for high confidence BUY signals */}
       {signal === "BUY" && confidence >= 80 && (
-        <div className="absolute top-0 left-0 w-24 h-1 bg-gradient-to-r from-emerald-500 via-accent to-transparent" />
+        <div className="absolute top-0 left-0 w-24 h-0.5 bg-gradient-to-r from-emerald-500 via-accent to-transparent" />
       )}
 
       {/* Main Stock Row */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Left Side: Stock Identity */}
-        <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-[14px] bg-secondary/80 flex items-center justify-center font-bold text-xs text-accent">
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg bg-secondary/80 flex items-center justify-center font-bold text-xs text-accent">
             {ticker.substring(0, 3)}
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h4 className="font-bold text-sm text-text-primary tracking-tight">{ticker}</h4>
-              <span className="font-caption text-[10px] text-text-secondary/70 bg-secondary/40 px-1.5 py-0.5 rounded">
+            <div className="flex items-center gap-1.5">
+              <h4 className="font-bold text-xs text-text-primary tracking-tight">{ticker}</h4>
+              <span className="font-caption text-[9px] text-text-secondary/70 bg-secondary/40 px-1 py-0.5 rounded">
                 {sector}
               </span>
             </div>
-            <span className="font-caption text-xs text-text-secondary/80 truncate block max-w-[180px]">
+            <span className="font-caption text-[10px] text-text-secondary/80 truncate block max-w-[180px]">
               {name}
             </span>
           </div>
