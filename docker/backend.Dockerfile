@@ -27,6 +27,7 @@ RUN poetry install --no-root --no-ansi
 
 # Copy application files
 COPY backend/ /app/
+COPY ml /app/ml
 
 EXPOSE 8000
 
