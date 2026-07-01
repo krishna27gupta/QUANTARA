@@ -111,12 +111,36 @@ export default function HomePage() {
           <SkeletonFeed />
         ) : (
           <FadeIn className="space-y-8">
-            {/* Answer the 5-sec goal: "What should I do today?" */}
-            <div className="p-5 rounded-[20px] bg-accent/10 border border-accent/25 glass">
-              <span className="text-[10px] text-accent font-extrabold uppercase tracking-wider block">Today&apos;s Directive</span>
-              <p className="text-xs text-text-primary/95 mt-1 font-semibold leading-relaxed">
-                🎯 Focus swing longs on high-momentum large caps. The primary trade setup of the day is <span className="font-mono text-accent">RELIANCE</span> targeting a breakout. Allocate up to 10% risk boundaries.
-              </p>
+            {/* Morning Briefing Card (Step 10 / Home Page Improvements) */}
+            <div className="p-6 rounded-2xl bg-card border border-border shadow-soft glow-card overflow-hidden relative">
+              {/* Background ambient radial gradient */}
+              <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[radial-gradient(circle,rgba(0,255,135,0.06),transparent_60%)] -z-10" />
+              
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-2">
+                  <span className="text-[10px] text-accent font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-accent/10 border border-accent/20 inline-block">Morning Briefing</span>
+                  <h2 className="text-xl font-bold text-text-primary">Good Morning, {user?.name || "Krishna"}.</h2>
+                  <p className="text-sm text-text-secondary">
+                    Today&apos;s market setup is <span className="text-success font-bold">BULLISH</span>. Strong earnings estimates and heavy option open interest support breakouts.
+                  </p>
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-6">
+                  <div className="text-center md:text-right">
+                    <span className="text-[10px] text-text-secondary block font-semibold uppercase tracking-wider">Market Confidence</span>
+                    <span className="text-2xl font-extrabold text-accent">82%</span>
+                  </div>
+                  <div className="h-10 w-px bg-border/40 hidden sm:block" />
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-text-secondary block font-semibold uppercase tracking-wider">Recommended Actions</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="text-xs font-semibold px-2 py-1 rounded-lg bg-success/10 text-success border border-success/20">Buy RELIANCE</span>
+                      <span className="text-xs font-semibold px-2 py-1 rounded-lg bg-success/10 text-success border border-success/20">Watch TCS</span>
+                      <span className="text-xs font-semibold px-2 py-1 rounded-lg bg-danger/10 text-danger border border-danger/20">Avoid Metals</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Hero Market Mood */}
