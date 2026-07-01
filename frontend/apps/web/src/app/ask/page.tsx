@@ -23,6 +23,7 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   widget?: "stock" | "portfolio" | "education" | "comparison" | "coach";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   widgetData?: any;
 }
 
@@ -90,6 +91,7 @@ export default function AskPage() {
     setTimeout(() => {
       let content = "";
       let widget: "stock" | "portfolio" | "education" | "comparison" | "coach" | undefined;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let widgetData: any;
 
       const q = text.toLowerCase();

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Brain, Star, Check, Sliders, IndianRupee, Clock, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export interface MemoryData {
   riskTolerance: "Low" | "Medium" | "High";

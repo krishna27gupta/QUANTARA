@@ -50,7 +50,7 @@ export function DailyBriefing({
       {/* Suggested trades list */}
       <div className="space-y-2.5">
         <span className="text-[10px] text-text-secondary font-semibold uppercase block">
-          Today's Recommended Trades
+          Today&apos;s Recommended Trades
         </span>
         <div className="space-y-2">
           {recommendedTrades.map((t) => (
