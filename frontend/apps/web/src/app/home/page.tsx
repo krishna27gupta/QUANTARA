@@ -1,92 +1,170 @@
 "use client";
 
-import React from "react";
-import { PageTransition } from "@/components/ui/Animate";
-import { DashboardLayout } from "@/components/layouts";
-import { PortfolioCard, MarketCard, ExplanationCard } from "@/components/cards";
-import { PerformanceContainer } from "@/components/charts";
-import LightweightChart from "@/components/LightweightChart";
-import { Sparkles, ArrowUpRight } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { PageTransition, FadeIn } from "@/components/ui/Animate";
+import { useAuth } from "@/context/AuthContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { 
+  MarketMoodHero, 
+  TradeOfTheDay, 
+  CategorizedPicks, 
+  MarketPulse, 
+  QuickAskWidget, 
+  SkeletonFeed 
+} from "@/components/feed";
+import { Bell, User, Calendar, Clock } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
-  const marketIndices = [
-    { name: "NIFTY 50", value: "24,505.80", change: "110.60", changePercent: "0.45%", up: true },
-    { name: "SENSEX", value: "80,312.45", change: "342.10", changePercent: "0.43%", up: true },
-    { name: "NIFTY BANK", value: "52,142.10", change: "-120.40", changePercent: "0.23%", up: false },
-  ];
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
+
+  useEffect(() => {
+    // Dynamic Time & Date updates
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+      setCurrentDate(now.toLocaleDateString("en-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" }));
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+
+    // Simulate progressive load state
+    const timer = setTimeout(() => setLoading(false), 900);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  const tradeData = {
+    ticker: "RELIANCE",
+    name: "Reliance Industries Ltd.",
+    price: "₹2,845.20",
+    signal: "BUY" as const,
+    confidence: "92%",
+    probability: "81%",
+    expectedReturn: "+4.8%",
+    entry: "₹2,820 - ₹2,840",
+    target: "₹2,950",
+    stopLoss: "₹2,775",
+    riskReward: "1:2.45",
+    reasons: [
+      "Positive market sentiment",
+      "Strong technical momentum",
+      "Volume breakout",
+      "Institutional buying",
+      "Historical pattern similarity"
+    ]
+  };
+
+  const pulseData = {
+    summary: "Today's NIFTY 50 outlook appears moderately bullish. Strong earnings estimates and heavy option open interest support support boundaries near 24,400. IT index and banking sectors show immediate volume breakouts, suggesting breakout swing trades remain highly favorable.",
+    fearAndGreed: 64,
+    volatility: "12.45 (-2.1%)",
+    bestSectors: ["Auto", "Financials", "IT Services"],
+    worstSectors: ["Metal", "Media", "Realty"]
+  };
 
   return (
     <PageTransition>
-      <div className="space-y-6">
-        {/* Upper Banner Greeting */}
-        <div className="p-6 rounded-[20px] bg-gradient-to-r from-accent/15 via-accent/5 to-transparent border border-accent/25 relative overflow-hidden glass">
-          <div className="absolute top-0 right-0 w-44 h-44 bg-accent/10 rounded-full blur-2xl pointer-events-none" />
-          <h2 className="font-heading text-text-primary mb-1.5 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-accent animate-pulse" />
-            Quantara Swing Trading Copilot
-          </h2>
-          <p className="text-xs text-text-secondary max-w-xl leading-relaxed">
-            Welcome back! The market analyzer is tracking NIFTY 50 assets. Standard quantitative and AI models are operational.
-          </p>
+      <div className="space-y-8 max-w-6xl mx-auto pb-12">
+        
+        {/* Morning Intelligence Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/40 pb-5">
+          <div className="space-y-1">
+            <h1 className="font-heading text-text-primary">
+              Good Morning, {user?.name || "Trader"}
+            </h1>
+            <div className="flex flex-wrap items-center gap-3 text-xs text-text-secondary">
+              <span className="flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-accent" />
+                {currentDate}
+              </span>
+              <span className="hidden sm:inline w-1 h-1 bg-border/80 rounded-full" />
+              <span className="flex items-center gap-1 font-mono">
+                <Clock className="w-3.5 h-3.5 text-accent" />
+                {currentTime}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <button className="p-2.5 rounded-xl border border-border/60 hover:border-accent/40 bg-secondary/15 hover:bg-secondary/35 text-text-secondary hover:text-text-primary transition-all cursor-pointer relative">
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent animate-ping" />
+            </button>
+            <Link href="/profile">
+              <button className="p-2.5 rounded-xl border border-border/60 hover:border-accent/40 bg-secondary/15 hover:bg-secondary/35 text-text-secondary hover:text-text-primary transition-all cursor-pointer flex items-center gap-1.5">
+                <User className="w-4 h-4 text-accent" />
+                <span className="text-xs font-bold hidden sm:inline">Profile</span>
+              </button>
+            </Link>
+          </div>
         </div>
 
-        {/* Home Layout */}
-        <DashboardLayout
-          sidebar={
-            <>
-              {/* Performance Indicator Column */}
-              <PerformanceContainer title="AI Pipeline Performance" metric="+18.4% Monthly" />
-              
-              {/* Daily AI explanation snippet */}
-              <ExplanationCard
-                title="Market Briefing"
-                explanation="Indices are hovering near key support resistance bounds. Consolidation is expected before the weekly option expiry. Favor long setups on high beta auto stocks."
-                sourceDocs={["NIFTY_EMA_50.csv", "RSI_NSE_DAILY.log"]}
-              />
-            </>
-          }
-        >
-          {/* Market Indices Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {marketIndices.map((idx, i) => (
-              <MarketCard key={i} {...idx} />
-            ))}
-          </div>
-
-          {/* Main Portfolio Value Card */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
-            <div className="md:col-span-2">
-              <PortfolioCard
-                name="Paper Account Equity"
-                balance="₹5,24,592.15"
-                returns="₹24,592.15"
-                returnsPercent="4.92%"
-                up={true}
-              />
+        {loading ? (
+          <SkeletonFeed />
+        ) : (
+          <FadeIn className="space-y-8">
+            {/* Answer the 5-sec goal: "What should I do today?" */}
+            <div className="p-5 rounded-[20px] bg-accent/10 border border-accent/25 glass">
+              <span className="text-[10px] text-accent font-extrabold uppercase tracking-wider block">Today&apos;s Directive</span>
+              <p className="text-xs text-text-primary/95 mt-1 font-semibold leading-relaxed">
+                🎯 Focus swing longs on high-momentum large caps. The primary trade setup of the day is <span className="font-mono text-accent">RELIANCE</span> targeting a breakout. Allocate up to 10% risk boundaries.
+              </p>
             </div>
-            {/* Quick action card */}
-            <div className="p-6 rounded-[20px] bg-card border border-border flex flex-col justify-between hover:border-accent/40 glass">
-              <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider">Trading Status</span>
-              <div>
-                <div className="text-xl font-bold text-success flex items-center gap-1">
-                  Active <ArrowUpRight className="w-5 h-5 animate-pulse" />
+
+            {/* Hero Market Mood */}
+            <MarketMoodHero
+              mood="BULLISH"
+              niftyOutlook="+0.8%"
+              niftyUp={true}
+              opportunityScore={82}
+            />
+
+            {/* Main grid splits */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+              {/* Left span: Trade of the day */}
+              <div className="lg:col-span-2 space-y-6">
+                <TradeOfTheDay {...tradeData} />
+              </div>
+
+              {/* Right span: Quick stats details */}
+              <div className="bg-card border border-border rounded-[20px] p-6 space-y-4 glass shadow-soft">
+                <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider block border-b border-border/40 pb-2">
+                  Account Overview
+                </span>
+                <div className="space-y-4">
+                  <div>
+                    <span className="text-[10px] text-text-secondary block font-semibold uppercase">Paper Cash Balance</span>
+                    <span className="text-2xl font-extrabold font-mono text-text-primary">₹3,78,215.15</span>
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-text-secondary block font-semibold uppercase">Daily Return (NSE)</span>
+                    <span className="text-base font-extrabold font-mono text-success">+₹8,490.45 (+1.62%)</span>
+                  </div>
                 </div>
-                <span className="text-[10px] text-text-secondary block mt-1">2 active swing trades running</span>
               </div>
             </div>
-          </div>
 
-          {/* Chart performance */}
-          <div className="p-6 rounded-[20px] bg-card border border-border space-y-4 glass shadow-soft">
-            <div>
-              <h3 className="font-bold text-sm text-text-primary">Interactive Market Chart</h3>
-              <p className="text-[10px] text-text-secondary">Interactive TradingView Canvas Rendering</p>
+            {/* Categorized pick lists */}
+            <div className="space-y-3">
+              <h3 className="font-bold text-sm text-text-primary uppercase tracking-wider">Categorized Opportunities</h3>
+              <CategorizedPicks />
             </div>
-            <div className="w-full pt-2">
-              <LightweightChart />
-            </div>
-          </div>
-        </DashboardLayout>
+
+            {/* Perplexity AI Summary */}
+            <MarketPulse {...pulseData} />
+
+            {/* Ask Quantara suggestion widget */}
+            <QuickAskWidget />
+          </FadeIn>
+        )}
       </div>
     </PageTransition>
   );

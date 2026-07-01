@@ -19,12 +19,13 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
 }
 
 // Fade Transitions
-export function FadeIn({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+export function FadeIn({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.2, delay, ease: "easeOut" }}
+      className={className}
     >
       {children}
     </motion.div>
@@ -32,7 +33,7 @@ export function FadeIn({ children, delay = 0 }: { children: React.ReactNode; del
 }
 
 // Slide-In Panel Transition
-export function SlideIn({ children, direction = "up", delay = 0 }: { children: React.ReactNode; direction?: "up" | "down" | "left" | "right"; delay?: number }) {
+export function SlideIn({ children, direction = "up", delay = 0, className }: { children: React.ReactNode; direction?: "up" | "down" | "left" | "right"; delay?: number; className?: string }) {
   const directions = {
     up: { y: 16, x: 0 },
     down: { y: -16, x: 0 },
@@ -45,6 +46,7 @@ export function SlideIn({ children, direction = "up", delay = 0 }: { children: R
       initial={{ opacity: 0, ...directions[direction] }}
       animate={{ opacity: 1, x: 0, y: 0 }}
       transition={{ duration: 0.25, delay, ease: "easeOut" }}
+      className={className}
     >
       {children}
     </motion.div>
