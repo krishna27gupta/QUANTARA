@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantara Paper Trading Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(22, 28, 45, 0.45);
+            --border: rgba(255, 255, 255, 0.08);
+            --primary: #00ff87;
+            --danger: #ff3838;
+            --text: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        body {
+            background: var(--bg-color);
+            color: var(--text);
+            padding: 2.5rem;
+            min-height: 100vh;
+        }
+        .header {
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-size: 2rem; font-weight: 700;
+            background: linear-gradient(135deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            color: var(--text-muted); font-size: 0.95rem; margin-top: 0.25rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem; margin-bottom: 2rem;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            backdrop-filter: blur(12px);
+        }
+        .card-title {
+            color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase;
+        }
+        .card-value {
+            font-size: 1.75rem; font-weight: 700; margin-top: 0.5rem;
+        }
+        .card-value.gain { color: var(--primary); }
+        .card-value.loss { color: var(--danger); }
+        .sections {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+        }
+        .table-card {
+            overflow-x: auto;
+        }
+        .table-title {
+            font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem;
+        }
+        table {
+            width: 100%; border-collapse: collapse; text-align: left;
+        }
+        th, td {
+            padding: 0.85rem; border-bottom: 1px solid var(--border); font-size: 0.9rem;
+        }
+        th {
+            color: var(--text-muted); font-weight: 600;
+        }
+        .badge {
+            padding: 0.25rem 0.6rem; border-radius: 4px; font-weight: 600; font-size: 0.75rem;
+        }
+        .badge.buy { background: rgba(0, 255, 135, 0.15); color: var(--primary); }
+        .badge.sell { background: rgba(255, 56, 56, 0.15); color: var(--danger); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Quantara Paper Trading Portfolio</h1>
+        <p>Live validation tracking engine. Target split period: 60 trading days.</p>
+    </div>
+    
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">Portfolio Capital</div>
+            <div class="card-value">₹102078.09</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Total Return</div>
+            <div class="card-value gain">+2.08%</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Win Rate</div>
+            <div class="card-value">46.1%</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Sharpe Ratio</div>
+            <div class="card-value">0.685</div>
+        </div>
+        <div class="card">
+            <div class="card-title">Max Drawdown</div>
+            <div class="card-value loss">-1.06%</div>
+        </div>
+    </div>
+
+    <div class="sections">
+        <div class="card table-card">
+            <div class="table-title">Open Trading Positions</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>Signal</th>
+                        <th>Confidence</th>
+                        <th>Entry Price</th>
+                        <th>Stop Loss</th>
+                        <th>Target Price</th>
+                        <th>Holding Days</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+        <div class="card">
+            <div class="table-title">Recent Closed Performance</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Symbol</th>
+                        <th>P&L %</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><b>INDUSINDBK</b></td><td class='loss'>-2.00%</td><td>STOP_LOSS</td></tr><tr><td><b>TRENT</b></td><td class='gain'>+4.00%</td><td>TARGET_HIT</td></tr><tr><td><b>INDUSINDBK</b></td><td class='gain'>+4.00%</td><td>TARGET_HIT</td></tr><tr><td><b>INDUSINDBK</b></td><td class='loss'>-2.00%</td><td>STOP_LOSS</td></tr><tr><td><b>INDUSINDBK</b></td><td class='gain'>+4.00%</td><td>TARGET_HIT</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
