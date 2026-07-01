@@ -18,10 +18,10 @@ import {
   Shield, 
   Zap, 
   X,
-  Info,
   Sliders
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 // Interface for stock opportunity data
 interface StockOpportunity {
@@ -525,7 +525,7 @@ export default function DiscoverPage() {
                   )}
                 >
                   <span className="flex items-center gap-1.5">
-                    <Flame className="w-3.5 h-3.5 text-accent animate-pulse" /> Today's Top Picks
+                    <Flame className="w-3.5 h-3.5 text-accent animate-pulse" /> {"Today's Top Picks"}
                   </span>
                 </button>
                 <button

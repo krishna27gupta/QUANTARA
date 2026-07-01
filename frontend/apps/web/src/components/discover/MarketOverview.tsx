@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { TrendingUp, Activity, AlertCircle, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -10,7 +10,7 @@ function AnimatedValue({ value, decimals = 0, prefix = "", suffix = "" }: { valu
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    let start = 0;
+    const start = 0;
     const duration = 1000; // 1 second
     const startTime = performance.now();
 

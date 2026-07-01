@@ -31,7 +31,7 @@ const defaultSectors: SectorData[] = [
 ];
 
 export function SectorHeatmap({ onSectorSelect, selectedSector = null }: SectorHeatmapProps) {
-  const [sectors, setSectors] = useState<SectorData[]>(defaultSectors);
+  const [sectors] = useState<SectorData[]>(defaultSectors);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   // Determine heat coloring based on momentum

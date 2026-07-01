@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, ChevronDown, Check, Copy, ExternalLink, ShieldCheck, Newspaper } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function AISummary() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -62,7 +61,7 @@ export function AISummary() {
         {/* AI Response Text */}
         <div className="font-body text-xs text-text-primary/90 leading-relaxed space-y-2.5">
           <p>
-            Today's market remains <span className="text-emerald-500 font-semibold bg-emerald-500/5 px-1 py-0.5 rounded">moderately bullish</span>. 
+            Today&apos;s market remains <span className="text-emerald-500 font-semibold bg-emerald-500/5 px-1 py-0.5 rounded">moderately bullish</span>. 
             Banking <span className="font-mono text-[10px] text-text-secondary/70 bg-secondary/40 px-1 py-0.5 rounded">[1]</span> and IT <span className="font-mono text-[10px] text-text-secondary/70 bg-secondary/40 px-1 py-0.5 rounded">[2]</span> sectors show the strongest momentum 
             while FMCG remains weak. The Fear & Greed index is at 67 (Greed) <span className="font-mono text-[10px] text-text-secondary/70 bg-secondary/40 px-1 py-0.5 rounded">[3]</span>, backed by strong institutional inflows, but volatility (VIX) remains low, offering excellent entry points for swing traders.
           </p>

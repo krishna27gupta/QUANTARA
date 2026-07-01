@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Sparkles, TrendingUp, Shield, IndianRupee } from "lucide-react";
+import { motion } from "framer-motion";
+import { Brain, TrendingUp, Shield, IndianRupee } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface AllocationItem {
@@ -154,7 +154,7 @@ export function PersonalizedPicks() {
           
           {/* Segmented Progress Bar */}
           <div className="w-full h-3.5 bg-border/40 rounded-full flex overflow-hidden border border-border/20">
-            {allocation.map((item, idx) => (
+            {allocation.map((item) => (
               <motion.div
                 key={item.ticker}
                 initial={{ width: 0 }}

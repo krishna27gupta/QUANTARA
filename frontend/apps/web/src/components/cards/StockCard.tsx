@@ -8,10 +8,7 @@ import {
   Star, 
   BarChart2, 
   ChevronDown, 
-  Plus, 
-  Check, 
   Activity, 
-  Info,
   Layers
 } from "lucide-react";
 import { cn } from "@/lib/utils";
