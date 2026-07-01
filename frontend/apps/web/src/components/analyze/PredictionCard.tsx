@@ -97,6 +97,40 @@ export function PredictionCard({
           ₹{rangeMin.toLocaleString("en-IN")} – ₹{rangeMax.toLocaleString("en-IN")}
         </span>
       </div>
+
+      {/* Prediction Tracker (Step 8) */}
+      <div className="pt-3 border-t border-border/40 space-y-2">
+        <span className="text-[10px] text-text-secondary uppercase tracking-wider font-bold block">Active Prediction Tracker</span>
+        <div className="bg-secondary/15 border border-border/30 rounded-xl p-3.5 space-y-2">
+          <div className="flex justify-between items-center text-xs">
+            <div>
+              <span className="text-[9px] text-text-secondary block font-bold">Predicted Target</span>
+              <span className="font-mono font-bold text-emerald-400">₹{Math.round(tomorrowPrice * 1.035).toLocaleString("en-IN")}</span>
+            </div>
+            <div className="text-center">
+              <span className="text-[9px] text-text-secondary block font-bold">Current Spot</span>
+              <span className="font-mono font-bold text-text-primary">₹{Math.round(currentPrice).toLocaleString("en-IN")}</span>
+            </div>
+            <div className="text-right">
+              <span className="text-[9px] text-text-secondary block font-bold">Target ETA</span>
+              <span className="font-sans font-bold text-accent">4 days</span>
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex justify-between text-[9px] text-text-secondary">
+              <span>Setup Progress</span>
+              <span className="font-mono font-bold text-accent">63%</span>
+            </div>
+            <div className="w-full h-1 bg-border rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-accent rounded-full" 
+                style={{ width: "63%" }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }

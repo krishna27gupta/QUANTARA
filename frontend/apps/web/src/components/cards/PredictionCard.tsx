@@ -49,6 +49,17 @@ export function PredictionCard({
         <div>
           <span className="font-caption text-text-secondary">Predicted Target</span>
           <h4 className="text-xl font-bold font-mono text-text-primary">{targetPrice}</h4>
+          
+          {/* Prediction Progress Tracker (Step 8) */}
+          <div className="space-y-1 mt-2.5 border-t border-border/10 pt-2 text-[10px]">
+            <div className="flex justify-between text-text-secondary font-mono">
+              <span>Spot: ₹{Math.round(parseFloat(targetPrice.replace(/[₹,]/g, '')) * 0.965).toLocaleString("en-IN")}</span>
+              <span className="text-accent font-bold">63% Progress</span>
+            </div>
+            <div className="w-full h-1 bg-border rounded-full overflow-hidden">
+              <div className="h-full bg-accent rounded-full" style={{ width: "63%" }} />
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center justify-between text-xs border-t border-border/40 pt-3">

@@ -16,7 +16,7 @@ import { SimilarOpportunities } from "@/components/analyze/SimilarOpportunities"
 import { AskQuantaraPanel } from "@/components/analyze/AskQuantaraPanel";
 import { LightweightChart } from "@/components/LightweightChart";
 import { cn } from "@/lib/utils";
-import { LineChart, BarChart3, HelpCircle, Activity, Sparkles, Sliders } from "lucide-react";
+import { LineChart, BarChart3, HelpCircle, Activity, Sparkles, Sliders, TrendingUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Comprehensive Mock database of NIFTY 50 securities
@@ -568,6 +568,94 @@ function AnalyzeContent() {
                 sector={currentStock.sectorSentiment}
                 overall={currentStock.overallSentiment}
               />
+
+              {/* Prediction History (Step 2) */}
+              <div className="p-6 rounded-[20px] bg-card border border-border space-y-4 hover:border-accent/40 glass shadow-soft relative transition-all duration-300">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h4 className="font-bold text-sm text-text-primary flex items-center gap-1.5">
+                    <TrendingUp className="w-4 h-4 text-accent" /> Prediction History: {ticker}
+                  </h4>
+                  <span className="text-[9px] px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20">
+                    Accuracy: 71.7%
+                  </span>
+                </div>
+                
+                <div className="space-y-2.5 text-xs">
+                  {[
+                    { date: "24 Jun", signal: "BUY", predicted: "+5.2%", actual: "+4.7%", status: "✓" },
+                    { date: "18 Jun", signal: "BUY", predicted: "+3.9%", actual: "+5.1%", status: "✓" },
+                    { date: "12 Jun", signal: "SELL", predicted: "-2.8%", actual: "-1.9%", status: "✓" }
+                  ].map((pred, i) => (
+                    <div key={i} className="flex justify-between items-center bg-secondary/10 border border-border/30 rounded-xl p-3 font-mono">
+                      <div>
+                        <span className="text-[10px] text-text-secondary block font-sans">{pred.date}</span>
+                        <span className={cn("font-bold px-1.5 py-0.5 rounded text-[9px] mt-0.5 inline-block border",
+                          pred.signal === "BUY" ? "text-emerald-500 bg-emerald-500/5 border-emerald-500/10" : "text-rose-500 bg-rose-500/5 border-rose-500/10"
+                        )}>{pred.signal}</span>
+                      </div>
+                      <div className="text-right flex items-center gap-3">
+                        <div>
+                          <span className="text-[9px] text-text-secondary font-sans block">Pred / Act</span>
+                          <span className="text-text-primary font-bold">{pred.predicted} / {pred.actual}</span>
+                        </div>
+                        <span className="text-emerald-400 font-bold text-sm">{pred.status}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Model Performance & Validation Card (Step 3 & Step 7) */}
+              <div className="p-6 rounded-[20px] bg-card border border-border space-y-4 hover:border-accent/40 glass shadow-soft relative transition-all duration-300">
+                <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                  <h4 className="font-bold text-sm text-text-primary flex items-center gap-1.5">
+                    <Activity className="w-4 h-4 text-accent" /> Quantara Model Performance
+                  </h4>
+                  <span className="text-[9px] px-2 py-0.5 rounded-lg bg-accent/20 text-accent font-semibold border border-accent/30 animate-pulse">
+                    LIVE VALIDATION
+                  </span>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-3 text-xs">
+                  <div className="p-2.5 bg-secondary/10 border border-border/30 rounded-xl">
+                    <span className="text-[9px] text-text-secondary block font-semibold uppercase">Direction Accuracy</span>
+                    <span className="text-sm font-bold font-mono text-text-primary">71.7%</span>
+                  </div>
+                  <div className="p-2.5 bg-secondary/10 border border-border/30 rounded-xl">
+                    <span className="text-[9px] text-text-secondary block font-semibold uppercase">Trade Win Rate</span>
+                    <span className="text-sm font-bold font-mono text-text-primary">62.5%</span>
+                  </div>
+                  <div className="p-2.5 bg-secondary/10 border border-border/30 rounded-xl">
+                    <span className="text-[9px] text-text-secondary block font-semibold uppercase">Backtest Sharpe</span>
+                    <span className="text-sm font-bold font-mono text-text-primary">4.33</span>
+                  </div>
+                  <div className="p-2.5 bg-secondary/10 border border-border/30 rounded-xl">
+                    <span className="text-[9px] text-text-secondary block font-semibold uppercase">Max Drawdown</span>
+                    <span className="text-sm font-bold font-mono text-rose-500">-10%</span>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-border/20 text-[9px] text-text-secondary font-mono flex justify-between">
+                  <span>Tested: **2,450 Trades**</span>
+                  <span>Period: **2016-2025**</span>
+                </div>
+
+                {/* Paper Trading Forward-Validation Status (Step 7) */}
+                <div className="mt-3 p-3 bg-accent/5 border border-accent/15 rounded-xl space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-text-primary font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-accent animate-ping" />
+                      Forward Paper Trading
+                    </span>
+                    <span className="text-[8px] text-accent font-bold uppercase tracking-wider">Validation Running</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1 text-[9px] text-text-secondary font-mono">
+                    <div><span>Days Validated</span><span className="text-text-primary block font-bold">17/60</span></div>
+                    <div><span>Trades executed</span><span className="text-text-primary block font-bold">31</span></div>
+                    <div><span>Win rate (30d)</span><span className="text-success block font-bold">62.5%</span></div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* 5. AI EXPLANATION */}

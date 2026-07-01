@@ -162,13 +162,13 @@ export function StockHero({
         </div>
 
         {/* Mid Section: AI Signal Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 xl:gap-8 w-full lg:w-auto border-t lg:border-t-0 border-border/30 pt-4 lg:pt-0">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 w-full lg:w-auto border-t lg:border-t-0 border-border/30 pt-4 lg:pt-0">
           
           {/* Signal Indicator */}
-          <div className="flex flex-col">
-            <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">AI Recommendation</span>
+          <div className="flex flex-col justify-center">
+            <span className="text-[9px] text-text-secondary uppercase tracking-wider font-semibold">AI Recommendation</span>
             <div className={cn(
-              "text-lg font-black px-4 py-1.5 rounded-xl border mt-1.5 text-center min-w-[80px]",
+              "text-base font-black px-3 py-1.5 rounded-xl border mt-1.5 text-center min-w-[70px]",
               config.color,
               config.bg
             )}>
@@ -177,31 +177,43 @@ export function StockHero({
           </div>
 
           {/* Expected Return */}
-          <div className="flex flex-col">
-            <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Exp. Return</span>
+          <div className="flex flex-col justify-center">
+            <span className="text-[9px] text-text-secondary uppercase tracking-wider font-semibold">Exp. Return</span>
             <div className={cn(
-              "text-lg font-mono font-bold mt-2 flex items-center gap-0.5",
+              "text-base font-mono font-bold mt-2 flex items-center gap-0.5",
               expectedReturn >= 0 ? "text-emerald-500" : "text-rose-500"
             )}>
-              {expectedReturn >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+              {expectedReturn >= 0 ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
               <AnimatedNumber value={expectedReturn} decimals={1} suffix="%" />
             </div>
           </div>
 
           {/* Profit Probability */}
-          <div className="flex flex-col">
-            <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Profit Prob.</span>
-            <span className="text-lg font-mono font-bold text-text-primary mt-2">
+          <div className="flex flex-col justify-center">
+            <span className="text-[9px] text-text-secondary uppercase tracking-wider font-semibold">Profit Prob.</span>
+            <span className="text-base font-mono font-bold text-text-primary mt-2">
               <AnimatedNumber value={profitProbability} suffix="%" />
             </span>
           </div>
 
           {/* Confidence */}
-          <div className="flex flex-col">
-            <span className="text-[10px] text-text-secondary uppercase tracking-wider font-semibold">Confidence</span>
-            <span className="text-lg font-mono font-bold text-text-primary mt-2">
+          <div className="flex flex-col justify-center">
+            <span className="text-[9px] text-text-secondary uppercase tracking-wider font-semibold">Confidence</span>
+            <span className="text-base font-mono font-bold text-text-primary mt-2 text-accent">
               <AnimatedNumber value={confidence} suffix="%" />
             </span>
+          </div>
+
+          {/* Confidence Breakdown (Step 4) */}
+          <div className="flex flex-col justify-center pl-2 border-l border-border/40 min-w-[110px]">
+            <span className="text-[8px] text-text-secondary uppercase tracking-wider font-bold">Confidence Matrix</span>
+            <div className="mt-1 space-y-0.5 text-[8px] font-mono text-text-secondary">
+              <div className="flex justify-between"><span>Technical:</span><span className="text-text-primary font-bold">90%</span></div>
+              <div className="flex justify-between"><span>Sentiment:</span><span className="text-text-primary font-bold">74%</span></div>
+              <div className="flex justify-between"><span>Momentum:</span><span className="text-text-primary font-bold">86%</span></div>
+              <div className="flex justify-between"><span>Volume:</span><span className="text-text-primary font-bold">82%</span></div>
+              <div className="flex justify-between"><span>Institutional:</span><span className="text-text-primary font-bold">77%</span></div>
+            </div>
           </div>
         </div>
 

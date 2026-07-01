@@ -93,6 +93,17 @@ export function RiskAnalysis({
           />
         </div>
       </div>
+
+      {/* Risk Explanation (Step 5) */}
+      <div className="pt-3 border-t border-border/40 space-y-2">
+        <span className="text-[10px] text-text-secondary uppercase tracking-wider font-bold block">Risk Triggers Breakdown</span>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[10px] font-mono text-text-secondary">
+          <div className="flex justify-between border-b border-border/10 pb-1"><span>Volatility Rank:</span><span className="text-text-primary font-bold">61%</span></div>
+          <div className="flex justify-between border-b border-border/10 pb-1"><span>ATR Band:</span><span className="text-amber-500 font-bold">Elevated</span></div>
+          <div className="flex justify-between border-b border-border/10 pb-1"><span>Earnings Alert:</span><span className="text-text-primary font-bold">In 18 days</span></div>
+          <div className="flex justify-between border-b border-border/10 pb-1"><span>Sector Beta:</span><span className="text-rose-500 font-bold">1.42 (High)</span></div>
+        </div>
+      </div>
     </motion.div>
   );
 }
