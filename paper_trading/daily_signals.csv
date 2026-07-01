@@ -1,0 +1,3 @@
+symbol,signal,confidence,probability,expected_return,risk,entry_price,stop_loss,target_price
+ADANIENT,BUY,60,0.15,-0.16,MEDIUM,2238.7,2193.92,2328.25
+BEL,BUY,58,0.15,1.35,MEDIUM,397.91,389.95,413.82
