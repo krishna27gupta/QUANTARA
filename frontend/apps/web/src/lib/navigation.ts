@@ -4,9 +4,6 @@ import {
   BarChart3,
   Briefcase,
   MessageSquare,
-  CreditCard,
-  User,
-  Settings,
 } from "lucide-react";
 
 export const navItems = [
@@ -14,8 +11,5 @@ export const navItems = [
   { label: "Discover", href: "/discover", icon: Compass },
   { label: "Analyze", href: "/analyze", icon: BarChart3 },
   { label: "Portfolio", href: "/portfolio", icon: Briefcase },
-  { label: "Ask AI", href: "/ask", icon: MessageSquare },
-  { label: "Pricing", href: "/pricing", icon: CreditCard },
-  { label: "Profile", href: "/profile", icon: User },
-  { label: "Settings", href: "/settings", icon: Settings },
+  { label: "Ask Quantara", href: "/ask", icon: MessageSquare },
 ];
