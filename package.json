@@ -1,0 +1,20 @@
+{
+  "name": "quantara-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "npm@11.6.0",
+  "workspaces": [
+    "frontend/apps/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md,css}\"",
+    "prepare": "echo 'Pre-commit setup bypassed during initialization'"
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.14"
+  }
+}
