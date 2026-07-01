@@ -1,0 +1,3 @@
+trade_id,date,symbol,qty,signal,entry_price,target_price,stop_loss,confidence,probability,risk,holding_days,allocation,status
+6b082cd5,2025-12-26,ADANIENT,8,BUY,2228.9,2318.06,2184.33,60,0.15,MEDIUM,3,17831.23,OPEN
+5a50b92f,2025-12-30,BEL,51,BUY,391.63,407.3,383.8,58,0.15,MEDIUM,1,19973.27,OPEN
