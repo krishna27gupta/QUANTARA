@@ -4,6 +4,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-card-elevated: var(--card-elevated);
   --color-card-foreground: var(--card-foreground);
   --color-border: var(--border);
   --color-text-primary: var(--text-primary);
@@ -22,42 +23,53 @@
 }
 
 :root {
-  /* Default: Dark Mode (Institutional Zinc/Blue accents) */
+  /* Premium Dark Mode theme */
   --background: #09090B;
-  --card: #18181B;
-  --border: #27272A;
+  --card: #111318;
+  --card-elevated: #161922;
+  --border: rgba(255, 255, 255, 0.08);
   --text-primary: #FAFAFA;
-  --text-secondary: #A1A1AA;
-  --success: #22C55E;
-  --danger: #EF4444;
-  --accent: #3B82F6;
+  --text-secondary: #9CA3AF;
+  --success: #00ff87;
+  --danger: #ff3838;
+  --accent: #00ff87;
   
-  /* 20px Border Radius Token */
-  --radius: 1.25rem;
+  --radius: 12px;
   
-  /* Soft Shadows */
-  --shadow-soft-val: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.2);
+  --shadow-soft-val: 0 12px 40px -12px rgba(0, 0, 0, 0.6), 0 1px 3px rgba(0, 0, 0, 0.3);
 
-  /* Foreground defaults mapping for Tailwind */
   --foreground: #FAFAFA;
   --card-foreground: #FAFAFA;
 }
 
-.light {
-  /* Light Mode */
-  --background: #FFFFFF;
-  --card: #F4F4F5;
-  --border: #E4E4E7;
-  --text-primary: #09090B;
-  --text-secondary: #71717A;
-  --success: #16A34A;
-  --danger: #DC2626;
-  --accent: #2563EB;
-  
-  --shadow-soft-val: 0 10px 30px -10px rgba(9, 9, 11, 0.1), 0 1px 3px rgba(9, 9, 11, 0.05);
-  
-  --foreground: #09090B;
-  --card-foreground: #09090B;
+/* Animations for green and red flashes */
+@keyframes green-flash-anim {
+  0% { background-color: rgba(0, 255, 135, 0.2); color: #00ff87; }
+  100% { background-color: transparent; }
+}
+
+@keyframes red-flash-anim {
+  0% { background-color: rgba(255, 56, 56, 0.2); color: #ff3838; }
+  100% { background-color: transparent; }
+}
+
+.flash-green {
+  animation: green-flash-anim 0.8s ease-out;
+}
+
+.flash-red {
+  animation: red-flash-anim 0.8s ease-out;
+}
+
+/* Premium ambient glow card border effect */
+.glow-card {
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+.glow-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -10px rgba(0, 255, 135, 0.12);
 }
 
 * {
