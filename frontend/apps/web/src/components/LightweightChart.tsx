@@ -71,7 +71,7 @@ function generateCandleData(ticker: string, count: number) {
 }
 
 // Indicator calculation helpers
-function calculateSMA(data: any[], period: number) {
+function calculateSMA(data: { close: number; time: string }[], period: number) {
   const sma = [];
   for (let i = 0; i < data.length; i++) {
     if (i < period - 1) continue;
@@ -84,7 +84,7 @@ function calculateSMA(data: any[], period: number) {
   return sma;
 }
 
-function calculateEMA(data: any[], period: number) {
+function calculateEMA(data: { close: number; time: string }[], period: number) {
   const ema = [];
   const k = 2 / (period + 1);
   let val = data[0].close;
@@ -98,7 +98,7 @@ function calculateEMA(data: any[], period: number) {
   return ema;
 }
 
-function calculateBollingerBands(data: any[], period: number = 20, multiplier: number = 2) {
+function calculateBollingerBands(data: { close: number; time: string }[], period: number = 20, multiplier: number = 2) {
   const upper = [];
   const lower = [];
   const middle = [];
@@ -208,18 +208,16 @@ export function LightweightChart({ ticker, timeframe, activeIndicators }: Lightw
     })));
 
     // 3. Render Technical Overlays
-    const activeSeriesList: any[] = [];
 
     // MA20
     if (activeIndicators.includes("ma20")) {
       const ma20Data = calculateSMA(candles, 20);
       const ma20Series = chart.addSeries(LineSeries, {
         color: "#3b82f6",
-        lineWidth: 1.5,
+        lineWidth: 2,
         title: "MA 20",
       });
       ma20Series.setData(ma20Data);
-      activeSeriesList.push(ma20Series);
     }
 
     // MA50
@@ -227,11 +225,10 @@ export function LightweightChart({ ticker, timeframe, activeIndicators }: Lightw
       const ma50Data = calculateSMA(candles, 50);
       const ma50Series = chart.addSeries(LineSeries, {
         color: "#ec4899",
-        lineWidth: 1.5,
+        lineWidth: 2,
         title: "MA 50",
       });
       ma50Series.setData(ma50Data);
-      activeSeriesList.push(ma50Series);
     }
 
     // EMA20
@@ -239,11 +236,10 @@ export function LightweightChart({ ticker, timeframe, activeIndicators }: Lightw
       const ema20Data = calculateEMA(candles, 20);
       const ema20Series = chart.addSeries(LineSeries, {
         color: "#10b981",
-        lineWidth: 1.5,
+        lineWidth: 2,
         title: "EMA 20",
       });
       ema20Series.setData(ema20Data);
-      activeSeriesList.push(ema20Series);
     }
 
     // EMA50
@@ -251,11 +247,10 @@ export function LightweightChart({ ticker, timeframe, activeIndicators }: Lightw
       const ema50Data = calculateEMA(candles, 50);
       const ema50Series = chart.addSeries(LineSeries, {
         color: "#f59e0b",
-        lineWidth: 1.5,
+        lineWidth: 2,
         title: "EMA 50",
       });
       ema50Series.setData(ema50Data);
-      activeSeriesList.push(ema50Series);
     }
 
     // Bollinger Bands
@@ -282,8 +277,6 @@ export function LightweightChart({ ticker, timeframe, activeIndicators }: Lightw
         title: "BB Basis",
       });
       basisBB.setData(bbData.middle);
-
-      activeSeriesList.push(upperBB, lowerBB, basisBB);
     }
 
     chart.timeScale().fitContent();

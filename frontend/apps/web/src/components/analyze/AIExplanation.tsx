@@ -72,14 +72,15 @@ export function AIExplanation({ ticker, signal, rationales }: AIExplanationProps
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-text-secondary/70">
-                    <HelpCircle 
-                      className="w-3.5 h-3.5 hover:text-accent transition-colors" 
-                      title="Click to learn technical details" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleExpand(item.id);
-                      }}
-                    />
+                    <span title="Click to learn technical details">
+                      <HelpCircle 
+                        className="w-3.5 h-3.5 hover:text-accent transition-colors" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleExpand(item.id);
+                        }}
+                      />
+                    </span>
                     <motion.div
                       animate={{ rotate: isExpanded ? 180 : 0 }}
                       transition={{ duration: 0.15 }}

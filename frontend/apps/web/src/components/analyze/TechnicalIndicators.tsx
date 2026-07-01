@@ -92,7 +92,7 @@ export function TechnicalIndicators({
             {/* RSI */}
             <div className="p-3 bg-secondary/20 border border-border/40 rounded-xl space-y-1 relative group">
               <span className="text-[10px] text-text-secondary font-medium flex items-center gap-0.5">
-                RSI (14) <HelpCircle className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" title="Relative Strength Index measures speed and change of price movements." />
+                RSI (14) <span title="Relative Strength Index measures speed and change of price movements."><HelpCircle className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" /></span>
               </span>
               <span className="font-mono font-bold text-sm text-text-primary block">{rsi}</span>
               <div className="w-full h-1 bg-border rounded-full overflow-hidden mt-2">
@@ -106,7 +106,7 @@ export function TechnicalIndicators({
             {/* MACD */}
             <div className="p-3 bg-secondary/20 border border-border/40 rounded-xl space-y-1 relative group">
               <span className="text-[10px] text-text-secondary font-medium flex items-center gap-0.5">
-                MACD <HelpCircle className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" title="Moving Average Convergence Divergence highlights trend direction and momentum crossovers." />
+                MACD <span title="Moving Average Convergence Divergence highlights trend direction and momentum crossovers."><HelpCircle className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" /></span>
               </span>
               <span className="font-mono font-bold text-xs text-text-primary block truncate">{macd}</span>
               <span className="text-[8px] text-text-secondary block">12, 26, 9 parameter</span>
@@ -115,7 +115,7 @@ export function TechnicalIndicators({
             {/* ADX */}
             <div className="p-3 bg-secondary/20 border border-border/40 rounded-xl space-y-1 relative group">
               <span className="text-[10px] text-text-secondary font-medium flex items-center gap-0.5">
-                ADX (14) <HelpCircle className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" title="Average Directional Index measures overall trend strength regardless of direction." />
+                ADX (14) <span title="Average Directional Index measures overall trend strength regardless of direction."><HelpCircle className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" /></span>
               </span>
               <span className="font-mono font-bold text-sm text-text-primary block">{adx}</span>
               <span className={cn("text-[8px] font-bold", adx >= 25 ? "text-emerald-500" : "text-text-secondary/70")}>
@@ -126,7 +126,7 @@ export function TechnicalIndicators({
             {/* ATR */}
             <div className="p-3 bg-secondary/20 border border-border/40 rounded-xl space-y-1 relative group">
               <span className="text-[10px] text-text-secondary font-medium flex items-center gap-0.5">
-                ATR (14) <HelpCircle className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" title="Average True Range measures market volatility over a 14-day window." />
+                ATR (14) <span title="Average True Range measures market volatility over a 14-day window."><HelpCircle className="w-2.5 h-2.5 opacity-50 group-hover:opacity-100 transition-opacity" /></span>
               </span>
               <span className="font-mono font-bold text-sm text-text-primary block">₹{atr.toFixed(2)}</span>
               <span className="text-[8px] text-text-secondary/70 block">Daily price range</span>

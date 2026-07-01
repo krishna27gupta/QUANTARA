@@ -10,7 +10,7 @@ function AnimatedNumber({ value, decimals = 0, prefix = "", suffix = "" }: { val
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    let start = 0;
+    const start = 0;
     const duration = 800; // 0.8s
     const startTime = performance.now();
 
