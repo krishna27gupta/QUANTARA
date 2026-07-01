@@ -1,79 +1,63 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-border: var(--border);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-accent: var(--accent);
   
   --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-sm: calc(var(--radius) - 8px);
   
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+  --shadow-soft: var(--shadow-soft-val);
+  
+  --font-sans: "Geist", "Inter", "SF Pro", -apple-system, sans-serif;
 }
 
 :root {
-  /* Default: Dark Theme (Fintech Zinc/Charcoal mix) */
-  --background: 240 10% 4%;
-  --foreground: 0 0% 98%;
-  --card: 240 10% 6%;
-  --card-foreground: 0 0% 98%;
-  --popover: 240 10% 4%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 180 100% 40%; /* fintech cyan */
-  --primary-foreground: 240 10% 4%;
-  --secondary: 240 6% 12%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 240 6% 12%;
-  --muted-foreground: 240 5% 65%;
-  --accent: 180 100% 40%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 6% 15%;
-  --input: 240 6% 15%;
-  --ring: 180 100% 40%;
-  --radius: 0.75rem;
+  /* Default: Dark Mode (Institutional Zinc/Blue accents) */
+  --background: #09090B;
+  --card: #18181B;
+  --border: #27272A;
+  --text-primary: #FAFAFA;
+  --text-secondary: #A1A1AA;
+  --success: #22C55E;
+  --danger: #EF4444;
+  --accent: #3B82F6;
+  
+  /* 20px Border Radius Token */
+  --radius: 1.25rem;
+  
+  /* Soft Shadows */
+  --shadow-soft-val: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.2);
+
+  /* Foreground defaults mapping for Tailwind */
+  --foreground: #FAFAFA;
+  --card-foreground: #FAFAFA;
 }
 
 .light {
-  /* Light Theme */
-  --background: 0 0% 100%;
-  --foreground: 240 10% 4%;
-  --card: 240 5% 98%;
-  --card-foreground: 240 10% 4%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 4%;
-  --primary: 180 100% 35%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 5% 96%;
-  --secondary-foreground: 240 10% 4%;
-  --muted: 240 5% 96%;
-  --muted-foreground: 240 4% 45%;
-  --accent: 180 100% 35%;
-  --accent-foreground: 240 10% 4%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 240 6% 90%;
-  --input: 240 6% 90%;
-  --ring: 180 100% 35%;
+  /* Light Mode */
+  --background: #FFFFFF;
+  --card: #F4F4F5;
+  --border: #E4E4E7;
+  --text-primary: #09090B;
+  --text-secondary: #71717A;
+  --success: #16A34A;
+  --danger: #DC2626;
+  --accent: #2563EB;
+  
+  --shadow-soft-val: 0 10px 30px -10px rgba(9, 9, 11, 0.1), 0 1px 3px rgba(9, 9, 11, 0.05);
+  
+  --foreground: #09090B;
+  --card-foreground: #09090B;
 }
 
 * {
@@ -82,36 +66,64 @@
 
 body {
   background-color: var(--color-background);
-  color: var(--color-foreground);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
   min-height: 100vh;
 }
 
-/* Glassmorphism utility */
+/* Premium Typography Helper Classes */
+.font-display {
+  font-size: 2.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.font-heading {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.font-body {
+  font-size: 0.95rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.font-caption {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+
+/* Glassmorphic Panel Styles */
 .glass {
-  background: rgba(24, 24, 27, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(63, 63, 70, 0.4);
+  background: rgba(24, 24, 27, 0.6);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(39, 39, 42, 0.4);
 }
 
 .light .glass {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
+  background: rgba(244, 244, 245, 0.6);
+  backdrop-filter: blur(16px);
   border: 1px solid rgba(228, 228, 231, 0.4);
 }
 
-/* Custom scrollbars */
+/* Custom premium scrollbar styling */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(100, 116, 139, 0.2);
-  border-radius: 4px;
+  background: rgba(161, 161, 170, 0.15);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.4);
+  background: rgba(161, 161, 170, 0.3);
 }
