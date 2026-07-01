@@ -1,0 +1,334 @@
+{
+  "generated_at": "2026-07-01T23:00:34.974885",
+  "datasets": [
+    {
+      "ticker": "RELIANCE",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "TCS",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "HDFCBANK",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "INFY",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "ICICIBANK",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "TRENT",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "SBIN",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "ITC",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "HINDUNILVR",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "LT",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "HCLTECH",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "SUNPHARMA",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "AXISBANK",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "KOTAKBANK",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "MARUTI",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "ULTRACEMCO",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "NTPC",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "TATASTEEL",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "POWERGRID",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "COALINDIA",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "M&M",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "JSWSTEEL",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "ASIANPAINT",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "HINDALCO",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "NESTLEIND",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "ONGC",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "ADANIPORTS",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "JIOFIN",
+      "rows": 584,
+      "date_range": "2023-08-21 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "ADANIENT",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "BPCL",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "GRASIM",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "SBILIFE",
+      "rows": 2038,
+      "date_range": "2017-10-03 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "WIPRO",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "EICHERMOT",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "INDUSINDBK",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "HDFCLIFE",
+      "rows": 2006,
+      "date_range": "2017-11-17 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "DIVISLAB",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "CIPLA",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "SHRIRAMFIN",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "APOLLOHOSP",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "TATACONSUM",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "BAJAJ-AUTO",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "BAJFINANCE",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "BAJAJFINSV",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "HEROMOTOCO",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    },
+    {
+      "ticker": "BEL",
+      "rows": 2470,
+      "date_range": "2016-01-01 to 2025-12-31",
+      "missing_values": 0,
+      "features_count": 100
+    }
+  ]
+}
