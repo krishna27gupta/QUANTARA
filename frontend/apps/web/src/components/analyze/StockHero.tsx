@@ -103,18 +103,18 @@ export function StockHero({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="relative overflow-hidden rounded-[24px] border border-border bg-card p-6 md:p-8 glass shadow-soft hover:border-accent/20 transition-all duration-300"
+      className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 md:p-5 glass shadow-soft hover:border-accent/20 transition-all duration-300"
     >
       {/* Glow Effect matching signal */}
       <div className={cn("absolute -top-16 -left-16 w-56 h-56 rounded-full blur-3xl opacity-50 bg-gradient-to-br", config.gradient)} />
       <div className="absolute top-0 right-0 w-44 h-44 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-center">
+      <div className="relative z-10 flex flex-col lg:flex-row gap-4 justify-between items-start lg:items-center">
         {/* Left Section: Company Name, Price */}
-        <div className="space-y-3.5 w-full lg:w-auto">
+        <div className="space-y-2 w-full lg:w-auto">
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-mono text-xs text-text-secondary/70 bg-secondary/60 px-2.5 py-0.5 rounded-full uppercase">
+              <span className="font-mono text-[9px] text-text-secondary/70 bg-secondary/60 px-2 py-0.5 rounded-full uppercase">
                 {sector}
               </span>
               <span className="text-[10px] text-text-secondary font-semibold">|</span>
@@ -122,25 +122,41 @@ export function StockHero({
               <span className="text-[10px] text-text-secondary">|</span>
               <span className="text-[10px] text-text-secondary">Cap: {marketCap}</span>
             </div>
-            <div className="flex items-baseline gap-2 mt-1.5 flex-wrap">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight">{ticker}</h1>
-              <p className="text-xs md:text-sm text-text-secondary">{name}</p>
+            <div className="flex items-baseline gap-2 mt-1 flex-wrap">
+              <h1 className="text-xl md:text-2xl font-extrabold text-text-primary tracking-tight">{ticker}</h1>
+              <p className="text-[10px] md:text-xs text-text-secondary">{name}</p>
             </div>
           </div>
 
-          {/* Pricing Row */}
-          <div className="flex items-baseline gap-3.5">
-            <span className="text-3xl md:text-4xl font-mono font-bold text-text-primary">
-              ₹<AnimatedNumber value={price} decimals={2} />
-            </span>
-            <div className={cn(
-              "flex items-center gap-1 text-xs md:text-sm font-bold px-2 py-0.5 rounded-lg",
-              isPositive ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"
-            )}>
-              {isPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-              <span>
-                <AnimatedNumber value={Math.abs(dailyChange)} decimals={2} prefix={isPositive ? "+" : "-"} suffix="%" />
+          {/* Pricing Row with Mini Sparkline */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl md:text-3xl font-mono font-bold text-text-primary">
+                ₹<AnimatedNumber value={price} decimals={2} />
               </span>
+              <div className={cn(
+                "flex items-center gap-1 text-[10px] md:text-xs font-bold px-1.5 py-0.5 rounded-md",
+                isPositive ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"
+              )}>
+                {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+                <span>
+                  <AnimatedNumber value={Math.abs(dailyChange)} decimals={2} prefix={isPositive ? "+" : "-"} suffix="%" />
+                </span>
+              </div>
+            </div>
+
+            {/* Sparkline */}
+            <div className="w-20 h-6 hidden sm:block shrink-0">
+              <svg className="w-full h-full" viewBox="0 0 150 40">
+                <polyline
+                  fill="none"
+                  stroke={isPositive ? "#00ff87" : "#ff3838"}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  points={isPositive ? "5,30 25,27 45,24 65,26 85,15 105,18 125,8 145,10" : "5,10 25,15 45,12 65,22 85,18 105,28 125,25 145,30"}
+                />
+              </svg>
             </div>
           </div>
         </div>
