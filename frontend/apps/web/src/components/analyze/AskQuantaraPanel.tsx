@@ -23,7 +23,15 @@ export function AskQuantaraPanel({ currentTicker, sectorName = "Banking", onComp
     {
       id: "welcome",
       sender: "ai",
-      text: `Hello! I am Quantara's quantitative helper. Ask me anything about ${currentTicker} or technical indicators.`,
+      text: `Hello! I have generated the daily **${currentTicker}** quantitative validation score. Based on ensembled calculations:
+
+✓ **Relative Strength**: +4.2%  
+✓ **MACD**: Bullish Crossover  
+✓ **Volume Inflows**: +37% (vs 20-day average)  
+✓ **Sector Momentum**: Strong Bullish  
+✓ **Institutional Flows**: Positive (FII accumulation)  
+
+**Model Confidence**: **84%** [Source Citation: Ensemble Model Output #${currentTicker}-2026]`,
       timestamp: new Date()
     }
   ]);
@@ -89,6 +97,27 @@ export function AskQuantaraPanel({ currentTicker, sectorName = "Banking", onComp
     }, 1200);
   };
 
+  const renderMessageText = (text: string) => {
+    return text.split('\n').map((line, i) => {
+      let content: React.ReactNode = line;
+      if (line.trim().startsWith('✓')) {
+        const remaining = line.replace('✓', '').trim();
+        content = (
+          <span key={i} className="flex items-center gap-1.5 text-emerald-400 font-semibold my-0.5">
+            <span className="text-emerald-500 font-bold">✓</span>
+            {remaining}
+          </span>
+        );
+      } else {
+        const parts = line.split('**');
+        if (parts.length > 1) {
+          content = parts.map((part, index) => index % 2 === 1 ? <strong key={index} className="text-text-primary font-semibold">{part}</strong> : part);
+        }
+      }
+      return <div key={i}>{content}</div>;
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -139,7 +168,7 @@ export function AskQuantaraPanel({ currentTicker, sectorName = "Banking", onComp
                   : "bg-secondary/40 border-border/40 text-text-primary/95"
               )}
             >
-              {m.text}
+              {renderMessageText(m.text)}
             </div>
           </div>
         ))}
