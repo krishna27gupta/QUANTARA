@@ -1,110 +1,115 @@
 "use client";
 
-import { useState } from "react";
-import { Send, Bot, User, Sparkles } from "lucide-react";
+import React, { useState } from "react";
+import { PageTransition } from "@/components/ui/Animate";
+import { AIPromptInput } from "@/components/ui/Input";
+import { ChatLayout } from "@/components/layouts";
+import { Bot, User } from "lucide-react";
 
 export default function AskPage() {
   const [messages, setMessages] = useState([
-    { role: "assistant", content: "Hello! I am Quantara's AI financial intelligence assistant. Ask me about stock forecasts, sentiment analysis, or current portfolio status." }
+    { role: "assistant", content: "Namaste! I am Quantara's AI swing trading co-pilot. I can evaluate NIFTY 50 setups, explain indicator values, or inspect your portfolio limits." }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const sendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
+  const triggerSend = () => {
     if (!input.trim() || loading) return;
 
-    const userMsg = input.trim();
-    setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
+    const userText = input.trim();
+    setMessages((prev) => [...prev, { role: "user", content: userText }]);
     setInput("");
     setLoading(true);
 
     setTimeout(() => {
-      let reply = "I've analyzed that ticker using our standard quantitative model. Based on moving averages, there's a strong support level. Please integrate the real FastAPI services to fetch actual sentiment data.";
-      if (userMsg.toLowerCase().includes("aapl")) {
-        reply = "Apple Inc. (AAPL) is trading robustly with a bullish pattern. The current support is around $180, and resistance lies at $187. Our ML forecast model predicts a 2.4% gain over the next 5 days.";
-      } else if (userMsg.toLowerCase().includes("portfolio")) {
-        reply = "Your portfolio value is currently $124,592.15, dominated by NVIDIA Corp. (NVDA) at 17.5%. The portfolio is up 12.4% this quarter.";
+      let response = "I have queried the vector index and model parameters. Standard EMA trends show support for this trade. Connect real FastAPI feeds to query live tickers.";
+      
+      if (userText.toLowerCase().includes("reliance")) {
+        response = "RELIANCE is trading at ₹2,845.20. It has established support near ₹2,820. Indicators report a Bullish MACD crossover, suggesting a potential swing target of ₹2,950.";
+      } else if (userText.toLowerCase().includes("portfolio")) {
+        response = "Your portfolio cash balance is ₹3,78,215.15. The active holdings are RELIANCE, HDFCBANK, and TCS. Win rate is solid at 72.4%.";
       }
 
-      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: response }]);
       setLoading(false);
     }, 1200);
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)] max-w-4xl mx-auto border border-border bg-card rounded-2xl overflow-hidden">
-      {/* Bot Chat Header */}
-      <div className="p-4 border-b border-border bg-secondary/30 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
-          <Bot className="w-5 h-5" />
-        </div>
+    <PageTransition>
+      <div className="space-y-6">
         <div>
-          <h3 className="font-bold text-sm flex items-center gap-1.5">
-            Quantara Advisor
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-mono font-medium flex items-center gap-0.5">
-              <Sparkles className="w-2.5 h-2.5" />
-              ONLINE
-            </span>
-          </h3>
-          <p className="text-xs text-muted-foreground">Ask anything about markets or holdings</p>
+          <h2 className="font-heading text-text-primary">Ask Quantara</h2>
+          <p className="text-xs text-text-secondary">Consult the AI trading mentor regarding market directions</p>
         </div>
-      </div>
 
-      {/* Messages Scroll Area */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-4">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={`flex gap-3 max-w-[85%] ${msg.role === "user" ? "ml-auto flex-row-reverse" : ""}`}
-          >
-            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
-              msg.role === "user" 
-                ? "bg-secondary text-foreground border-border" 
-                : "bg-primary/10 text-primary border-primary/20"
-            }`}>
-              {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+        {/* Chat Layout */}
+        <ChatLayout
+          chatHeader={
+            <div className="p-4 border-b border-border/40 bg-secondary/15 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center text-accent">
+                <Bot className="w-5 h-5 animate-pulse" />
+              </div>
+              <div>
+                <h4 className="font-bold text-xs flex items-center gap-1.5 text-text-primary">
+                  Quantara AI Trading Mentor
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-success/20 text-success font-bold font-mono">
+                    ONLINE
+                  </span>
+                </h4>
+                <p className="text-[10px] text-text-secondary">Context bound to Indian NIFTY 50 securities</p>
+              </div>
             </div>
-            <div className={`p-3.5 rounded-2xl text-sm leading-relaxed ${
-              msg.role === "user"
-                ? "bg-primary text-primary-foreground font-medium rounded-tr-none"
-                : "bg-secondary/40 text-foreground rounded-tl-none border border-border/60"
-            }`}>
-              {msg.content}
+          }
+          messageStream={
+            <>
+              {messages.map((msg, i) => (
+                <div
+                  key={i}
+                  className={`flex gap-3 max-w-[85%] ${msg.role === "user" ? "ml-auto flex-row-reverse" : ""}`}
+                >
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
+                    msg.role === "user" 
+                      ? "bg-secondary/60 text-text-primary border-border" 
+                      : "bg-accent/10 text-accent border-accent/25"
+                  }`}>
+                    {msg.role === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                  </div>
+                  <div className={`p-4 rounded-[20px] text-xs leading-relaxed ${
+                    msg.role === "user"
+                      ? "bg-accent text-white font-semibold rounded-tr-none shadow-sm"
+                      : "bg-secondary/20 text-text-primary rounded-tl-none border border-border/40 shadow-sm"
+                  }`}>
+                    {msg.content}
+                  </div>
+                </div>
+              ))}
+              {loading && (
+                <div className="flex gap-3 max-w-[80%] animate-pulse">
+                  <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/25 text-accent flex items-center justify-center shrink-0">
+                    <Bot className="w-4 h-4" />
+                  </div>
+                  <div className="bg-secondary/20 border border-border/40 p-4 rounded-[20px] rounded-tl-none flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-text-secondary/60 animate-bounce" style={{ animationDelay: "0ms" }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-text-secondary/60 animate-bounce" style={{ animationDelay: "150ms" }} />
+                    <span className="w-1.5 h-1.5 rounded-full bg-text-secondary/60 animate-bounce" style={{ animationDelay: "300ms" }} />
+                  </div>
+                </div>
+              )}
+            </>
+          }
+          inputBar={
+            <div className="p-4 border-t border-border/40 bg-secondary/10">
+              <AIPromptInput
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about RELIANCE forecast or NIFTY 50 volume indicators..."
+                onSend={triggerSend}
+              />
             </div>
-          </div>
-        ))}
-        {loading && (
-          <div className="flex gap-3 max-w-[80%]">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary border border-primary/20 flex items-center justify-center shrink-0">
-              <Bot className="w-4 h-4" />
-            </div>
-            <div className="bg-secondary/40 border border-border/60 p-3.5 rounded-2xl rounded-tl-none flex items-center gap-1">
-              <span className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: "0ms" }} />
-              <span className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: "150ms" }} />
-              <span className="w-2 h-2 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: "300ms" }} />
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Input Form Footer */}
-      <form onSubmit={sendMessage} className="p-4 border-t border-border bg-secondary/15 flex gap-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask apple's forecast or summary of portfolio..."
-          className="flex-1 bg-secondary border border-border rounded-xl px-4 py-3 text-sm text-foreground outline-none focus:border-primary placeholder-muted-foreground"
+          }
         />
-        <button
-          type="submit"
-          disabled={!input.trim() || loading}
-          className="p-3 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-40 cursor-pointer"
-        >
-          <Send className="w-4 h-4" />
-        </button>
-      </form>
-    </div>
+      </div>
+    </PageTransition>
   );
 }

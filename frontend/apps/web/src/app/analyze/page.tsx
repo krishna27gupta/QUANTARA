@@ -1,139 +1,131 @@
 "use client";
 
-import { useState } from "react";
-import { Play, Sparkles, BarChart, FileText, CheckCircle2 } from "lucide-react";
+import React, { useState } from "react";
+import { PageTransition } from "@/components/ui/Animate";
+import { Input, Select } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { TradeSetupCard, SentimentCard, ExplanationCard } from "@/components/cards";
+import { CandlestickContainer } from "@/components/charts";
+import { AnalyticsLayout } from "@/components/layouts";
+import LightweightChart from "@/components/LightweightChart";
 
-interface Metric {
-  name: string;
-  value: string;
-}
-
-interface AnalysisResult {
+interface AnalysisData {
   ticker: string;
-  sentiment: string;
-  score: string;
+  entry: string;
+  target: string;
+  stopLoss: string;
+  riskReward: string;
+  bullish: number;
+  bearish: number;
+  neutral: number;
   summary: string;
-  metrics: Metric[];
 }
 
 export default function AnalyzePage() {
   const [ticker, setTicker] = useState("AAPL");
-  const [analyzing, setAnalyzing] = useState(false);
-  const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [indicator, setIndicator] = useState("ema");
+  const [running, setRunning] = useState(false);
+  const [data, setData] = useState<AnalysisData | null>(null);
 
-  const triggerAnalysis = () => {
-    setAnalyzing(true);
-    setResult(null);
+  const options = [
+    { label: "Exponential Moving Avg (EMA)", value: "ema" },
+    { label: "Relative Strength Index (RSI)", value: "rsi" },
+    { label: "Moving Average Convergence (MACD)", value: "macd" },
+  ];
+
+  const triggerRun = () => {
+    setRunning(true);
+    setData(null);
     setTimeout(() => {
-      setAnalyzing(false);
-      setResult({
+      setRunning(false);
+      setData({
         ticker: ticker.toUpperCase(),
-        sentiment: "Bullish",
-        score: "85/100",
-        summary: `Quantitative analysis of ${ticker.toUpperCase()} suggests a strong upward momentum based on exponential moving averages and relative strength index (RSI 62).`,
-        metrics: [
-          { name: "P/E Ratio", value: "28.4" },
-          { name: "Debt to Equity", value: "1.2" },
-          { name: "RSI (14d)", value: "62.4" },
-          { name: "MACD Signal", value: "Buy" },
-        ],
+        entry: "₹2,820.00 - ₹2,840.00",
+        target: "₹2,950.00",
+        stopLoss: "₹2,775.00",
+        riskReward: "1:2.45",
+        bullish: 74,
+        bearish: 12,
+        neutral: 14,
+        summary: `Moving Average Convergence (MACD) signal reports a golden cross pattern. Standard volume indicators support a swing breakout in the NIFTY 50 listing.`
       });
-    }, 1500);
+    }, 1200);
   };
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div>
-        <h2 className="text-xl font-bold">Quantitative Stock Analyzer</h2>
-        <p className="text-sm text-muted-foreground">Run mathematical and sentiment indicators on any stock or crypto</p>
-      </div>
-
-      {/* Analysis Control Box */}
-      <div className="p-6 rounded-2xl bg-card border border-border flex flex-col md:flex-row gap-4 items-end">
-        <div className="flex-1 space-y-2 w-full">
-          <label className="text-xs font-semibold text-muted-foreground uppercase">Enter Ticker / Symbol</label>
-          <input
-            type="text"
-            value={ticker}
-            onChange={(e) => setTicker(e.target.value)}
-            className="w-full bg-secondary border border-border rounded-xl px-4 py-3 outline-none focus:border-primary text-foreground text-sm font-mono"
-            placeholder="e.g. AAPL, BTC, NVDA"
-          />
+    <PageTransition>
+      <div className="space-y-6">
+        <div>
+          <h2 className="font-heading text-text-primary">Quantitative Analyzer</h2>
+          <p className="text-xs text-text-secondary">Run mathematical indicators on NIFTY 50 assets</p>
         </div>
-        <button
-          onClick={triggerAnalysis}
-          disabled={analyzing}
-          className="w-full md:w-auto px-6 py-3 rounded-xl bg-primary text-primary-foreground font-semibold flex items-center justify-center gap-2 hover:bg-primary/95 disabled:opacity-50 cursor-pointer select-none transition-colors"
-        >
-          {analyzing ? (
-            <>
-              <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            <>
-              <Play className="w-4 h-4" />
-              Run Analysis
-            </>
-          )}
-        </button>
-      </div>
 
-      {/* Result Display */}
-      {result && (
-        <div className="space-y-6 animate-fade-in">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-5 rounded-2xl bg-card border border-border">
-              <div className="text-xs text-muted-foreground font-semibold mb-2">TARGET ASSET</div>
-              <div className="text-2xl font-bold font-mono">{result.ticker}</div>
-            </div>
-            <div className="p-5 rounded-2xl bg-card border border-border">
-              <div className="text-xs text-muted-foreground font-semibold mb-2">QUANT SENTIMENT</div>
-              <div className="text-2xl font-bold text-emerald-500 flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-primary" />
-                {result.sentiment}
+        {/* Analytics Layout */}
+        <AnalyticsLayout
+          chartSection={
+            <CandlestickContainer title={`Technical Chart: ${ticker.toUpperCase()}`}>
+              <LightweightChart />
+            </CandlestickContainer>
+          }
+          controlsSection={
+            <div className="p-6 rounded-[20px] bg-card border border-border space-y-4 glass shadow-soft">
+              <span className="text-[10px] text-text-secondary font-bold uppercase tracking-wider block border-b border-border/40 pb-2">
+                Calculation Bounds
+              </span>
+
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <label className="text-[10px] text-text-secondary font-semibold uppercase">Security Ticker</label>
+                  <Input
+                    value={ticker}
+                    onChange={(e) => setTicker(e.target.value)}
+                    className="font-mono"
+                    placeholder="e.g. RELIANCE"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] text-text-secondary font-semibold uppercase">Indicator Strategy</label>
+                  <Select
+                    options={options}
+                    value={indicator}
+                    onChange={(e) => setIndicator(e.target.value)}
+                  />
+                </div>
+
+                <Button
+                  onClick={triggerRun}
+                  loading={running}
+                  variant="ai"
+                  className="w-full mt-2"
+                >
+                  Calculate Indicators
+                </Button>
               </div>
             </div>
-            <div className="p-5 rounded-2xl bg-card border border-border">
-              <div className="text-xs text-muted-foreground font-semibold mb-2">PROBABILITY SCORE</div>
-              <div className="text-2xl font-bold font-mono text-primary">{result.score}</div>
-            </div>
-          </div>
+          }
+          detailsSection={
+            data && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in">
+                {/* Trade Setup Card */}
+                <TradeSetupCard {...data} />
 
-          <div className="p-6 rounded-2xl bg-card border border-border space-y-4">
-            <h3 className="font-bold flex items-center gap-2 border-b border-border pb-3">
-              <FileText className="w-4 h-4 text-primary" />
-              Executive Summary
-            </h3>
-            <p className="text-sm text-foreground/90 leading-relaxed">{result.summary}</p>
-          </div>
+                {/* Sentiment Card */}
+                <SentimentCard {...data} />
 
-          <div className="p-6 rounded-2xl bg-card border border-border space-y-4">
-            <h3 className="font-bold flex items-center gap-2 border-b border-border pb-3">
-              <BarChart className="w-4 h-4 text-primary" />
-              Technical Indicators
-            </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {result.metrics.map((metric: Metric, i: number) => (
-                <div key={i} className="p-4 rounded-xl bg-secondary/30 border border-border/80">
-                  <span className="text-xs text-muted-foreground font-medium block mb-1">{metric.name}</span>
-                  <span className="font-mono font-bold text-base text-foreground">{metric.value}</span>
+                {/* AI Rationale Explanation */}
+                <div className="md:col-span-2">
+                  <ExplanationCard
+                    title="Calculation Rationale"
+                    explanation={data.summary}
+                    sourceDocs={["NIFTY_MACD_黄金.csv", "NSE_VOLUME_DELTA.log"]}
+                  />
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {!result && !analyzing && (
-        <div className="p-12 rounded-2xl bg-secondary/10 border border-border border-dashed text-center space-y-3">
-          <CheckCircle2 className="w-8 h-8 text-muted-foreground mx-auto" />
-          <h4 className="font-semibold">Ready for calculations</h4>
-          <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-            Input a stock symbol above and click Run Analysis. Predictions use mock analytics nodes.
-          </p>
-        </div>
-      )}
-    </div>
+              </div>
+            )
+          }
+        />
+      </div>
+    </PageTransition>
   );
 }
