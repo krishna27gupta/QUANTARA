@@ -1,17 +1,17 @@
-# Quantara Forward Validation Journal
+# Quantara Forward Validation
 
 ## Day 1
 
 Market:
 Bullish
 
-Trades:
+Trade:
 INDUSINDBK BUY
 
-Observations:
-- System ran successfully.
-- Banking momentum remained strong.
-- Confidence appears very high (99%).
+Observation:
+System executed perfectly.
+Confidence appears very high.
+Banking momentum remains strong.
 
 Decision:
 Continue.
@@ -23,13 +23,29 @@ Continue.
 Market:
 Bullish
 
-Trades:
+Trade:
 TRENT BUY
 
-Observations:
-- INDUSINDBK moved +1.31%.
-- TRENT breakout detected.
-- Portfolio exposure increased to 38.8%.
+Observation:
+INDUSINDBK moved +1.31%.
+TRENT breakout identified.
+Portfolio exposure increased to 38.8%.
+
+Decision:
+Continue.
+
+---
+
+## Day 3
+
+Market:
+Neutral/Bearish
+
+Observation:
+TRENT retraced to -1.48%.
+INDUSINDBK compressed gains.
+No new trades opened.
+Risk management behaved correctly.
 
 Decision:
 Continue.
