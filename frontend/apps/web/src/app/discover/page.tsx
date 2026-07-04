@@ -81,6 +81,33 @@ export default function DiscoverPage() {
     { ticker: "RELIANCE", name: "Reliance Industries Ltd.", price: "₹2,845.20", change: "+1.42%", up: true }
   ]);
 
+  // Market opportunity state
+  const [marketOpportunity, setMarketOpportunity] = useState<{
+    market_confidence: number;
+    opportunity_score: number;
+    market_regime: string;
+    market_sentiment: string;
+    vix: number;
+  } | null>(null);
+  const [isOpportunityLoading, setIsOpportunityLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchOpportunity() {
+      try {
+        const res = await fetch("http://localhost:8000/api/v1/market-opportunity");
+        if (res.ok) {
+          const data = await res.json();
+          setMarketOpportunity(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch market opportunity score:", err);
+      } finally {
+        setIsOpportunityLoading(false);
+      }
+    }
+    fetchOpportunity();
+  }, []);
+
   // Clock updating
   useEffect(() => {
     const updateTime = () => {
@@ -503,11 +530,12 @@ export default function DiscoverPage() {
         >
           {/* Market Overview Core stats */}
           <MarketOverview 
-            mood="Bullish"
+            mood={marketOpportunity?.market_sentiment === "Bullish" ? "Bullish" : (marketOpportunity?.market_sentiment === "Bearish" ? "Bearish" : "Neutral")}
             niftyPred={0.8}
             fearGreed={67}
-            volatility="Low"
-            oppScore={82}
+            volatility={marketOpportunity ? (marketOpportunity.vix > 18 ? "High" : (marketOpportunity.vix > 15 ? "Medium" : "Low")) : "Low"}
+            oppScore={marketOpportunity?.opportunity_score}
+            isLoading={isOpportunityLoading}
           />
 
           {/* Opportunities Section */}

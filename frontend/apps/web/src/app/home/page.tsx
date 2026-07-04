@@ -21,6 +21,33 @@ export default function HomePage() {
   const [currentTime, setCurrentTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
 
+  // Market opportunity state
+  const [marketOpportunity, setMarketOpportunity] = useState<{
+    market_confidence: number;
+    opportunity_score: number;
+    market_regime: string;
+    market_sentiment: string;
+    vix: number;
+  } | null>(null);
+  const [isOpportunityLoading, setIsOpportunityLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchOpportunity() {
+      try {
+        const res = await fetch("http://localhost:8000/api/v1/market-opportunity");
+        if (res.ok) {
+          const data = await res.json();
+          setMarketOpportunity(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch market opportunity score:", err);
+      } finally {
+        setIsOpportunityLoading(false);
+      }
+    }
+    fetchOpportunity();
+  }, []);
+
   useEffect(() => {
     // Dynamic Time & Date updates
     const updateTime = () => {
@@ -124,11 +151,12 @@ export default function HomePage() {
                     Today&apos;s market setup is <span className="text-success font-bold">BULLISH</span>. Strong earnings estimates and heavy option open interest support breakouts.
                   </p>
                 </div>
-                
-                <div className="flex flex-wrap items-center gap-6">
+                                <div className="flex flex-wrap items-center gap-6">
                   <div className="text-center md:text-right">
                     <span className="text-[10px] text-text-secondary block font-semibold uppercase tracking-wider">Market Confidence</span>
-                    <span className="text-2xl font-extrabold text-accent">82%</span>
+                    <span className="text-2xl font-extrabold text-accent">
+                      {isOpportunityLoading ? "..." : `${marketOpportunity?.market_confidence ?? 84}%`}
+                    </span>
                   </div>
                   <div className="h-10 w-px bg-border/40 hidden sm:block" />
                   <div className="space-y-1">
@@ -144,12 +172,16 @@ export default function HomePage() {
             </div>
 
             {/* Hero Market Mood */}
-            <MarketMoodHero
-              mood="BULLISH"
-              niftyOutlook="+0.8%"
-              niftyUp={true}
-              opportunityScore={82}
-            />
+            {isOpportunityLoading ? (
+              <div className="h-44 w-full bg-secondary/10 border border-border animate-pulse rounded-[20px]" />
+            ) : (
+              <MarketMoodHero
+                mood={marketOpportunity?.market_sentiment === "Bullish" ? "BULLISH" : (marketOpportunity?.market_sentiment === "Bearish" ? "BEARISH" : "NEUTRAL")}
+                niftyOutlook="+0.8%"
+                niftyUp={true}
+                opportunityScore={marketOpportunity?.opportunity_score ?? 84}
+              />
+            )}
 
             {/* Main grid splits */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">

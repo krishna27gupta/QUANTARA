@@ -47,7 +47,8 @@ export interface MarketOverviewProps {
   niftyPred?: number; // e.g. 0.8
   fearGreed?: number; // e.g. 67
   volatility?: "Low" | "Medium" | "High";
-  oppScore?: number; // e.g. 82
+  oppScore?: number;
+  isLoading?: boolean;
 }
 
 export function MarketOverview({
@@ -55,7 +56,8 @@ export function MarketOverview({
   niftyPred = 0.8,
   fearGreed = 67,
   volatility = "Low",
-  oppScore = 82,
+  oppScore,
+  isLoading = false,
 }: MarketOverviewProps) {
   // Glow colors based on mood
   const moodConfig = {
@@ -84,6 +86,32 @@ export function MarketOverview({
 
   const currentMood = moodConfig[mood];
 
+  if (isLoading) {
+    return (
+      <div className="relative overflow-hidden rounded-[20px] border border-border bg-card p-6 glass shadow-soft">
+        <div className="space-y-6">
+          <div className="flex justify-between items-start">
+            <div className="space-y-2">
+              <div className="h-3 w-28 bg-border/40 rounded animate-pulse" />
+              <div className="h-6 w-36 bg-border/40 rounded animate-pulse" />
+            </div>
+            <div className="h-6 w-24 bg-border/40 rounded-full animate-pulse" />
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="p-4 h-24 rounded-2xl bg-secondary/20 border border-border/20 animate-pulse flex flex-col justify-between">
+                <div className="h-3 w-16 bg-border/40 rounded" />
+                <div className="h-6 w-12 bg-border/40 rounded mt-2" />
+                <div className="h-2 w-full bg-border/20 rounded mt-1" />
+              </div>
+            ))}
+          </div>
+          <div className="h-10 w-full bg-secondary/20 border border-border/20 rounded-xl animate-pulse" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 15 }}
@@ -94,7 +122,7 @@ export function MarketOverview({
       {/* Decorative mood-based glow */}
       <div className={cn("absolute -top-12 -left-12 w-48 h-48 rounded-full blur-3xl opacity-50 bg-gradient-to-br", currentMood.gradient)} />
       <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl pointer-events-none" />
-
+ 
       <div className="relative z-10 space-y-6">
         {/* Title & Info */}
         <div className="flex justify-between items-start">
@@ -185,7 +213,7 @@ export function MarketOverview({
             </span>
             <div className="mt-2 flex items-baseline gap-1">
               <span className="text-3xl font-mono font-extrabold text-text-primary">
-                <AnimatedValue value={oppScore} />
+                <AnimatedValue value={oppScore ?? 0} />
               </span>
               <span className="text-xs text-text-secondary font-semibold">/100</span>
             </div>
