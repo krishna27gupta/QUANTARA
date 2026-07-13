@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import numpy as np
 import pandas as pd
 import yfinance as yf
-from ml.src.trend import calculate_advanced_indicators
+from ml.src.features_engine import calculate_advanced_indicators
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s - %(message)s")
@@ -71,6 +71,28 @@ class PaperTradingEngine:
             all_returns.append(df['Close'].pct_change() if 'Close' in df.columns else df['close'].pct_change())
         market_returns = pd.concat(all_returns, axis=1).mean(axis=1)
 
+        # Download real Nifty and VIX
+        logger.info("Downloading real market context (^NSEI, ^NSEBANK, ^INDIAVIX)...")
+        try:
+            nifty_df = yf.download("^NSEI", period="5y", progress=False)['Close']
+            bank_df = yf.download("^NSEBANK", period="5y", progress=False)['Close']
+            vix_df = yf.download("^INDIAVIX", period="5y", progress=False)['Close']
+            
+            if isinstance(nifty_df, pd.DataFrame): nifty_df = nifty_df.iloc[:, 0]
+            if isinstance(bank_df, pd.DataFrame): bank_df = bank_df.iloc[:, 0]
+            if isinstance(vix_df, pd.DataFrame): vix_df = vix_df.iloc[:, 0]
+                
+            context_df = pd.DataFrame({
+                "context_nifty_close": nifty_df,
+                "context_bank_close": bank_df,
+                "context_vix_close": vix_df
+            })
+            context_df.index = pd.to_datetime(context_df.index).tz_localize(None)
+            context_df = context_df.ffill().bfill()
+        except Exception as e:
+            logger.error(f"Failed to download context: {e}")
+            context_df = pd.DataFrame(columns=["context_nifty_close", "context_bank_close", "context_vix_close"])
+
         # Load all stock features aligned by Date
         stock_dfs = {}
         for file in parquet_files:
@@ -82,9 +104,10 @@ class PaperTradingEngine:
                     "open": "Open", "high": "High", "low": "Low", "close": "Close", "volume": "Volume",
                     "dividend": "Dividends", "split": "Stock Splits"
                 })
-                df['context_nifty_close'] = df['Close'] * 15.0
-                df['context_bank_close'] = df['Close'] * 32.0
-                df['context_vix_close'] = 14.5
+                
+                df.index = pd.to_datetime(df.index).tz_localize(None)
+                df = df.merge(context_df, how="left", left_index=True, right_index=True)
+                df = df.ffill().bfill()
                 
                 df = calculate_advanced_indicators(df, market_returns)
                 
