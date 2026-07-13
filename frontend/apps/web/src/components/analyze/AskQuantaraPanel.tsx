@@ -31,7 +31,7 @@ export function AskQuantaraPanel({ currentTicker, sectorName = "Banking", onComp
 ✓ **Sector Momentum**: Strong Bullish  
 ✓ **Institutional Flows**: Positive (FII accumulation)  
 
-**Model Confidence**: **84%** [Source Citation: Ensemble Model Output #${currentTicker}-2026]`,
+**Model Confidence**: **High** [Source Citation: Ensemble Model Output #${currentTicker}-2026]`,
       timestamp: new Date()
     }
   ]);
@@ -71,7 +71,7 @@ export function AskQuantaraPanel({ currentTicker, sectorName = "Banking", onComp
       const query = text.toLowerCase();
 
       if (query.includes("should i buy")) {
-        responseText = `Quantara's indicators flag a strong entry signal for ${currentTicker}. The setup reports an expected return of +6.1% and a confidence score of 84%, supported by positive MACD crossovers and rising daily volumes. However, ensure the stop loss at optimal boundaries is adhered to.`;
+        responseText = `Quantara's indicators flag a strong entry signal for ${currentTicker}. The setup reports an expected positive return and a high confidence score, supported by positive MACD crossovers and rising daily volumes. However, ensure the stop loss at optimal boundaries is adhered to.`;
       } else if (query.includes("why is") || query.includes("bullish")) {
         responseText = `${currentTicker} is displaying bullish behavior due to three key factors: (1) Strong institutional inflows over the past 48 hours, (2) MACD showing a golden cross on the daily timeframe, and (3) Sector strength in ${sectorName} leading index momentum.`;
       } else if (query.includes("compare")) {

@@ -164,7 +164,7 @@ export function AIExplanation({ ticker, signal, rationales }: AIExplanationProps
             <div>
               <span className="text-[10px] text-accent font-bold uppercase tracking-wider block">Validated Data Sources</span>
               <div className="flex flex-wrap gap-1.5 mt-2.5">
-                {["NSE India", "Yahoo Finance", "India VIX", "FII/DII Flows", "FinBERT Sentiment"].map((src, i) => (
+                {["NSE India", "Yahoo Finance", "India VIX", "FII/DII Flows", "News Sentiment Lexicon"].map((src, i) => (
                   <span key={i} className="text-[10px] font-semibold px-2 py-0.5 rounded bg-accent/5 text-text-primary border border-border/60">
                     ✓ {src}
                   </span>

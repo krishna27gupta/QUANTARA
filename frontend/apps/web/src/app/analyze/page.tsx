@@ -30,7 +30,7 @@ const NIFTY_STOCKS = [
     volume: "12.4M",
     marketCap: "19.2T",
     signal: "BUY" as const,
-    confidence: 84,
+    confidence: 88,
     profitProbability: 72,
     expectedReturn: 6.1,
     score: 87,

@@ -13,7 +13,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from ml.src import (
     DataPipeline,
-    FeatureStore,
     TrendPredictor,
     ProfitPredictor,
     RiskPredictor,
@@ -118,8 +117,6 @@ async def get_market_opportunity():
     confidences = []
     expected_returns = []
     risks = []
-    
-    from ml.src.feature_store import FeatureStore
     from ml.src.trend import TrendPredictor
     from ml.src.profit import ProfitPredictor
     from ml.src.risk import RiskPredictor
@@ -127,7 +124,6 @@ async def get_market_opportunity():
     from ml.src.sentiment import SentimentEngine
     from ml.src.ensemble import EnsembleEngine
     
-    store = FeatureStore()
     trend_model = TrendPredictor()
     profit_model = ProfitPredictor()
     risk_model = RiskPredictor()
@@ -137,31 +133,21 @@ async def get_market_opportunity():
     
     for symbol in benchmarks:
         try:
-            ohlcv = pipeline.fetch_ohlcv(symbol, days=60)
-            if ohlcv:
-                ohlcv = pipeline.compute_technical_indicators(ohlcv)
-                ohlcv = pipeline.compute_volatility_features(ohlcv)
-                ohlcv = pipeline.compute_volume_features(ohlcv)
-                
-                engineered = store.engineer_features(ohlcv, context)
-                selected = store.select_features(engineered)
-                latest_vector = selected[-1] if selected else {}
-                
-                # Run predictions
-                trend_res = await trend_model.predict_trend(latest_vector)
-                profit_res = await profit_model.predict_profitability(latest_vector)
-                risk_res = await risk_model.evaluate_risk(latest_vector)
-                return_res = await return_model.forecast_expected_return(selected)
-                
-                # Mock sentiment
-                sentiment_res = await sentiment_model.analyze_sentiment([f"Neutral sentiment on {symbol}"])
-                
-                ensemble_res = await ensemble.aggregate_predictions(
-                    trend_res, profit_res, risk_res, return_res, sentiment_res
-                )
-                confidences.append(ensemble_res["confidence"])
-                expected_returns.append(ensemble_res["expected_return"])
-                risks.append(ensemble_res["risk"])
+            # Run predictions
+            trend_res = await trend_model.predict_trend({"symbol": symbol})
+            profit_res = await profit_model.predict_profitability({"symbol": symbol})
+            risk_res = await risk_model.evaluate_risk({"symbol": symbol})
+            return_res = await return_model.forecast_expected_return([{"symbol": symbol}])
+            
+            # Sentiment analysis with real news via yfinance
+            sentiment_res = await sentiment_model.analyze_sentiment({"symbol": symbol})
+            
+            ensemble_res = await ensemble.aggregate_predictions(
+                trend_res, profit_res, risk_res, return_res, sentiment_res
+            )
+            confidences.append(ensemble_res["confidence"])
+            expected_returns.append(ensemble_res["expected_return"])
+            risks.append(ensemble_res["risk"])
         except Exception as e:
             logger.error(f"Failed to calculate benchmark metrics for {symbol}: {e}")
             
@@ -214,25 +200,7 @@ async def predict_stock(symbol: str = "RELIANCE"):
     """
     logger.info(f"Received prediction request for symbol: {symbol}")
     
-    # 1. Ingestion
-    pipeline = DataPipeline()
-    ohlcv = pipeline.fetch_ohlcv(symbol, days=60)
-    context = pipeline.fetch_market_context()
-    
-    # 2. Features Calculations
-    ohlcv = pipeline.compute_technical_indicators(ohlcv)
-    ohlcv = pipeline.compute_volatility_features(ohlcv)
-    ohlcv = pipeline.compute_volume_features(ohlcv)
-    
-    # 3. Feature Store Engineering
-    store = FeatureStore()
-    engineered = store.engineer_features(ohlcv, context)
-    selected = store.select_features(engineered)
-    
-    # Get latest features vector
-    latest_vector = selected[-1] if selected else {}
-    
-    # 4. ML Models evaluation
+    # 1. ML Models evaluation
     trend_model = TrendPredictor()
     profit_model = ProfitPredictor()
     risk_model = RiskPredictor()
@@ -241,33 +209,28 @@ async def predict_stock(symbol: str = "RELIANCE"):
     
     # Run async predictions
     import asyncio
-    trend_task = trend_model.predict_trend(latest_vector)
-    profit_task = profit_model.predict_profitability(latest_vector)
-    risk_task = risk_model.evaluate_risk(latest_vector)
-    return_task = return_model.forecast_expected_return(selected)
+    trend_task = trend_model.predict_trend({"symbol": symbol})
+    profit_task = profit_model.predict_profitability({"symbol": symbol})
+    risk_task = risk_model.evaluate_risk({"symbol": symbol})
+    return_task = return_model.forecast_expected_return([{"symbol": symbol}])
     
-    # Mock text feedback for sentiment NLP
-    news_feed = [
-        f"Shares of {symbol} show breakout potential after closing above moving averages.",
-        f"Brokers report active institutional blocks trade accumulation in {symbol}.",
-        f"Market regime remains supportive for Indian swing setups."
-    ]
-    sentiment_task = sentiment_model.analyze_sentiment(news_feed)
+    # Sentiment analysis with real news via yfinance
+    sentiment_task = sentiment_model.analyze_sentiment({"symbol": symbol})
     
     # Gather results
     trend_res, profit_res, risk_res, return_res, sentiment_res = await asyncio.gather(
         trend_task, profit_task, risk_task, return_task, sentiment_task
     )
     
-    # 5. Ensemble Engine Voting
+    # 2. Ensemble Engine Voting
     ensemble = EnsembleEngine()
     ensemble_res = await ensemble.aggregate_predictions(
         trend_res, profit_res, risk_res, return_res, sentiment_res
     )
     
-    # 6. Explainability and SHAP reasons
+    # 3. Explainability and SHAP reasons
     explainer = ExplainabilityEngine()
-    rationales = explainer.generate_rationales(latest_vector, ensemble_res["signal"])
+    rationales = explainer.generate_rationales(symbol, ensemble_res["signal"])
     
     # Return formatted schema
     return {
@@ -277,7 +240,14 @@ async def predict_stock(symbol: str = "RELIANCE"):
         "expected_return": ensemble_res["expected_return"],
         "risk": ensemble_res["risk"],
         "quantara_score": ensemble_res["quantara_score"],
-        "explanation": rationales
+        "explanation": rationales,
+        "model_sources": {
+            "trend": trend_res.get("model_type"),
+            "profit": profit_res.get("model_type"),
+            "risk": risk_res.get("model_type"),
+            "expected_return": return_res.get("model_type"),
+            "sentiment": sentiment_res.get("model_type")
+        }
     }
 
 # Paper Trading Endpoints (Step 12)

@@ -50,7 +50,7 @@ export default function AskPage() {
 
   // Daily Briefing state
   const recommendedTrades = [
-    { rank: 1, ticker: "RELIANCE", confidence: 84, expectedReturn: "+6.1%", risk: "Medium" as const },
+    { rank: 1, ticker: "RELIANCE", confidence: 88, expectedReturn: "+6.1%", risk: "Medium" as const },
     { rank: 2, ticker: "TCS", confidence: 78, expectedReturn: "+4.8%", risk: "Low" as const },
     { rank: 3, ticker: "HDFCBANK", confidence: 82, expectedReturn: "+5.5%", risk: "Low" as const }
   ];
@@ -102,7 +102,7 @@ export default function AskPage() {
         widgetData = {
           ticker: "RELIANCE",
           signal: "BUY",
-          confidence: 84,
+          confidence: 88,
           profitProbability: 72,
           expectedReturn: "+6.1%",
           risk: "Medium",
@@ -137,7 +137,7 @@ export default function AskPage() {
         content = "Here is a side-by-side opportunities scan comparing RELIANCE and TCS:";
         widget = "comparison";
         widgetData = {
-          assetA: { ticker: "RELIANCE", signal: "BUY", confidence: 84, expectedReturn: "+6.1%", risk: "Medium" },
+          assetA: { ticker: "RELIANCE", signal: "BUY", confidence: 88, expectedReturn: "+6.1%", risk: "Medium" },
           assetB: { ticker: "TCS", signal: "BUY", confidence: 78, expectedReturn: "+4.8%", risk: "Low" },
           recommendationText: "Quantara recommends favoring RELIANCE due to higher momentum indicators, but TCS remains an outstanding lower-volatility defensive choice."
         };

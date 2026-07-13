@@ -36,7 +36,7 @@ export function CategorizedPicks() {
       { ticker: "ICICIBANK", name: "ICICI Bank Ltd.", signal: "BUY", confidence: "86%", probability: "79%", expectedReturn: "+4.1%" },
     ],
     aggressive: [
-      { ticker: "M&M", name: "Mahindra & Mahindra Ltd.", signal: "BUY", confidence: "84%", probability: "68%", expectedReturn: "+8.5%" },
+      { ticker: "M&M", name: "Mahindra & Mahindra Ltd.", signal: "BUY", confidence: "88%", probability: "68%", expectedReturn: "+8.5%" },
       { ticker: "TATASTEEL", name: "Tata Steel Ltd.", signal: "SELL", confidence: "80%", probability: "70%", expectedReturn: "-6.2%" },
       { ticker: "ADANIENT", name: "Adani Enterprises Ltd.", signal: "BUY", confidence: "72%", probability: "58%", expectedReturn: "+12.4%" },
     ],

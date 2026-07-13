@@ -41,7 +41,7 @@ interface StockOpportunity {
 }
 
 const ALL_STOCKS: StockOpportunity[] = [
-  { ticker: "RELIANCE", name: "Reliance Industries Ltd.", price: "₹2,845.20", signal: "BUY", confidence: 84, profitProbability: 72, expectedReturn: "+6.1%", risk: "Medium", sector: "Energy", marketCap: "Large Cap", rsi: 62, macd: "Bullish Cross", volume: "High" },
+  { ticker: "RELIANCE", name: "Reliance Industries Ltd.", price: "₹2,845.20", signal: "BUY", confidence: 88, profitProbability: 72, expectedReturn: "+6.1%", risk: "Medium", sector: "Energy", marketCap: "Large Cap", rsi: 62, macd: "Bullish Cross", volume: "High" },
   { ticker: "TCS", name: "Tata Consultancy Services Ltd.", price: "₹3,920.10", signal: "BUY", confidence: 78, profitProbability: 68, expectedReturn: "+4.8%", risk: "Low", sector: "IT", marketCap: "Large Cap", rsi: 54, macd: "Neutral", volume: "Medium" },
   { ticker: "HDFCBANK", name: "HDFC Bank Ltd.", price: "₹1,612.45", signal: "BUY", confidence: 82, profitProbability: 74, expectedReturn: "+5.5%", risk: "Low", sector: "Banking", marketCap: "Large Cap", rsi: 58, macd: "Bullish", volume: "High" },
   { ticker: "ITC", name: "ITC Ltd.", price: "₹425.80", signal: "BUY", confidence: 86, profitProbability: 80, expectedReturn: "+3.5%", risk: "Low", sector: "FMCG", marketCap: "Large Cap", rsi: 48, macd: "Strong Bullish", volume: "High" },
