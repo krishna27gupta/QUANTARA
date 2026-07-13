@@ -123,27 +123,27 @@
     "lag_macd_5"
   ],
   "label_definition": "1 if +4% touched before -2% within 5 days, else 0",
-  "base_rate_win_pct": 43.34994705517216,
+  "base_rate_win_pct": 43.76462615288499,
   "metrics": {
     "random_forest": {
       "name": "RandomForest",
-      "test_acc": 0.5035605731654363,
-      "precision": 0.4423656254954812,
-      "recall": 0.5591742659585128,
-      "f1": 0.49395830566989773,
-      "auc": 0.5132616591539805,
-      "n_selective_signals": 17,
-      "selective_win_rate_at_60pct_confidence": 41.17647058823529
+      "test_acc": 0.5072056557599928,
+      "precision": 0.44445416375087476,
+      "recall": 0.5290503956684715,
+      "f1": 0.4830766305381251,
+      "auc": 0.5127388594104085,
+      "n_selective_signals": 21,
+      "selective_win_rate_at_60pct_confidence": 23.809523809523807
     },
     "xgboost": {
       "name": "XGBoost",
-      "test_acc": 0.5629613547546678,
-      "precision": 0.4469135802469136,
-      "recall": 0.0362761799779537,
-      "f1": 0.06710538511446844,
-      "auc": 0.5110793696568939,
-      "n_selective_signals": 1,
-      "selective_win_rate_at_60pct_confidence": 0.0
+      "test_acc": 0.5612254146650956,
+      "precision": 0.47098214285714285,
+      "recall": 0.06591003748438151,
+      "f1": 0.11563755937157472,
+      "auc": 0.5205948950281576,
+      "n_selective_signals": 40,
+      "selective_win_rate_at_60pct_confidence": 60.0
     }
   }
 }
