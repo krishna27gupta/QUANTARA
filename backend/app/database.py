@@ -1,5 +1,7 @@
 from collections.abc import AsyncGenerator
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
 from app.config import settings
 
 # Create async engine with connection pooling enabled
@@ -20,18 +22,21 @@ SessionLocal = async_sessionmaker(
     expire_on_commit=False,
 )
 
+
 # Async dependency injector
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
+async def get_db() -> AsyncGenerator[AsyncSession]:
     async with SessionLocal() as session:
         try:
             yield session
         finally:
             await session.close()
-            
+
+
 async def verify_db_connection() -> bool:
     """Utility function to verify DB connectivity on health checks."""
     try:
         from sqlalchemy import text
+
         async with SessionLocal() as session:
             await session.execute(text("SELECT 1"))
         return True

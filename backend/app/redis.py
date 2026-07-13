@@ -1,4 +1,5 @@
 import redis.asyncio as aioredis
+
 from app.config import settings
 
 # Initialize Redis connection pool
@@ -8,9 +9,11 @@ redis_pool = aioredis.ConnectionPool.from_url(
     max_connections=20,
 )
 
+
 async def get_redis() -> aioredis.Redis:
     """Dependency injector for asynchronous Redis client sessions."""
     return aioredis.Redis(connection_pool=redis_pool)
+
 
 async def verify_redis_connection() -> bool:
     """Utility to test Redis connectivity on health check calls."""
