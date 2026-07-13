@@ -6,27 +6,27 @@ Trades Opened: 2
 
 Trades Closed: 1
 
-Portfolio Value: ₹99555.48
+Portfolio Value: ₹99851.42
 
-Total Return: -0.44%
+Total Return: -0.15%
 
-Win Rate: 52.94%
+Win Rate: 100.00%
 
-Sharpe Ratio: -0.6220
+Sharpe Ratio: -15.8745
 
-Sortino Ratio: -1.0596
+Sortino Ratio: 0.0000
 
-Maximum Drawdown: -1.21%
+Maximum Drawdown: -0.15%
 
-Best Trade: INDUSINDBK (+4.00%)
+Best Trade: JSWSTEEL (+4.00%)
 
-Worst Trade: BEL (-2.00%)
+Worst Trade: JSWSTEEL (4.00%)
 
 Open Positions: 2
 
-Closed Positions: 17
+Closed Positions: 1
 
-Today's Signals: ADANIENT, BEL
+Today's Signals: BEL, ADANIENT
 
 Market Regime: Bullish Swing
 
