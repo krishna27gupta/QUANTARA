@@ -54,6 +54,7 @@ class TrendPredictor(BaseTrendPredictor):
         self.lgb_model = None
         self.features = []
         self.top_features = []
+        self.load_failed = False
 
         try:
             if os.path.exists(self.xgb_path):
@@ -69,6 +70,7 @@ class TrendPredictor(BaseTrendPredictor):
                     self.top_features = meta.get("top_features", ["rsi", "macd", "Volume"])
             logger.info("Successfully loaded real XGBoost and LightGBM trend models.")
         except Exception as e:
+            self.load_failed = True
             logger.error(f"Failed to load real model weights: {e}")
 
     def _infer(self, row: Dict[str, Any]) -> Dict[str, Any]:
@@ -76,10 +78,10 @@ class TrendPredictor(BaseTrendPredictor):
 
         prob_xgb, prob_lgb, prob_sell = 0.5, 0.5, 0.33
         probs3 = None
-        if self.xgb_model:
+        if self.xgb_model and not self.load_failed:
             probs = self.xgb_model.predict_proba(X)[0]
             prob_xgb = float(probs[2]) if len(probs) == 3 else float(probs[-1])
-        if self.lgb_model:
+        if self.lgb_model and not self.load_failed:
             probs3 = self.lgb_model.predict_proba(X)[0]
             prob_lgb = float(probs3[2]) if len(probs3) == 3 else float(probs3[-1])
             prob_sell = float(probs3[0])
@@ -104,7 +106,7 @@ class TrendPredictor(BaseTrendPredictor):
             else:
                 top_feats_mapped.append(feat.upper())
 
-        return {
+        result = {
             "signal": signal,
             "confidence": confidence,
             "probability": round(prob_lgb, 4),
@@ -112,6 +114,10 @@ class TrendPredictor(BaseTrendPredictor):
             "predicted_regime": "Bullish" if prob_lgb >= 0.48 else ("Bearish" if prob <= 0.40 else "Sideways"),
             "top_features": top_feats_mapped,
         }
+        if (not self.xgb_model and not self.lgb_model) or self.load_failed:
+            result["error"] = "model_failed_to_load"
+            
+        return result
 
     def predict(self, symbol: str) -> Dict[str, Any]:
         """Self-contained inference from raw parquet data for a given symbol."""

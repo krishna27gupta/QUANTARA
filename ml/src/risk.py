@@ -40,6 +40,7 @@ class RiskPredictor(BaseRiskPredictor):
 
         self.model = None
         self.features = []
+        self.load_failed = False
         try:
             if os.path.exists(self.model_path):
                 with open(self.model_path, "rb") as f:
@@ -49,6 +50,7 @@ class RiskPredictor(BaseRiskPredictor):
                     self.features = json.load(f).get("features", [])
             logger.info("Loaded real risk model (Gradient Boosting).")
         except Exception as e:
+            self.load_failed = True
             logger.error(f"Failed to load risk model: {e}")
 
     def predict(self, symbol: str, precomputed_row: Dict[str, Any] = None) -> Dict[str, Any]:
@@ -56,7 +58,7 @@ class RiskPredictor(BaseRiskPredictor):
             row = precomputed_row if precomputed_row is not None else build_live_feature_row(symbol, self.workspace_root)
             X = pd.DataFrame([{f: row.get(f, 0.0) for f in self.features}])
 
-            if self.model:
+            if self.model and not self.load_failed:
                 probs = self.model.predict_proba(X)[0]
                 pred_class = int(probs.argmax())
                 risk_label = RISK_LABELS[pred_class]
@@ -64,7 +66,7 @@ class RiskPredictor(BaseRiskPredictor):
             else:
                 risk_label, confidence = "Medium", 0.34
 
-            return {
+            result = {
                 "model_type": "Gradient Boosting (HistGB) - trained",
                 "model_version": self.version,
                 "risk_level": risk_label,
@@ -72,6 +74,10 @@ class RiskPredictor(BaseRiskPredictor):
                 "label_definition": "Predicted realized-volatility tercile over the next 5 trading days",
                 "beta_volatility": round(float(row.get("beta", 1.0)), 3),
             }
+            if not self.model or self.load_failed:
+                result["error"] = "model_failed_to_load"
+            
+            return result
         except Exception as e:
             logger.error(f"Risk inference error for {symbol}: {e}")
             return {

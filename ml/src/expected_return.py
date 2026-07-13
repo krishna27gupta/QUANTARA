@@ -44,6 +44,7 @@ class ExpectedReturnPredictor(BaseExpectedReturnPredictor):
 
         self.models = None
         self.features = []
+        self.load_failed = False
         try:
             if os.path.exists(self.model_path):
                 with open(self.model_path, "rb") as f:
@@ -53,6 +54,7 @@ class ExpectedReturnPredictor(BaseExpectedReturnPredictor):
                     self.features = json.load(f).get("features", [])
             logger.info("Loaded real expected-return quantile models.")
         except Exception as e:
+            self.load_failed = True
             logger.error(f"Failed to load expected-return models: {e}")
 
     def predict(self, symbol: str, precomputed_row: Dict[str, Any] = None) -> Dict[str, Any]:
@@ -60,14 +62,14 @@ class ExpectedReturnPredictor(BaseExpectedReturnPredictor):
             row = precomputed_row if precomputed_row is not None else build_live_feature_row(symbol, self.workspace_root)
             X = pd.DataFrame([{f: row.get(f, 0.0) for f in self.features}])
 
-            if self.models:
+            if self.models and not self.load_failed:
                 median = float(self.models["median"].predict(X)[0])
                 lower = float(self.models["lower"].predict(X)[0])
                 upper = float(self.models["upper"].predict(X)[0])
             else:
                 median, lower, upper = 0.0, -2.0, 2.0
 
-            return {
+            result = {
                 "model_type": "Gradient Boosted Quantile Regression - trained (not LSTM/GRU, see docstring)",
                 "model_version": self.version,
                 "expected_return_pct": round(median, 2),
@@ -75,6 +77,10 @@ class ExpectedReturnPredictor(BaseExpectedReturnPredictor):
                 "forecast_upper_bound_pct": round(upper, 2),
                 "label_definition": "Actual 5-day forward close-to-close return, percent",
             }
+            if not self.models or self.load_failed:
+                result["error"] = "model_failed_to_load"
+            
+            return result
         except Exception as e:
             logger.error(f"Expected return inference error for {symbol}: {e}")
             return {
