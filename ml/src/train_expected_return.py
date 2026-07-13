@@ -48,7 +48,7 @@ def main():
     combined = []
     for ticker in tickers:
         try:
-            df = load_and_engineer(ticker, datasets_dir, market_returns)
+            df = load_and_engineer(ticker, datasets_dir, market_returns, workspace_root=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")))
             df['future_return_5d_pct'] = (df['Close'].shift(-HOLD_DAYS) - df['Close']) / df['Close'] * 100
             df = df.dropna()
             df['ticker'] = ticker

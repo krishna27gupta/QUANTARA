@@ -13,126 +13,7 @@ from sklearn.calibration import CalibratedClassifierCV
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s - %(message)s")
 logger = logging.getLogger("quantara-model-optimization")
-
-def calculate_advanced_indicators(df: pd.DataFrame, market_returns: pd.Series) -> pd.DataFrame:
-    """Implement 50+ advanced indicators and quantitative market features."""
-    df = df.copy()
-    close = df['Close']
-    high = df['High']
-    low = df['Low']
-    open_p = df['Open']
-    volume = df['Volume']
-
-    # 1. Base technicals
-    df['sma20'] = close.rolling(20).mean()
-    df['sma50'] = close.rolling(50).mean()
-    df['ema20'] = close.ewm(span=20, adjust=False).mean()
-    df['ema50'] = close.ewm(span=50, adjust=False).mean()
-
-    # RSI
-    delta = close.diff()
-    gain = (delta.where(delta > 0, 0)).rolling(14).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(14).mean()
-    rs = gain / (loss + 1e-9)
-    df['rsi'] = 100 - (100 / (1 + rs))
-
-    # MACD
-    ema12 = close.ewm(span=12, adjust=False).mean()
-    ema26 = close.ewm(span=26, adjust=False).mean()
-    df['macd'] = ema12 - ema26
-    df['macd_signal'] = df['macd'].ewm(span=9, adjust=False).mean()
-    df['macd_hist'] = df['macd'] - df['macd_signal']
-
-    # ATR
-    high_low = high - low
-    high_cp = (high - close.shift()).abs()
-    low_cp = (low - close.shift()).abs()
-    tr = pd.concat([high_low, high_cp, low_cp], axis=1).max(axis=1)
-    df['atr'] = tr.rolling(14).mean()
-
-    # ADX
-    up_move = high.diff()
-    down_move = low.diff()
-    plus_dm = np.where((up_move > down_move) & (up_move > 0), up_move, 0.0)
-    minus_dm = np.where((down_move > up_move) & (down_move > 0), down_move, 0.0)
-    plus_di = 100 * (pd.Series(plus_dm, index=df.index).rolling(14).mean() / (df['atr'] + 1e-9))
-    minus_di = 100 * (pd.Series(minus_dm, index=df.index).rolling(14).mean() / (df['atr'] + 1e-9))
-    dx = 100 * (plus_di - minus_di).abs() / ((plus_di + minus_di).abs() + 1e-9)
-    df['adx'] = dx.rolling(14).mean()
-
-    # Bollinger Bands
-    df['bb_middle'] = df['sma20']
-    std_20 = close.rolling(20).std()
-    df['bb_upper'] = df['bb_middle'] + (std_20 * 2)
-    df['bb_lower'] = df['bb_middle'] - (std_20 * 2)
-    df['vwap'] = (close * volume).cumsum() / (volume.cumsum() + 1e-9)
-    df['obv'] = (np.sign(close.diff().fillna(0)) * volume).cumsum()
-
-    min_rsi = df['rsi'].rolling(14).min()
-    max_rsi = df['rsi'].rolling(14).max()
-    df['stoch_rsi'] = (df['rsi'] - min_rsi) / (max_rsi - min_rsi + 1e-9)
-    df['roc'] = (close - close.shift(10)) / (close.shift(10) + 1e-9) * 100
-    df['momentum'] = close - close.shift(1)
-    df['historical_volatility'] = close.pct_change().rolling(20).std() * np.sqrt(252)
-    
-    roll_max = close.cummax()
-    df['drawdown'] = (close - roll_max) / (roll_max + 1e-9) * 100
-
-    # 2. Market features
-    # Nifty relative strength
-    if 'context_nifty_close' in df.columns:
-        df['nifty_rs'] = close / (df['context_nifty_close'] + 1e-9)
-    else:
-        df['nifty_rs'] = 1.0
-
-    # Sector relative strength proxy (ratio relative to Bank Nifty / IT close if available)
-    if 'context_bank_close' in df.columns:
-        df['sector_rs'] = close / (df['context_bank_close'] + 1e-9)
-    else:
-        df['sector_rs'] = 1.0
-
-    # Volatility
-    df['vix_level'] = df.get('context_vix_close', 14.5)
-
-    # Beta
-    stock_returns = close.pct_change().dropna()
-    aligned_stock, aligned_mkt = stock_returns.align(market_returns, join='inner')
-    covariance = aligned_stock.rolling(60).cov(aligned_mkt)
-    mkt_variance = aligned_mkt.rolling(60).var()
-    df['beta'] = (covariance / (mkt_variance + 1e-9)).reindex(df.index, method='ffill').fillna(1.0)
-
-    # 3. Trend features
-    df['trend_persistence_5d'] = close.diff(1).rolling(5).mean()
-    df['trend_persistence_10d'] = close.diff(1).rolling(10).mean()
-    df['momentum_acceleration'] = df['momentum'].diff(1)
-    df['ma_slope_20d'] = df['sma20'].diff(1)
-    df['ma_slope_50d'] = df['sma50'].diff(1)
-    df['price_ema20_dist'] = close - df['ema20']
-    df['price_ema50_dist'] = close - df['ema50']
-
-    # 4. Volatility Percentiles
-    df['atr_percentile'] = df['atr'].rolling(60).rank(pct=True)
-    df['drawdown_percentile'] = df['drawdown'].rolling(60).rank(pct=True)
-
-    # 5. Pattern features
-    df['breakout_high_10d'] = (close >= high.rolling(10).max().shift(1)).astype(int)
-    df['breakout_low_10d'] = (close <= low.rolling(10).min().shift(1)).astype(int)
-    df['gap_open_pct'] = (open_p - close.shift(1)) / (close.shift(1) + 1e-9) * 100
-    df['support_distance'] = (close - low.rolling(20).min()) / (close + 1e-9)
-    df['resistance_distance'] = (high.rolling(20).max() - close) / (close + 1e-9)
-
-    # Generate lags for these advanced features (1 to 5 days lag)
-    advanced_cols = [
-        'nifty_rs', 'sector_rs', 'vix_level', 'trend_persistence_5d', 'trend_persistence_10d',
-        'momentum_acceleration', 'ma_slope_20d', 'ma_slope_50d', 'price_ema20_dist', 'price_ema50_dist',
-        'atr_percentile', 'drawdown_percentile', 'breakout_high_10d', 'breakout_low_10d', 'gap_open_pct',
-        'support_distance', 'resistance_distance'
-    ]
-    for col in advanced_cols:
-        for lag in range(1, 4):
-            df[f"lag_{col}_{lag}"] = df[col].shift(lag)
-
-    return df
+from features_engine import calculate_advanced_indicators, load_and_engineer, compute_market_returns
 
 def main():
     logger.info("Initializing Advanced ML Optimization & Tuning Pipeline...")
@@ -141,40 +22,22 @@ def main():
     os.makedirs(models_dir, exist_ok=True)
 
     parquet_files = glob.glob(os.path.join(datasets_dir, "*.parquet"))
-    
-    # Calculate market return proxy
-    all_returns = []
-    for file in parquet_files:
-        df = pd.read_parquet(file)
-        all_returns.append(df['Close'].pct_change())
-    market_returns = pd.concat(all_returns, axis=1).mean(axis=1)
+    market_returns = compute_market_returns(datasets_dir)
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    workspace_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
 
     combined_data_list = []
     for file in parquet_files:
         ticker = os.path.basename(file).replace(".parquet", "")
         try:
-            df = pd.read_parquet(file)
-            # Inject context
-            # We mock the indices context mapping dynamically for consistency
-            df['context_nifty_close'] = df['Close'] * 15.0 # Nifty context proxy
-            df['context_bank_close'] = df['Close'] * 32.0
-            df['context_vix_close'] = 14.5
-            
-            df = calculate_advanced_indicators(df, market_returns)
+            df = load_and_engineer(ticker, datasets_dir, market_returns, workspace_root=workspace_root)
 
             # Define three-class target classification
             df['future_return_5d'] = (df['Close'].shift(-5) - df['Close']) / df['Close']
             df['target'] = 1  # HOLD default
             df.loc[df['future_return_5d'] > 0.04, 'target'] = 2  # BUY
             df.loc[df['future_return_5d'] < -0.02, 'target'] = 0  # SELL
-
-            # Generate Lags features (close, volume, rsi, macd)
-            for lag in range(1, 11):
-                df[f"lag_close_{lag}"] = df['Close'].shift(lag)
-                df[f"lag_volume_{lag}"] = df['Volume'].shift(lag)
-            for lag in range(1, 6):
-                df[f"lag_rsi_{lag}"] = df['rsi'].shift(lag)
-                df[f"lag_macd_{lag}"] = df['macd'].shift(lag)
 
             df = df.dropna()
             df['ticker'] = ticker

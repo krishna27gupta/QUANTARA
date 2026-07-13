@@ -11,19 +11,32 @@ import yfinance as yf
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s - %(message)s")
 logger = logging.getLogger("quantara-data-ingestion")
 
-# Ticker Universe configuration
-TICKERS = [
-    "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFY.NS", "ICICIBANK.NS",
-    "TRENT.NS", "SBIN.NS", "BHARTIARTL.NS", "ITC.NS", "HINDUNILVR.NS",
-    "LT.NS", "HCLTECH.NS", "SUNPHARMA.NS", "AXISBANK.NS", "KOTAKBANK.NS",
-    "MARUTI.NS", "ULTRACEMCO.NS", "NTPC.NS", "TATASTEEL.NS", "POWERGRID.NS",
-    "COALINDIA.NS", "M&M.NS", "JSWSTEEL.NS", "ASIANPAINT.NS", "HINDALCO.NS",
-    "TATAMOTORS.NS", "NESTLEIND.NS", "ONGC.NS", "ADANIPORTS.NS", "JIOFIN.NS",
-    "ADANIENT.NS", "BPCL.NS", "GRASIM.NS", "SBILIFE.NS", "WIPRO.NS",
-    "EICHERMOT.NS", "LTIM.NS", "INDUSINDBK.NS", "HDFCLIFE.NS", "DIVISLAB.NS",
-    "CIPLA.NS", "SHRIRAMFIN.NS", "APOLLOHOSP.NS", "TATACONSUM.NS", "BAJAJ-AUTO.NS",
-    "BAJFINANCE.NS", "BAJAJFINSV.NS", "HEROMOTOCO.NS", "BEL.NS"
-]
+def get_all_historical_tickers():
+    try:
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        path = os.path.join(current_dir, "historical_constituents.json")
+        with open(path, "r") as f:
+            mapping = json.load(f)
+        all_tickers = set()
+        for month_list in mapping.values():
+            all_tickers.update(month_list)
+        return [t + ".NS" for t in all_tickers]
+    except Exception as e:
+        logger.warning(f"Could not load historical mapping, using fallback. {e}")
+        return [
+            "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFY.NS", "ICICIBANK.NS",
+            "TRENT.NS", "SBIN.NS", "BHARTIARTL.NS", "ITC.NS", "HINDUNILVR.NS",
+            "LT.NS", "HCLTECH.NS", "SUNPHARMA.NS", "AXISBANK.NS", "KOTAKBANK.NS",
+            "MARUTI.NS", "ULTRACEMCO.NS", "NTPC.NS", "TATASTEEL.NS", "POWERGRID.NS",
+            "COALINDIA.NS", "M&M.NS", "JSWSTEEL.NS", "ASIANPAINT.NS", "HINDALCO.NS",
+            "TATAMOTORS.NS", "NESTLEIND.NS", "ONGC.NS", "ADANIPORTS.NS", "JIOFIN.NS",
+            "ADANIENT.NS", "BPCL.NS", "GRASIM.NS", "SBILIFE.NS", "WIPRO.NS",
+            "EICHERMOT.NS", "LTIM.NS", "INDUSINDBK.NS", "HDFCLIFE.NS", "DIVISLAB.NS",
+            "CIPLA.NS", "SHRIRAMFIN.NS", "APOLLOHOSP.NS", "TATACONSUM.NS", "BAJAJ-AUTO.NS",
+            "BAJFINANCE.NS", "BAJAJFINSV.NS", "HEROMOTOCO.NS", "BEL.NS"
+        ]
+
+TICKERS = get_all_historical_tickers()
 
 INDEX_TICKERS = {
     "nifty50": "^NSEI",

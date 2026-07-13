@@ -138,6 +138,9 @@ def calculate_advanced_indicators(df: pd.DataFrame, market_returns: pd.Series) -
     return df
 
 
+import functools
+
+@functools.lru_cache(maxsize=1)
 def compute_market_returns(datasets_dir: str) -> pd.Series:
     """Equal-weighted proxy market return series across the whole universe, used for beta."""
     parquet_files = glob.glob(os.path.join(datasets_dir, "*.parquet"))
@@ -151,10 +154,49 @@ def compute_market_returns(datasets_dir: str) -> pd.Series:
     return pd.concat(all_returns, axis=1).mean(axis=1)
 
 
-def load_and_engineer(ticker: str, datasets_dir: str, market_returns: pd.Series) -> pd.DataFrame:
+import json
+
+@functools.lru_cache(maxsize=1)
+def get_historical_mapping(workspace_root: str) -> dict:
+    path = os.path.join(workspace_root, "ml", "src", "historical_constituents.json")
+    if not os.path.exists(path):
+        return {}
+    with open(path, "r") as f:
+        return json.load(f)
+
+def filter_point_in_time(df: pd.DataFrame, ticker: str, workspace_root: str) -> pd.DataFrame:
+    mapping = get_historical_mapping(workspace_root)
+    if not mapping or df.empty:
+        return df
+    
+    # Ensure datetime index
+    df = df.copy()
+    if 'Date' in df.columns:
+        ym_series = pd.to_datetime(df['Date']).dt.strftime('%Y-%m')
+    else:
+        ym_series = pd.Series(df.index).dt.strftime('%Y-%m')
+        ym_series.index = df.index
+    
+    # Mask where the ticker was actively in the index
+    def is_active(ym):
+        return ticker in mapping.get(ym, [])
+        
+    mask = ym_series.map(is_active)
+    # Default to keeping the row if the month is entirely missing from mapping
+    missing_months = ~ym_series.isin(mapping.keys())
+    final_mask = mask | missing_months
+    
+    filtered_df = df[final_mask]
+    return filtered_df
+
+def load_and_engineer(ticker: str, datasets_dir: str, market_returns: pd.Series, workspace_root: str = None) -> pd.DataFrame:
     """Load one ticker's parquet and compute the full feature frame (used in training)."""
     path = os.path.join(datasets_dir, f"{ticker}.parquet")
     df = pd.read_parquet(path)
+    
+    if workspace_root:
+        df = filter_point_in_time(df, ticker, workspace_root)
+        
     df['context_nifty_close'] = df['Close'] * 15.0
     df['context_bank_close'] = df['Close'] * 32.0
     df['context_vix_close'] = 14.5
@@ -162,6 +204,7 @@ def load_and_engineer(ticker: str, datasets_dir: str, market_returns: pd.Series)
     return df
 
 
+@functools.lru_cache(maxsize=128)
 def build_live_feature_row(symbol: str, workspace_root: str) -> dict:
     """
     Build the latest feature row for a symbol, for live prediction serving.
@@ -171,7 +214,7 @@ def build_live_feature_row(symbol: str, workspace_root: str) -> dict:
     clean_symbol = symbol.replace(".NS", "")
     datasets_dir = os.path.join(workspace_root, "ml", "datasets")
     market_returns = compute_market_returns(datasets_dir)
-    df = load_and_engineer(clean_symbol, datasets_dir, market_returns)
+    df = load_and_engineer(clean_symbol, datasets_dir, market_returns, workspace_root=workspace_root)
     df = df.ffill().bfill()
     latest = df.tail(1).iloc[0].to_dict()
     return latest

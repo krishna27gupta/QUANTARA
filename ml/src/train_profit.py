@@ -85,10 +85,13 @@ def main():
 
     market_returns = compute_market_returns(datasets_dir)
 
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    workspace_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
+
     combined = []
     for ticker in tickers:
         try:
-            df = load_and_engineer(ticker, datasets_dir, market_returns)
+            df = load_and_engineer(ticker, datasets_dir, market_returns, workspace_root=workspace_root)
             df['target'] = compute_first_touch_label(df)
             df = df.dropna()
             df['ticker'] = ticker

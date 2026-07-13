@@ -53,7 +53,7 @@ def main():
     combined = []
     for ticker in tickers:
         try:
-            df = load_and_engineer(ticker, datasets_dir, market_returns)
+            df = load_and_engineer(ticker, datasets_dir, market_returns, workspace_root=os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")))
             df['forward_realized_vol'] = compute_forward_realized_vol(df)
             df = df.dropna()
             df['ticker'] = ticker
