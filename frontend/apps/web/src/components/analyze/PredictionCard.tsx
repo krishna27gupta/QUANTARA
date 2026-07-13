@@ -6,22 +6,25 @@ import { Calendar, ChevronRight, TrendingUp, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface PredictionCardProps {
-  tomorrowPrice: number;
-  threeDayPrice: number;
-  sevenDayPrice: number;
-  rangeMin: number;
-  rangeMax: number;
+  expectedReturn: number;
+  confidence: number;
   currentPrice: number;
+  profitProbability: number;
 }
 
 export function PredictionCard({
-  tomorrowPrice,
-  threeDayPrice,
-  sevenDayPrice,
-  rangeMin,
-  rangeMax,
+  expectedReturn,
+  confidence,
   currentPrice,
+  profitProbability,
 }: PredictionCardProps) {
+  // Synthesize realistic forecast prices purely from the expected return 
+  const tomorrowPrice = currentPrice * (1 + (expectedReturn / 300)); // Scaled fraction for 1 day
+  const threeDayPrice = currentPrice * (1 + (expectedReturn / 150)); 
+  const sevenDayPrice = currentPrice * (1 + (expectedReturn / 100)); // The expected return applies mostly here
+  const rangeMin = currentPrice * (1 - (expectedReturn / 100) * 0.5);
+  const rangeMax = currentPrice * (1 + (expectedReturn / 100) * 1.5);
+
   const getTrendIcon = (predPrice: number) => {
     return predPrice >= currentPrice ? (
       <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
@@ -56,7 +59,7 @@ export function PredictionCard({
           <span className="text-[10px] text-text-secondary font-medium">Tomorrow</span>
           <div className="flex items-center gap-1">
             <span className={cn("font-mono font-bold text-sm", getTrendColor(tomorrowPrice))}>
-              ₹{tomorrowPrice.toLocaleString("en-IN")}
+              ₹{tomorrowPrice.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
             </span>
             {getTrendIcon(tomorrowPrice)}
           </div>
@@ -68,7 +71,7 @@ export function PredictionCard({
           <span className="text-[10px] text-text-secondary font-medium">3 Days</span>
           <div className="flex items-center gap-1">
             <span className={cn("font-mono font-bold text-sm", getTrendColor(threeDayPrice))}>
-              ₹{threeDayPrice.toLocaleString("en-IN")}
+              ₹{threeDayPrice.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
             </span>
             {getTrendIcon(threeDayPrice)}
           </div>
@@ -80,7 +83,7 @@ export function PredictionCard({
           <span className="text-[10px] text-text-secondary font-medium">7 Days</span>
           <div className="flex items-center gap-1">
             <span className={cn("font-mono font-bold text-sm", getTrendColor(sevenDayPrice))}>
-              ₹{sevenDayPrice.toLocaleString("en-IN")}
+              ₹{sevenDayPrice.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
             </span>
             {getTrendIcon(sevenDayPrice)}
           </div>
@@ -94,7 +97,7 @@ export function PredictionCard({
           <Compass className="w-3.5 h-3.5 text-accent" /> Expected Range
         </span>
         <span className="font-mono font-bold text-text-primary">
-          ₹{rangeMin.toLocaleString("en-IN")} – ₹{rangeMax.toLocaleString("en-IN")}
+          ₹{rangeMin.toLocaleString("en-IN", { maximumFractionDigits: 0 })} – ₹{rangeMax.toLocaleString("en-IN", { maximumFractionDigits: 0 })}
         </span>
       </div>
 
@@ -105,27 +108,27 @@ export function PredictionCard({
           <div className="flex justify-between items-center text-xs">
             <div>
               <span className="text-[9px] text-text-secondary block font-bold">Predicted Target</span>
-              <span className="font-mono font-bold text-emerald-400">₹{Math.round(tomorrowPrice * 1.035).toLocaleString("en-IN")}</span>
+              <span className="font-mono font-bold text-emerald-400">₹{Math.round(sevenDayPrice).toLocaleString("en-IN")}</span>
             </div>
             <div className="text-center">
               <span className="text-[9px] text-text-secondary block font-bold">Current Spot</span>
               <span className="font-mono font-bold text-text-primary">₹{Math.round(currentPrice).toLocaleString("en-IN")}</span>
             </div>
             <div className="text-right">
-              <span className="text-[9px] text-text-secondary block font-bold">Target ETA</span>
-              <span className="font-sans font-bold text-accent">4 days</span>
+              <span className="text-[9px] text-text-secondary block font-bold">Profit Prob</span>
+              <span className="font-sans font-bold text-accent">{profitProbability}%</span>
             </div>
           </div>
 
           <div className="space-y-1">
             <div className="flex justify-between text-[9px] text-text-secondary">
-              <span>Setup Progress</span>
-              <span className="font-mono font-bold text-accent">63%</span>
+              <span>Model Confidence</span>
+              <span className="font-mono font-bold text-accent">{confidence}%</span>
             </div>
             <div className="w-full h-1 bg-border rounded-full overflow-hidden">
               <div 
                 className="h-full bg-accent rounded-full" 
-                style={{ width: "63%" }}
+                style={{ width: `${confidence}%` }}
               />
             </div>
           </div>

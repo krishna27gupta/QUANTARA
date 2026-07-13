@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 
 export interface TechnicalIndicatorsProps {
   // Simple summary
-  momentum: "Strong" | "Neutral" | "Weak";
-  trend: "Bullish" | "Neutral" | "Bearish";
-  risk: "Low" | "Medium" | "High";
+  momentum: string;
+  trend: string;
+  risk: string;
   
   // Raw parameters
   rsi: number;

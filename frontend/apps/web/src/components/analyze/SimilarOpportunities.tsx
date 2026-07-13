@@ -11,7 +11,7 @@ interface SimilarStock {
   price: string;
   change: string;
   similarity: number; // e.g. 94
-  signal: "BUY" | "SELL" | "HOLD";
+  signal?: string;
 }
 
 export interface SimilarOpportunitiesProps {
@@ -58,9 +58,11 @@ export function SimilarOpportunities({
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="font-mono font-bold text-xs text-text-primary">{item.ticker}</span>
-                <span className={cn("text-[8px] font-bold px-1 rounded-md", signalStyles[item.signal])}>
-                  {item.signal}
-                </span>
+                {item.signal && (
+                  <span className={cn("text-[8px] font-bold px-1 rounded-md", signalStyles[item.signal as keyof typeof signalStyles])}>
+                    {item.signal}
+                  </span>
+                )}
               </div>
               <span className="text-[9px] text-text-secondary block truncate max-w-[100px] leading-none">
                 {item.name}
