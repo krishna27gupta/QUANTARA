@@ -261,7 +261,7 @@ class PaperTradingEngine:
                 try:
                     X = row[self.features]
                     probs = self.model.predict_proba(X)[0]
-                    prob_buy = float(probs[2])  # class 2 is BUY
+                    prob_buy = float(probs[2]) if len(probs) == 3 else float(probs[-1])
                     confidence = int(prob_buy * 100)
                     
                     if confidence > 48:  # filter confidence threshold

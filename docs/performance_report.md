@@ -1,33 +1,33 @@
 # Quantara Performance Report
 
-Date: 2025-12-31
+Date: 2025-12-19
 
-Trades Opened: 2
+Trades Opened: 5
 
-Trades Closed: 1
+Trades Closed: 0
 
-Portfolio Value: ₹99851.42
+Portfolio Value: ₹100715.09
 
-Total Return: -0.15%
+Total Return: 0.72%
 
-Win Rate: 100.00%
+Win Rate: 44.78%
 
-Sharpe Ratio: -15.8745
+Sharpe Ratio: 0.8219
 
-Sortino Ratio: 0.0000
+Sortino Ratio: 1.3432
 
-Maximum Drawdown: -0.15%
+Maximum Drawdown: -2.33%
 
-Best Trade: JSWSTEEL (+4.00%)
+Best Trade: BPCL (+4.00%)
 
-Worst Trade: JSWSTEEL (4.00%)
+Worst Trade: BPCL (-2.00%)
 
-Open Positions: 2
+Open Positions: 5
 
-Closed Positions: 1
+Closed Positions: 67
 
-Today's Signals: BEL, ADANIENT
+Today's Signals: ULTRACEMCO, TATASTEEL, EICHERMOT, HINDUNILVR, HDFCLIFE
 
-Market Regime: Bullish Swing
+Market Regime: Bearish Consolidation
 
 Notes: Strategy executing autonomously. Stop loss exit at -2.0% active.

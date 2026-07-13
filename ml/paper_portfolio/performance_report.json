@@ -1,14 +1,14 @@
 {
-  "validation_period_days": 2,
+  "validation_period_days": 60,
   "starting_capital": 100000.0,
-  "final_value": 100000.0,
-  "total_return_pct": 0.0,
-  "win_rate_pct": 0.0,
-  "sharpe_ratio": 0.0,
-  "sortino_ratio": 0.0,
-  "profit_factor": 0.0,
-  "max_drawdown_pct": 0.0,
-  "avg_gain_pct": 0.0,
-  "avg_loss_pct": 0.0,
-  "number_of_trades": 0
+  "final_value": 99505.2,
+  "total_return_pct": -0.49,
+  "win_rate_pct": 38.89,
+  "sharpe_ratio": -0.5223,
+  "sortino_ratio": -0.7792,
+  "profit_factor": 0.8033,
+  "max_drawdown_pct": -1.44,
+  "avg_gain_pct": 2.52,
+  "avg_loss_pct": -2.0,
+  "number_of_trades": 18
 }

@@ -32,13 +32,12 @@ class SentimentEngine(BaseSentimentEngine):
 
     HONESTY NOTE: a real FinBERT deployment needs (a) a transformer model download
     (requires internet access to huggingface.co, which isn't available in this build
-    environment) and (b) a real news/headline feed for the stock in question (the
-    live API currently uses 3 hardcoded mock sentences per request - see main.py -
-    which means sentiment is not actually reading real news yet regardless of which
-    scoring method is used). Both need to be wired up before sentiment adds real
-    signal. Until then, this component honestly reports what it is: a word-count
-    heuristic, correctly capable of reading negative text (the old version never
-    could), not a source of genuine alpha.
+    environment) and (b) a real news/headline feed for the stock in question. The
+    current implementation attempts to fetch real headlines via yfinance's news API
+    and falls back to Neutral (0.50) if no news is found. Both a real NLP model and
+    a reliable news feed need to be wired up before sentiment adds real signal. Until
+    then, this component honestly reports what it is: a word-count heuristic, not a
+    source of genuine alpha.
     """
 
     def __init__(self):

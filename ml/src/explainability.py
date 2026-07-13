@@ -6,7 +6,12 @@ from typing import Any, Dict, List
 
 import numpy as np
 import pandas as pd
-import shap
+
+try:
+    import shap
+    SHAP_AVAILABLE = True
+except ImportError:
+    SHAP_AVAILABLE = False
 
 try:
     from .features_engine import build_live_feature_row
@@ -132,9 +137,11 @@ class ExplainabilityEngine:
                 with open(meta_path, "r") as f:
                     meta = json.load(f)
                     self.features = meta.get("features", [])
-            if self.xgb_model is not None:
+            if self.xgb_model is not None and SHAP_AVAILABLE:
                 self.explainer = shap.TreeExplainer(self.xgb_model)
                 logger.info("ExplainabilityEngine: loaded trend XGBoost model and SHAP TreeExplainer.")
+            elif not SHAP_AVAILABLE:
+                logger.warning("ExplainabilityEngine: SHAP library not found — rationales will use rule-based fallback.")
             else:
                 logger.warning("ExplainabilityEngine: trend XGBoost model not found — rationales will be empty.")
         except Exception as e:
