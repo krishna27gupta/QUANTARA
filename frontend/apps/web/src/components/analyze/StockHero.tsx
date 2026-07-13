@@ -207,7 +207,7 @@ export function StockHero({
               <div className="flex justify-between"><span>Institutional:</span><span className="text-text-primary font-bold">77%</span></div>
               <div className="flex justify-between border-t border-border/40 pt-0.5 mt-0.5 text-accent font-bold">
                 <span>Final:</span>
-                <span>84%</span>
+                <span>{confidence}%</span>
               </div>
             </div>
           </div>

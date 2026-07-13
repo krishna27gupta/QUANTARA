@@ -8,6 +8,16 @@ from typing import Any, Dict, List
 
 logger = logging.getLogger("quantara-ml-data-pipeline")
 
+# NOTE ON ACTIVE vs. DEPRECATED METHODS
+# fetch_ohlcv()        -- still used by paper_trading.py and similar callers
+# fetch_market_context() -- still called by backend/app/main.py (/market-opportunity)
+# classify_market_regime() -- utility, called on demand
+#
+# DEPRECATED (no longer called by the prediction pipeline):
+# compute_technical_indicators()  }
+# compute_volatility_features()   } All replaced by features_engine.build_live_feature_row()
+# compute_volume_features()       } which is the single feature path used by every ML model
+
 class DataPipeline:
     """Production-grade pipeline for NIFTY 50 market data, index context, and feature calculations."""
 
@@ -104,7 +114,12 @@ class DataPipeline:
         return results
 
     def compute_technical_indicators(self, ohlcv: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Generate real technical indicators on the ingested OHLCV list."""
+        """
+        DEPRECATED: no longer called by backend/app/main.py or any ML model.
+        The prediction pipeline now uses features_engine.build_live_feature_row()
+        which computes a superset of these indicators consistently with training.
+        Kept here for paper_trading.py and other legacy callers not yet migrated.
+        """
         if not ohlcv:
             return []
             
@@ -179,7 +194,10 @@ class DataPipeline:
         return df.to_dict(orient="records")
 
     def compute_volatility_features(self, ohlcv: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Calculate real historical volatility, drawdowns, and beta parameters."""
+        """
+        DEPRECATED: no longer called by backend/app/main.py or any ML model.
+        See compute_technical_indicators() deprecation note above.
+        """
         if not ohlcv:
             return []
             
@@ -207,7 +225,10 @@ class DataPipeline:
         return df.to_dict(orient="records")
 
     def compute_volume_features(self, ohlcv: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Calculate relative volume spikes and delivery parameters."""
+        """
+        DEPRECATED: no longer called by backend/app/main.py or any ML model.
+        See compute_technical_indicators() deprecation note above.
+        """
         if not ohlcv:
             return []
             
