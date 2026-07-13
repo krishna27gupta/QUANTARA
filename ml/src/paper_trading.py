@@ -13,6 +13,8 @@ import numpy as np
 import pandas as pd
 import yfinance as yf
 from ml.src.features_engine import calculate_advanced_indicators
+from ml.src.risk import RiskPredictor
+from ml.src.expected_return import ExpectedReturnPredictor
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s - %(message)s")
@@ -37,6 +39,8 @@ class PaperTradingEngine:
         # Load model and metadata
         self.model = None
         self.features = []
+        self.risk_predictor = RiskPredictor()
+        self.return_predictor = ExpectedReturnPredictor()
         try:
             current_dir = os.path.dirname(os.path.abspath(__file__))
             workspace_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
@@ -261,16 +265,19 @@ class PaperTradingEngine:
                     confidence = int(prob_buy * 100)
                     
                     if confidence > 48:  # filter confidence threshold
-                        # Calculate expected return proxy
-                        roc = float(row['roc'].iloc[0])
-                        expected_ret = round(roc * 0.45, 2)
+                        row_dict = row.iloc[0].to_dict()
+                        ret_pred = self.return_predictor.predict(symbol, precomputed_row=row_dict)
+                        risk_pred = self.risk_predictor.predict(symbol, precomputed_row=row_dict)
+                        
+                        expected_ret = ret_pred.get("expected_return_pct", round(float(row_dict.get('roc', 0.0)) * 0.45, 2))
+                        risk_label = risk_pred.get("risk_level", "Medium")
                         
                         candidates.append({
                             "symbol": symbol,
                             "confidence": confidence,
                             "probability": round(prob_buy, 4),
                             "expected_return": expected_ret,
-                            "risk": "Low" if float(row['historical_volatility'].iloc[0]) < 0.18 else "Medium",
+                            "risk": risk_label,
                             "close": float(row['Close'].iloc[0])
                         })
                 except Exception:

@@ -22,6 +22,8 @@ if workspace_root not in sys.path:
     sys.path.append(workspace_root)
 
 from ml.src.features_engine import calculate_advanced_indicators
+from ml.src.risk import RiskPredictor
+from ml.src.expected_return import ExpectedReturnPredictor
 
 class AutonomousValidationSystem:
     """Zero-intervention automated paper trading validation scheduler and execution pipeline."""
@@ -63,6 +65,10 @@ class AutonomousValidationSystem:
                 with open(meta_path, "r") as f:
                     meta = json.load(f)
                     self.features = meta.get("features", [])
+            
+            self.risk_predictor = RiskPredictor()
+            self.return_predictor = ExpectedReturnPredictor()
+            
             logger.info("Loaded LightGBM multi-class model and feature configurations successfully.")
         except Exception as e:
             logger.error(f"Error loading models: {e}")
@@ -257,27 +263,21 @@ class AutonomousValidationSystem:
                 confidence = int(prob_buy * 100)
                 
                 # Risk criteria
-                vol = float(row['historical_volatility'].iloc[0])
-                risk = "HIGH" if vol > 0.25 else "MEDIUM" if vol > 0.18 else "LOW"
+                row_dict = row.iloc[0].to_dict()
+                risk_pred = self.risk_predictor.predict(symbol, precomputed_row=row_dict)
+                risk = risk_pred.get("risk_level", "Medium").upper()
                 
                 # Real Confidence Filtering
                 if confidence >= 15 and risk != "HIGH":
-                    # Load expected return predictor directly or proxy via ROC carefully
-                    # (For a true end-to-end fix, we import the return predictor. Here we use an honest proxy if the predictor isn't loaded locally yet, but the instruction says to use ExpectedReturnPredictor).
-                    try:
-                        import asyncio
-                        from ml.src.expected_return import ExpectedReturnPredictor
-                        ret_pred = ExpectedReturnPredictor()
-                        expected_ret = asyncio.run(ret_pred.forecast_expected_return([{"symbol": symbol}]))[0]["expected_return"]
-                    except Exception:
-                        expected_ret = round(float(row['roc'].iloc[0]) * 0.45, 2) # Fallback if model fails to load
+                    ret_pred = self.return_predictor.predict(symbol, precomputed_row=row_dict)
+                    expected_ret = ret_pred.get("expected_return_pct", round(float(row_dict.get('roc', 0.0)) * 0.45, 2))
                     
                     candidates.append({
                         "symbol": symbol,
                         "confidence": confidence,
                         "profit_probability": int(prob_buy * 100),
                         "expected_return": expected_ret,
-                        "risk": risk,
+                        "risk": risk.capitalize(),
                         "close": float(row['Close'].iloc[0]),
                         "quantara_score": int(confidence * 0.9)
                     })
@@ -393,6 +393,12 @@ class AutonomousValidationSystem:
         trades_closed_today = len(closed_trades) - self.prev_closed_count
         self.prev_closed_count = len(closed_trades)
 
+        # Calculate dynamic market regime based on breadth
+        advancing = sum([1 for sym, df in stock_dfs.items() if current_date in df.index and float(df.loc[current_date, 'roc']) > 0])
+        declining = sum([1 for sym, df in stock_dfs.items() if current_date in df.index and float(df.loc[current_date, 'roc']) < 0])
+        breadth = advancing / max(declining, 1)
+        market_regime = "Bullish Swing" if breadth >= 1.0 else "Bearish Consolidation"
+
         report_md = f"""# Quantara Performance Report
 
 Date: {date_str}
@@ -423,7 +429,7 @@ Closed Positions: {len(closed_trades)}
 
 Today's Signals: {', '.join([c['symbol'] for c in candidates])}
 
-Market Regime: Bullish Swing
+Market Regime: {market_regime}
 
 Notes: Strategy executing autonomously. Stop loss exit at -2.0% active.
 """

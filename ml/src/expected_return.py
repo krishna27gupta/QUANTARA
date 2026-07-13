@@ -55,9 +55,9 @@ class ExpectedReturnPredictor(BaseExpectedReturnPredictor):
         except Exception as e:
             logger.error(f"Failed to load expected-return models: {e}")
 
-    def predict(self, symbol: str) -> Dict[str, Any]:
+    def predict(self, symbol: str, precomputed_row: Dict[str, Any] = None) -> Dict[str, Any]:
         try:
-            row = build_live_feature_row(symbol, self.workspace_root)
+            row = precomputed_row if precomputed_row is not None else build_live_feature_row(symbol, self.workspace_root)
             X = pd.DataFrame([{f: row.get(f, 0.0) for f in self.features}])
 
             if self.models:
