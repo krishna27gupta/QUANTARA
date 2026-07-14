@@ -1,33 +1,33 @@
 # Quantara Performance Report
 
-Date: 2025-12-19
+Date: 2025-12-31
 
 Trades Opened: 5
 
-Trades Closed: 0
+Trades Closed: 1
 
-Portfolio Value: ₹100715.09
+Portfolio Value: ₹96235.34
 
-Total Return: 0.72%
+Total Return: -3.76%
 
-Win Rate: 44.78%
+Win Rate: 47.06%
 
-Sharpe Ratio: 0.8219
+Sharpe Ratio: -4.4987
 
-Sortino Ratio: 1.3432
+Sortino Ratio: -5.9557
 
-Maximum Drawdown: -2.33%
+Maximum Drawdown: -3.76%
 
-Best Trade: BPCL (+4.00%)
+Best Trade: BANKBARODA (+3.48%)
 
-Worst Trade: BPCL (-2.00%)
+Worst Trade: IOC (-2.49%)
 
-Open Positions: 5
+Open Positions: 4
 
-Closed Positions: 67
+Closed Positions: 68
 
-Today's Signals: ULTRACEMCO, TATASTEEL, EICHERMOT, HINDUNILVR, HDFCLIFE
+Today's Signals: AMBUJACEM, TRENT, ICICIBANK, HDFCBANK, RELIANCE
 
-Market Regime: Bearish Consolidation
+Market Regime: Bullish Swing
 
 Notes: Strategy executing autonomously. Stop loss exit at -2.0% active.

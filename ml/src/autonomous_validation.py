@@ -192,7 +192,7 @@ class AutonomousValidationSystem:
             pnl_pct = 0.0
             
             if low <= pos["stop_loss"]:
-                exit_price = pos["stop_loss"]
+                exit_price = pos["stop_loss"] * 0.9975
                 pnl = (exit_price - pos["entry_price"]) * pos["qty"]
                 pnl_pct = (exit_price - pos["entry_price"]) / pos["entry_price"] * 100
                 closed_trades.append({
@@ -202,7 +202,7 @@ class AutonomousValidationSystem:
                 })
                 self.cash += (pos["qty"] * exit_price)
             elif high >= pos["target_price"]:
-                exit_price = pos["target_price"]
+                exit_price = pos["target_price"] * 0.9975
                 pnl = (exit_price - pos["entry_price"]) * pos["qty"]
                 pnl_pct = (exit_price - pos["entry_price"]) / pos["entry_price"] * 100
                 closed_trades.append({
@@ -212,7 +212,7 @@ class AutonomousValidationSystem:
                 })
                 self.cash += (pos["qty"] * exit_price)
             elif pos["holding_days"] >= self.max_hold_days - 1:
-                exit_price = close
+                exit_price = close * 0.9975
                 pnl = (exit_price - pos["entry_price"]) * pos["qty"]
                 pnl_pct = (exit_price - pos["entry_price"]) / pos["entry_price"] * 100
                 closed_trades.append({
@@ -313,9 +313,9 @@ class AutonomousValidationSystem:
                 
             allocation_limit = self.capital * self.max_allocation
             if self.cash >= allocation_limit:
-                qty = int(allocation_limit // c["close"])
+                qty = int(allocation_limit // (c["close"] * 1.0025))
                 if qty > 0:
-                    entry_val = qty * c["close"]
+                    entry_val = qty * c["close"] * 1.0025
                     self.cash -= entry_val
                     
                     open_pos.append({
@@ -324,7 +324,7 @@ class AutonomousValidationSystem:
                         "symbol": c["symbol"],
                         "qty": qty,
                         "signal": "BUY",
-                        "entry_price": round(c["close"], 2),
+                        "entry_price": round(c["close"] * 1.0025, 2),
                         "target_price": round(c["close"] * (1 + self.target_pct), 2),
                         "stop_loss": round(c["close"] * (1 - self.max_risk_pct), 2),
                         "confidence": c["confidence"],

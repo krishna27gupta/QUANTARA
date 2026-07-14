@@ -46,17 +46,29 @@ def compute_first_touch_label(df: pd.DataFrame) -> pd.Series:
     low = df['Low'].values
     n = len(df)
     labels = np.full(n, np.nan)
+    
+    # 0.25% per side transaction cost (STT + Slippage + Exchange charges)
+    COST_BPS = 0.0025
 
     for i in range(n - HOLD_DAYS):
-        entry = close[i]
-        tp_level = entry * (1 + TAKE_PROFIT)
-        sl_level = entry * (1 + STOP_LOSS)
+        raw_entry = close[i]
+        entry = raw_entry * (1 + COST_BPS)
+        
+        # Calculate raw levels that would need to be hit
+        # To net TAKE_PROFIT, we need: (tp_raw * (1 - COST_BPS) - entry) / entry >= TAKE_PROFIT
+        # tp_raw = entry * (1 + TAKE_PROFIT) / (1 - COST_BPS)
+        tp_level_raw = entry * (1 + TAKE_PROFIT) / (1 - COST_BPS)
+        
+        # SL is hit if: (sl_raw * (1 - COST_BPS) - entry) / entry <= STOP_LOSS
+        # sl_raw = entry * (1 + STOP_LOSS) / (1 - COST_BPS)
+        sl_level_raw = entry * (1 + STOP_LOSS) / (1 - COST_BPS)
+        
         outcome = None
         for d in range(1, HOLD_DAYS + 1):
             hi = high[i + d]
             lo = low[i + d]
-            hit_tp = hi >= tp_level
-            hit_sl = lo <= sl_level
+            hit_tp = hi >= tp_level_raw
+            hit_sl = lo <= sl_level_raw
             if hit_tp and hit_sl:
                 # Ambiguous same-day touch: assume stop-loss triggers first (conservative)
                 outcome = 0
@@ -69,7 +81,8 @@ def compute_first_touch_label(df: pd.DataFrame) -> pd.Series:
                 break
         if outcome is None:
             # Neither level touched in the window - fall back to close-to-close sign
-            outcome = 1 if close[min(i + HOLD_DAYS, n - 1)] > entry else 0
+            final_exit = close[min(i + HOLD_DAYS, n - 1)] * (1 - COST_BPS)
+            outcome = 1 if final_exit > entry else 0
         labels[i] = outcome
     return pd.Series(labels, index=df.index)
 

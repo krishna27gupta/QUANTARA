@@ -123,27 +123,27 @@
     "lag_macd_5"
   ],
   "label_definition": "1 if +4% touched before -2% within 5 days, else 0",
-  "base_rate_win_pct": 43.447085502336556,
+  "base_rate_win_pct": 33.80798927663169,
   "metrics": {
     "random_forest": {
       "name": "RandomForest",
-      "test_acc": 0.4970963503030817,
-      "precision": 0.44389970584115424,
-      "recall": 0.6176183979731047,
-      "f1": 0.5165444172779136,
-      "auc": 0.5162653183859496,
-      "n_selective_signals": 13,
-      "selective_win_rate_at_60pct_confidence": 30.76923076923077
+      "test_acc": 0.5066338858039082,
+      "precision": 0.3427781037807025,
+      "recall": 0.5183823529411765,
+      "f1": 0.41267598526517635,
+      "auc": 0.5143248796531044,
+      "n_selective_signals": 3,
+      "selective_win_rate_at_60pct_confidence": 0.0
     },
     "xgboost": {
       "name": "XGBoost",
-      "test_acc": 0.5647916578356152,
-      "precision": 0.4978317432784042,
-      "recall": 0.05593451568894952,
-      "f1": 0.1005694261936049,
-      "auc": 0.5140521795095003,
-      "n_selective_signals": 33,
-      "selective_win_rate_at_60pct_confidence": 72.72727272727273
+      "test_acc": 0.6657199779576958,
+      "precision": 0.5263157894736842,
+      "recall": 0.002535496957403651,
+      "f1": 0.005046681806712087,
+      "auc": 0.5141454588915259,
+      "n_selective_signals": 2,
+      "selective_win_rate_at_60pct_confidence": 100.0
     }
   }
 }

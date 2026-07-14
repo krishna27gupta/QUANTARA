@@ -166,8 +166,8 @@ class PaperTradingEngine:
                 # Check stop-loss hit
                 if low_price <= pos["stop_loss"]:
                     # Closed at stop loss
-                    pnl = (pos["stop_loss"] - pos["entry_price"]) * pos["qty"]
-                    exit_price = pos["stop_loss"]
+                    exit_price = pos["stop_loss"] * 0.9975
+                    pnl = (exit_price - pos["entry_price"]) * pos["qty"]
                     closed_trades.append({
                         "trade_id": pos["trade_id"],
                         "date": date_str,
@@ -185,8 +185,8 @@ class PaperTradingEngine:
                     
                 # Check take-profit hit
                 elif high_price >= pos["target_price"]:
-                    pnl = (pos["target_price"] - pos["entry_price"]) * pos["qty"]
-                    exit_price = pos["target_price"]
+                    exit_price = pos["target_price"] * 0.9975
+                    pnl = (exit_price - pos["entry_price"]) * pos["qty"]
                     closed_trades.append({
                         "trade_id": pos["trade_id"],
                         "date": date_str,
@@ -204,8 +204,8 @@ class PaperTradingEngine:
                     
                 # Check max holding period exceeded (5 days)
                 elif pos["days_held"] >= self.max_hold_days - 1:
-                    pnl = (close_price - pos["entry_price"]) * pos["qty"]
-                    exit_price = close_price
+                    exit_price = close_price * 0.9975
+                    pnl = (exit_price - pos["entry_price"]) * pos["qty"]
                     closed_trades.append({
                         "trade_id": pos["trade_id"],
                         "date": date_str,
@@ -316,9 +316,9 @@ class PaperTradingEngine:
                 
                 allocation_limit = self.capital * self.max_allocation
                 if self.cash >= allocation_limit:
-                    qty = int(allocation_limit // c["close"])
+                    qty = int(allocation_limit // (c["close"] * 1.0025))
                     if qty > 0:
-                        entry_val = qty * c["close"]
+                        entry_val = qty * c["close"] * 1.0025
                         self.cash -= entry_val
                         
                         open_positions.append({
@@ -331,7 +331,7 @@ class PaperTradingEngine:
                             "probability": c["probability"],
                             "expected_return": c["expected_return"],
                             "risk": c["risk"],
-                            "entry_price": round(c["close"], 2),
+                            "entry_price": round(c["close"] * 1.0025, 2),
                             "stop_loss": round(c["close"] * (1 - self.max_risk_pct), 2),
                             "target_price": round(c["close"] * (1 + self.target_pct), 2),
                             "days_held": 0
