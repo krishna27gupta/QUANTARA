@@ -125,8 +125,8 @@
   "label_definition": "Actual 5-day forward close-to-close return, percent",
   "model_type_honest": "Gradient Boosted Quantile Regression (not LSTM/GRU - see file docstring)",
   "metrics": {
-    "median_mae": 2.627155084050597,
-    "median_r2": -0.00998928937177812,
-    "pct_actuals_within_10_90_band": 82.56593854799239
+    "median_mae": 2.6129829546724523,
+    "median_r2": -0.006821699371999834,
+    "pct_actuals_within_10_90_band": 82.84939171718028
   }
 }

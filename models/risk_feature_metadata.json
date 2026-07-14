@@ -124,43 +124,43 @@
   ],
   "label_definition": "Terciles of realized volatility (annualized) over the next 5 trading days, thresholds fit on training split only",
   "thresholds": {
-    "low_upper_bound": 0.17757442601634887,
-    "medium_upper_bound": 0.2819326253564451
+    "low_upper_bound": 0.17981379482437784,
+    "medium_upper_bound": 0.28569013185121306
   },
   "metrics": {
-    "test_accuracy": 0.4457603458368983,
-    "macro_f1": 0.41613294203507273,
+    "test_accuracy": 0.45691543126684636,
+    "macro_f1": 0.417374915108416,
     "classification_report": {
       "Low": {
-        "precision": 0.5401181281235802,
-        "recall": 0.6006467259498788,
-        "f1-score": 0.5687766135591599,
-        "support": 9896.0
+        "precision": 0.5457912988650694,
+        "recall": 0.6407883779032109,
+        "f1-score": 0.5894871249201958,
+        "support": 10807.0
       },
       "Medium": {
-        "precision": 0.3526356290881108,
-        "recall": 0.2482394366197183,
-        "f1-score": 0.2913686218407248,
-        "support": 7384.0
+        "precision": 0.3605654488709381,
+        "recall": 0.24829329962073324,
+        "f1-score": 0.29407801152953505,
+        "support": 7910.0
       },
       "High": {
-        "precision": 0.35343104596935376,
-        "recall": 0.43068804546377104,
-        "f1-score": 0.38825359070533344,
-        "support": 4927.0
+        "precision": 0.3494384025673026,
+        "recall": 0.38989456932564154,
+        "f1-score": 0.3685596088755171,
+        "support": 5027.0
       },
-      "accuracy": 0.4457603458368983,
+      "accuracy": 0.45691543126684636,
       "macro avg": {
-        "precision": 0.4153949343936816,
-        "recall": 0.4265247360111227,
-        "f1-score": 0.41613294203507273,
-        "support": 22207.0
+        "precision": 0.41859838343443667,
+        "recall": 0.42632541561652854,
+        "f1-score": 0.417374915108416,
+        "support": 23744.0
       },
       "weighted avg": {
-        "precision": 0.43635904195022135,
-        "recall": 0.4457603458368983,
-        "f1-score": 0.43648420375820846,
-        "support": 22207.0
+        "precision": 0.442514577034609,
+        "recall": 0.45691543126684636,
+        "f1-score": 0.44430144811440386,
+        "support": 23744.0
       }
     }
   }
