@@ -1,6 +1,8 @@
 # System Architecture Documentation
 
-This document outlines the architecture design, technology choices, and system components of **Quantara**, an institutional-grade swing trading copilot for Indian retail investors.
+This document outlines the architecture design, technology choices, and system components of **Quantara**, an AI-assisted market analysis guide for Indian retail investors focused on NIFTY 50 securities.
+
+> **Product positioning reference:** [`docs/roadmap.md`](roadmap.md) is the canonical source of truth for mission, validated model metrics, and the evidence-not-verdicts UI principle. All architectural decisions must be consistent with that document.
 
 ---
 
@@ -11,6 +13,17 @@ The user interface balances aesthetics and simplicity based on these targets:
 * **30% Apple**: Premium typography, grid alignment, glassmorphic menus, high contrast ratios.
 * **20% Linear**: Flat, border-constrained dark mode themes with fast keyboard navigation mapping.
 * **10% TradingView**: Interactive, performance-efficient price chart visualizers.
+
+### Evidence-Not-Verdicts Principle
+
+Every user-facing screen surfaces evidence and historical context — it does not surface verdicts. This is a non-negotiable architectural constraint:
+
+1. Raw indicators (RSI, MACD, ATR percentile, VIX, sector relative strength) render **before** any model output.
+2. Model outputs (risk band, trend lean) render **with** their accuracy/AUC inline — never as standalone verdicts.
+3. There are no "BUY" / "SELL" buttons, no recommendation fields, and no confidence scores framed as calls to action.
+4. The AI mentor (`/ask`) uses a Socratic pattern: it asks questions to probe the user's reasoning, not deliver conclusions.
+
+See [`docs/roadmap.md` — UI/UX Principle: Evidence, Not Verdicts](roadmap.md) for the full specification.
 
 ---
 

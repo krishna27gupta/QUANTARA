@@ -1,8 +1,10 @@
-# Quantara - AI-Powered Swing Trading Copilot
+# Quantara — AI-Assisted Market Analysis Guide
 
-Quantara is an institutional-grade swing trading copilot built for Indian retail investors, targeting NIFTY 50 securities. The architecture is organized as a production-grade monorepo.
+Quantara is an AI-assisted market analysis guide built for Indian retail investors focused on NIFTY 50 securities. It surfaces quantitative evidence — volatility risk bands, technical indicators, and historical context — to help users build their own informed judgment about a stock. **It does not issue trade recommendations.** The architecture is organized as a production-grade monorepo.
 
----
+> See [`docs/roadmap.md`](docs/roadmap.md) for the canonical product vision, validated model metrics, and the evidence-not-verdicts UI principle that governs all phases.
+
+
 
 ## 📂 Repository Structure
 
