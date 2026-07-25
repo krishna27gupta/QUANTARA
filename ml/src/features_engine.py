@@ -223,8 +223,8 @@ def build_live_feature_row(symbol: str, workspace_root: str) -> dict:
 FEATURE_EXCLUDE_COLS = [
     'Open', 'High', 'Low', 'Close', 'Volume', 'Dividends', 'Stock Splits',
     'context_nifty_close', 'context_bank_close', 'context_vix_close',
-    'future_return_5d', 'target', 'ticker', 'target_risk', 'forward_realized_vol',
-    'hit_profit_first', 'label'
+    'future_return_5d', 'future_return_5d_pct', 'target', 'ticker',
+    'target_risk', 'forward_realized_vol', 'hit_profit_first', 'label',
 ]
 
 

@@ -124,44 +124,284 @@
   ],
   "label_definition": "Terciles of realized volatility (annualized) over the next 5 trading days, thresholds fit on training split only",
   "thresholds": {
-    "low_upper_bound": 0.17981379482437784,
-    "medium_upper_bound": 0.28569013185121306
+    "low_upper_bound": 0.17143499843791493,
+    "medium_upper_bound": 0.2728317103845853
   },
+  "cv_scheme": "walk_forward_expanding_window_5_folds_5d_purge",
+  "fold_boundaries": [
+    {
+      "train_end": "2019-12-31",
+      "test_start": "2020-01-08",
+      "test_end": "2021-06-30"
+    },
+    {
+      "train_end": "2021-06-30",
+      "test_start": "2021-07-08",
+      "test_end": "2022-06-30"
+    },
+    {
+      "train_end": "2022-06-30",
+      "test_start": "2022-07-08",
+      "test_end": "2023-06-30"
+    },
+    {
+      "train_end": "2023-06-30",
+      "test_start": "2023-07-08",
+      "test_end": "2024-06-30"
+    },
+    {
+      "train_end": "2024-06-30",
+      "test_start": "2024-07-08",
+      "test_end": "2025-12-31"
+    }
+  ],
   "metrics": {
-    "test_accuracy": 0.45691543126684636,
-    "macro_f1": 0.417374915108416,
+    "test_accuracy": 0.45865669141868126,
+    "macro_f1": 0.4179189695944588,
+    "random_baseline_accuracy": 0.3333,
+    "lift_over_random_pp": 0.1254,
     "classification_report": {
       "Low": {
-        "precision": 0.5457912988650694,
-        "recall": 0.6407883779032109,
-        "f1-score": 0.5894871249201958,
-        "support": 10807.0
+        "precision": 0.5267608436132113,
+        "recall": 0.6804163454124904,
+        "f1-score": 0.5938095772120668,
+        "support": 7782.0
       },
       "Medium": {
-        "precision": 0.3605654488709381,
-        "recall": 0.24829329962073324,
-        "f1-score": 0.29407801152953505,
-        "support": 7910.0
+        "precision": 0.3523833291739456,
+        "recall": 0.2356475300400534,
+        "f1-score": 0.2824282428242824,
+        "support": 5992.0
       },
       "High": {
-        "precision": 0.3494384025673026,
-        "recall": 0.38989456932564154,
-        "f1-score": 0.3685596088755171,
-        "support": 5027.0
+        "precision": 0.39148494288681207,
+        "recall": 0.3645153492869229,
+        "f1-score": 0.37751908874702717,
+        "support": 4137.0
       },
-      "accuracy": 0.45691543126684636,
+      "accuracy": 0.45865669141868126,
       "macro avg": {
-        "precision": 0.41859838343443667,
-        "recall": 0.42632541561652854,
-        "f1-score": 0.417374915108416,
-        "support": 23744.0
+        "precision": 0.4235430385579897,
+        "recall": 0.42685974157982226,
+        "f1-score": 0.4179189695944588,
+        "support": 17911.0
       },
       "weighted avg": {
-        "precision": 0.442514577034609,
-        "recall": 0.45691543126684636,
-        "f1-score": 0.44430144811440386,
-        "support": 23744.0
+        "precision": 0.43717866127692667,
+        "recall": 0.45865669141868126,
+        "f1-score": 0.43968134839003165,
+        "support": 17911.0
       }
     }
+  },
+  "hyperparameters": {
+    "best": {
+      "min_samples_leaf": 10,
+      "max_leaf_nodes": 15,
+      "max_iter": 100,
+      "max_depth": 6,
+      "learning_rate": 0.1,
+      "l2_regularization": 0.1
+    }
+  },
+  "walk_forward_folds": [
+    {
+      "fold": 1,
+      "train_end": "2019-12-31",
+      "test_start": "2020-01-08",
+      "test_end": "2021-06-30",
+      "train_size": 39337,
+      "test_size": 16879,
+      "accuracy": 0.5194028082232359,
+      "macro_f1": 0.44501966258087206,
+      "thresholds": {
+        "q33": 0.17085304907042384,
+        "q66": 0.26584748184921353
+      }
+    },
+    {
+      "fold": 2,
+      "train_end": "2021-06-30",
+      "test_start": "2021-07-08",
+      "test_end": "2022-06-30",
+      "train_size": 56441,
+      "test_size": 11406,
+      "accuracy": 0.41504471330878484,
+      "macro_f1": 0.40909143345775023,
+      "thresholds": {
+        "q33": 0.1810142923147462,
+        "q66": 0.28984190763298623
+      }
+    },
+    {
+      "fold": 3,
+      "train_end": "2022-06-30",
+      "test_start": "2022-07-08",
+      "test_end": "2023-06-30",
+      "train_size": 68082,
+      "test_size": 11291,
+      "accuracy": 0.4649721016738996,
+      "macro_f1": 0.4144067636559014,
+      "thresholds": {
+        "q33": 0.1820363978108179,
+        "q66": 0.290261433636077
+      }
+    },
+    {
+      "fold": 4,
+      "train_end": "2023-06-30",
+      "test_start": "2023-07-08",
+      "test_end": "2024-06-30",
+      "train_size": 79603,
+      "test_size": 11260,
+      "accuracy": 0.4483126110124334,
+      "macro_f1": 0.39085676366859384,
+      "thresholds": {
+        "q33": 0.1752496513091317,
+        "q66": 0.2794838072066013
+      }
+    },
+    {
+      "fold": 5,
+      "train_end": "2024-06-30",
+      "test_start": "2024-07-08",
+      "test_end": "2025-12-31",
+      "train_size": 91098,
+      "test_size": 17911,
+      "accuracy": 0.45865669141868126,
+      "macro_f1": 0.4179189695944588,
+      "thresholds": {
+        "q33": 0.17143499843791493,
+        "q66": 0.2728317103845853
+      }
+    }
+  ],
+  "permutation_importance": {
+    "features_to_keep": [
+      "sma50",
+      "ema50",
+      "rsi",
+      "macd",
+      "macd_signal",
+      "atr",
+      "bb_middle",
+      "bb_lower",
+      "vwap",
+      "obv",
+      "stoch_rsi",
+      "roc",
+      "momentum",
+      "historical_volatility",
+      "drawdown",
+      "nifty_rs",
+      "vix_level",
+      "beta",
+      "trend_persistence_5d",
+      "ma_slope_20d",
+      "price_ema20_dist",
+      "price_ema50_dist",
+      "atr_percentile",
+      "breakout_high_10d",
+      "breakout_low_10d",
+      "gap_open_pct",
+      "support_distance",
+      "resistance_distance",
+      "relative_volume",
+      "delivery_percentage",
+      "lag_nifty_rs_2",
+      "lag_nifty_rs_3",
+      "lag_sector_rs_1",
+      "lag_sector_rs_2",
+      "lag_vix_level_1",
+      "lag_vix_level_2",
+      "lag_vix_level_3",
+      "lag_trend_persistence_5d_1",
+      "lag_trend_persistence_5d_2",
+      "lag_momentum_acceleration_1",
+      "lag_momentum_acceleration_2",
+      "lag_momentum_acceleration_3",
+      "lag_ma_slope_20d_2",
+      "lag_ma_slope_20d_3",
+      "lag_ma_slope_50d_1",
+      "lag_ma_slope_50d_3",
+      "lag_price_ema20_dist_1",
+      "lag_price_ema50_dist_1",
+      "lag_price_ema50_dist_3",
+      "lag_atr_percentile_1",
+      "lag_atr_percentile_2",
+      "lag_atr_percentile_3",
+      "lag_drawdown_percentile_1",
+      "lag_drawdown_percentile_2",
+      "lag_breakout_high_10d_1",
+      "lag_breakout_high_10d_2",
+      "lag_breakout_high_10d_3",
+      "lag_breakout_low_10d_1",
+      "lag_breakout_low_10d_2",
+      "lag_breakout_low_10d_3",
+      "lag_gap_open_pct_1",
+      "lag_gap_open_pct_2",
+      "lag_gap_open_pct_3",
+      "lag_support_distance_1",
+      "lag_support_distance_2",
+      "lag_support_distance_3",
+      "lag_resistance_distance_1",
+      "lag_resistance_distance_2",
+      "lag_close_1",
+      "lag_volume_2",
+      "lag_close_3",
+      "lag_volume_3",
+      "lag_close_4",
+      "lag_close_5",
+      "lag_volume_5",
+      "lag_volume_6",
+      "lag_volume_7",
+      "lag_close_8",
+      "lag_volume_8",
+      "lag_close_9",
+      "lag_volume_9",
+      "lag_close_10",
+      "lag_volume_10",
+      "lag_rsi_1",
+      "lag_macd_1",
+      "lag_rsi_2",
+      "lag_rsi_3",
+      "lag_rsi_4",
+      "lag_rsi_5"
+    ],
+    "features_to_drop": [
+      "sma20",
+      "ema20",
+      "macd_hist",
+      "adx",
+      "bb_upper",
+      "sector_rs",
+      "trend_persistence_10d",
+      "momentum_acceleration",
+      "ma_slope_50d",
+      "drawdown_percentile",
+      "lag_nifty_rs_1",
+      "lag_sector_rs_3",
+      "lag_trend_persistence_5d_3",
+      "lag_trend_persistence_10d_1",
+      "lag_trend_persistence_10d_2",
+      "lag_trend_persistence_10d_3",
+      "lag_ma_slope_20d_1",
+      "lag_ma_slope_50d_2",
+      "lag_price_ema20_dist_2",
+      "lag_price_ema20_dist_3",
+      "lag_price_ema50_dist_2",
+      "lag_drawdown_percentile_3",
+      "lag_resistance_distance_3",
+      "lag_volume_1",
+      "lag_close_2",
+      "lag_volume_4",
+      "lag_close_6",
+      "lag_close_7",
+      "lag_macd_2",
+      "lag_macd_3",
+      "lag_macd_4",
+      "lag_macd_5"
+    ],
+    "control_threshold": -0.00023044878460479624
   }
 }

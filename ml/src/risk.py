@@ -1,3 +1,10 @@
+"""
+risk.py
+
+Risk predictor serving module. Returns full class probabilities and the model
+accuracy statistic from walk-forward CV metadata. This is the MOST PROMINENT
+model output per docs/roadmap.md — the only model with a statistically validated edge.
+"""
 import os
 import json
 import pickle
@@ -25,14 +32,13 @@ class BaseRiskPredictor(ABC):
 
 class RiskPredictor(BaseRiskPredictor):
     """
-    Real Gradient Boosting classifier predicting whether the NEXT 5 trading days are
-    likely Low/Medium/High realized volatility for this stock (see train_risk.py for
-    label definition and honest backtested metrics - ~45% accuracy on 3 classes vs a
-    33% random baseline, i.e. a real but modest edge).
+    Gradient Boosting classifier predicting whether the NEXT 5 trading days are
+    likely Low/Medium/High realized volatility. This is the headline model — the
+    only one with a real, statistically validated edge over random.
     """
 
     def __init__(self, models_dir: str = "models"):
-        self.version = "2.0.0"
+        self.version = "3.0.0"
         current_dir = os.path.dirname(os.path.abspath(__file__))
         self.workspace_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
         self.model_path = os.path.join(self.workspace_root, models_dir, "risk_gb.pkl")
@@ -40,6 +46,9 @@ class RiskPredictor(BaseRiskPredictor):
 
         self.model = None
         self.features = []
+        self.model_accuracy = None
+        self.random_baseline = 0.3333
+        self.lift_over_random = None
         self.load_failed = False
         try:
             if os.path.exists(self.model_path):
@@ -47,8 +56,12 @@ class RiskPredictor(BaseRiskPredictor):
                     self.model = pickle.load(f)
             if os.path.exists(self.meta_path):
                 with open(self.meta_path, "r") as f:
-                    self.features = json.load(f).get("features", [])
-            logger.info("Loaded real risk model (Gradient Boosting).")
+                    meta = json.load(f)
+                    self.features = meta.get("features", [])
+                    metrics = meta.get("metrics", {})
+                    self.model_accuracy = metrics.get("test_accuracy")
+                    self.lift_over_random = metrics.get("lift_over_random_pp")
+            logger.info("Loaded risk model (Gradient Boosting) with accuracy metadata.")
         except Exception as e:
             self.load_failed = True
             logger.error(f"Failed to load risk model: {e}")
@@ -63,38 +76,47 @@ class RiskPredictor(BaseRiskPredictor):
                 pred_class = int(probs.argmax())
                 risk_label = RISK_LABELS[pred_class]
                 confidence = float(probs[pred_class])
+                class_probs = {RISK_LABELS[i]: round(float(probs[i]), 4) for i in range(len(probs))}
             else:
                 risk_label, confidence = "Medium", 0.34
+                class_probs = {"Low": 0.33, "Medium": 0.34, "High": 0.33}
+
+            # Format accuracy string for display
+            accuracy_str = None
+            if self.model_accuracy is not None:
+                accuracy_str = f"{self.model_accuracy*100:.2f}% (vs {self.random_baseline*100:.2f}% random baseline)"
 
             result = {
-                "model_type": "Gradient Boosting (HistGB) - trained",
+                "model_type": "HistGradientBoosting - walk-forward CV trained",
                 "model_version": self.version,
                 "risk_level": risk_label,
                 "risk_confidence": round(confidence, 4),
+                "class_probabilities": class_probs,
+                "model_accuracy": accuracy_str,
                 "label_definition": "Predicted realized-volatility tercile over the next 5 trading days",
                 "beta_volatility": round(float(row.get("beta", 1.0)), 3),
             }
             if not self.model or self.load_failed:
                 result["error"] = "model_failed_to_load"
-            
+
             return result
         except Exception as e:
             logger.error(f"Risk inference error for {symbol}: {e}")
             return {
-                "model_type": "Gradient Boosting (HistGB) - trained",
+                "model_type": "HistGradientBoosting - walk-forward CV trained",
                 "model_version": self.version,
                 "risk_level": "Medium",
                 "risk_confidence": 0.34,
+                "class_probabilities": {"Low": 0.33, "Medium": 0.34, "High": 0.33},
                 "error": "fallback_used",
             }
 
     async def evaluate_risk(self, features: Dict[str, Any]) -> Dict[str, Any]:
-        """Backward-compatible async wrapper. Callers should migrate to predict(symbol)."""
+        """Async wrapper for API layer."""
         symbol = features.get("symbol") if isinstance(features, dict) else None
         if not symbol:
-            logger.warning("evaluate_risk called without a symbol - use predict(symbol) instead.")
             return {
-                "model_type": "Gradient Boosting (HistGB) - trained",
+                "model_type": "HistGradientBoosting - walk-forward CV trained",
                 "model_version": self.version,
                 "risk_level": "Medium",
                 "error": "no_symbol_provided",

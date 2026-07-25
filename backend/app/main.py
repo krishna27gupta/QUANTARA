@@ -156,9 +156,10 @@ async def get_market_opportunity():
             ensemble_res = await ensemble.aggregate_predictions(
                 trend_res, profit_res, risk_res, return_res, sentiment_res
             )
-            confidences.append(ensemble_res["confidence"])
-            expected_returns.append(ensemble_res["expected_return"])
-            risks.append(ensemble_res["risk"])
+            confidences.append(ensemble_res["advanced"]["raw_ensemble_confidence_pct"])
+            ret_pct = ensemble_res["historical_context"]["expected_return_band_pct"]["median"]
+            expected_returns.append(ret_pct)
+            risks.append(ensemble_res["risk_forecast"]["risk_level"])
         except Exception as e:
             logger.error(f"Failed to calculate benchmark metrics for {symbol}: {e}")
 
@@ -212,14 +213,20 @@ async def get_market_opportunity():
     }
 
 
-@v1_router.get("/predict", tags=["ML Predictor"])
+@v1_router.get("/predict", tags=["ML Evidence"])
 async def predict_stock(symbol: str = "RELIANCE"):
     """
-    Complete production-grade ML prediction pipeline endpoint.
-    Retrieves market context, engineers features, feeds them to boosters/RNNs/Transformers,
-    runs ensemble voting, and provides SHAP-based rationales.
-    """  # noqa: E501
-    logger.info(f"Received prediction request for symbol: {symbol}")
+    Evidence-first ML analysis endpoint.
+
+    Returns structured evidence: risk_forecast (headline), trend_evidence (with
+    bootstrapped AUC CI), historical_context (base rates, return bands),
+    explanation (SHAP rationales), and model_confidence_intervals. No single
+    BUY/SELL/HOLD field as the primary output.
+
+    This endpoint was reviewed against docs/roadmap.md (Product Vision &
+    Development Roadmap) — evidence, not verdicts.
+    """
+    logger.info(f"Received evidence request for symbol: {symbol}")
 
     # 1. ML Models evaluation
     trend_model = TrendPredictor()
@@ -235,34 +242,33 @@ async def predict_stock(symbol: str = "RELIANCE"):
     profit_task = profit_model.predict_profitability({"symbol": symbol})
     risk_task = risk_model.evaluate_risk({"symbol": symbol})
     return_task = return_model.forecast_expected_return([{"symbol": symbol}])
-
-    # Sentiment analysis with real news via yfinance
     sentiment_task = sentiment_model.analyze_sentiment({"symbol": symbol})
 
-    # Gather results
     trend_res, profit_res, risk_res, return_res, sentiment_res = await asyncio.gather(
         trend_task, profit_task, risk_task, return_task, sentiment_task
     )
 
-    # 2. Ensemble Engine Voting
+    # 2. Evidence-first ensemble assembly
     ensemble = EnsembleEngine()
-    ensemble_res = await ensemble.aggregate_predictions(
+    evidence = await ensemble.aggregate_predictions(
         trend_res, profit_res, risk_res, return_res, sentiment_res
     )
 
     # 3. Explainability and SHAP reasons
     explainer = ExplainabilityEngine()
-    rationales = explainer.generate_rationales(symbol, ensemble_res["signal"])
+    rationales = explainer.generate_rationales(
+        symbol, evidence["risk_forecast"]["risk_level"],
+    )
 
-    # Return formatted schema
+    # Return evidence-first response
     return {
-        "signal": ensemble_res["signal"],
-        "confidence": ensemble_res["confidence"],
-        "profit_probability": ensemble_res["profit_probability"],
-        "expected_return": ensemble_res["expected_return"],
-        "risk": ensemble_res["risk"],
-        "quantara_score": ensemble_res["quantara_score"],
+        "symbol": symbol,
+        "risk_forecast": evidence["risk_forecast"],
+        "trend_evidence": evidence["trend_evidence"],
+        "historical_context": evidence["historical_context"],
         "explanation": rationales,
+        "model_confidence_intervals": evidence["model_confidence_intervals"],
+        "advanced": evidence["advanced"],
         "model_sources": {
             "trend": trend_res.get("model_type"),
             "profit": profit_res.get("model_type"),
