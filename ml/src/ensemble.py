@@ -27,6 +27,7 @@ class BaseEnsembleEngine(ABC):
         risk_pred: Dict[str, Any],
         return_pred: Dict[str, Any],
         sentiment_pred: Dict[str, Any],
+        historical_analogs: Dict[str, Any] = None,
     ) -> Dict[str, Any]:
         """Aggregate inputs from multiple specialized models into evidence-first output."""
         pass
@@ -52,6 +53,7 @@ class EnsembleEngine(BaseEnsembleEngine):
         risk_pred: Dict[str, Any],
         return_pred: Dict[str, Any],
         sentiment_pred: Dict[str, Any],
+        historical_analogs: Dict[str, Any] = None,
     ) -> Dict[str, Any]:
         logger.info("Assembling evidence-first prediction output.")
 
@@ -108,6 +110,7 @@ class EnsembleEngine(BaseEnsembleEngine):
             },
             "return_model_r2": return_pred.get("r2_caveat", -0.0068),
             "return_model_caveat": "Point forecast has ~0 R² (no predictive value); the uncertainty band is the useful output.",
+            "historical_analogs": historical_analogs if historical_analogs else None,
         }
 
         # ── model_confidence_intervals ─────────────────────────────────────

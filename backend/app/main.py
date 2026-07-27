@@ -21,6 +21,7 @@ from ml.src import (
     RiskPredictor,
     SentimentEngine,
     TrendPredictor,
+    find_analogs_for_symbol,
 )
 
 from app.config import settings
@@ -248,13 +249,22 @@ async def predict_stock(symbol: str = "RELIANCE"):
         trend_task, profit_task, risk_task, return_task, sentiment_task
     )
 
-    # 2. Evidence-first ensemble assembly
+    # 2. Historical analog search (leakage-safe)
+    workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    try:
+        analog_result = find_analogs_for_symbol(symbol, workspace_root, k=15)
+    except Exception as e:
+        logger.warning(f"Historical analog search failed for {symbol}: {e}")
+        analog_result = None
+
+    # 3. Evidence-first ensemble assembly
     ensemble = EnsembleEngine()
     evidence = await ensemble.aggregate_predictions(
-        trend_res, profit_res, risk_res, return_res, sentiment_res
+        trend_res, profit_res, risk_res, return_res, sentiment_res,
+        historical_analogs=analog_result,
     )
 
-    # 3. Explainability and SHAP reasons
+    # 4. Explainability and SHAP reasons
     explainer = ExplainabilityEngine()
     rationales = explainer.generate_rationales(
         symbol, evidence["risk_forecast"]["risk_level"],

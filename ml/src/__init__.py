@@ -11,6 +11,7 @@ from ml.src.registry import ModelRegistry
 from ml.src.mlops import MLOpsInfrastructure
 from ml.src.explainability import ExplainabilityEngine
 from ml.src.training_pipeline import TrainingPipeline
+from ml.src.historical_analogs import find_analogs_for_symbol
 
 __all__ = [
     "DataPipeline",
@@ -26,4 +27,5 @@ __all__ = [
     "MLOpsInfrastructure",
     "ExplainabilityEngine",
     "TrainingPipeline",
+    "find_analogs_for_symbol",
 ]
