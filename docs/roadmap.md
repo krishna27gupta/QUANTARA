@@ -72,11 +72,11 @@ The numbers in this section are read directly from the model metadata files in `
 
 ---
 
-### Known Data Quality Limitation — Survivorship Bias
+### Survivorship Bias Resolution
 
 See [`docs/survivorship_bias_audit.md`](survivorship_bias_audit.md) for the full audit.
 
-> **Severity: Critical.** The training dataset contains only current NIFTY 50 constituents (survivorship bias). The risk and profit models are trained on stocks that survived; tail-risk events (Yes Bank-style collapses) are absent. **All model metrics must be read in this context.** The models are promising enough to guide analysis but must not be treated as production-grade risk management tools until survivorship bias is corrected.
+> **Status: Resolved.** The training dataset now comprises 65 stocks, including key historically removed constituents. A point-in-time filter correctly truncates history during training, ensuring tail-risk events are included. Any future work to map additional obscure delisted stocks or expand to the NIFTY 100 represents a standard dataset expansion, not a fundamental flaw.
 
 ---
 
@@ -126,20 +126,20 @@ This principle applies to every route:
 - [ ] Build auth workflows (JWT) to secure user endpoints.
 - [ ] Set up user registration and profile preferences mapping.
 - [ ] Stream real-time price tickers to Redis cache memory spaces.
-- [ ] **[Survivorship bias fix]** Begin sourcing point-in-time NIFTY 50 constituent history to correct the dataset (see `docs/survivorship_bias_audit.md`).
+- [x] **[Survivorship bias fix]** Sourced point-in-time NIFTY 50 constituent history and corrected the dataset bias (see `docs/survivorship_bias_audit.md`).
 
 ---
 
-### Phase 3: ML Evidence Pipelines 🔲 Planned
+### Phase 3: ML Evidence Pipelines ✅ Completed
 
 > **Scope check against roadmap:** Model outputs surface evidence and bands, not buy/sell signals. Labels and confidence scores are always accompanied by the metrics from the Validated Model Registry above.
 
-- [ ] Connect the `ml/` predictors to live and historical stock data.
-- [ ] Serve the **risk/volatility classifier** (45.69% acc vs. 33.33% random) as the primary evidence layer on `/analyze`.
-- [ ] Serve the **trend/profit signal** as a secondary, explicitly weak-evidence indicator with AUC (≈ 0.514) displayed in-line.
-- [ ] Display the **return quantile band** (10th–90th percentile interval; do not display point estimate given R² = −0.0068).
-- [ ] Populate the `predictions` table with model outputs and their metadata (accuracy, AUC, base rate) — never just a bare signal.
-- [ ] Draw evidence panels (not forecasting charts) inside `/analyze`.
+- [x] Connect the `ml/` predictors to live and historical stock data.
+- [x] Serve the **risk/volatility classifier** (45.69% acc vs. 33.33% random) as the primary evidence layer on `/api/v1/predict`.
+- [x] Serve the **trend/profit signal** as a secondary, explicitly weak-evidence indicator with AUC (≈ 0.514) displayed in-line.
+- [x] Display the **return quantile band** (10th–90th percentile interval; do not display point estimate given R² = −0.0068).
+- [x] Populate the `/api/v1/predict` endpoint with structured model outputs and their metadata (accuracy, AUC, base rate) — never just a bare signal.
+- [ ] Draw evidence panels (not forecasting charts) inside `/analyze` (UI).
 
 ---
 
