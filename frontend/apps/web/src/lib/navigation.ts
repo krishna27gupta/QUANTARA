@@ -5,6 +5,7 @@ import {
   Briefcase,
   MessageSquare,
   Award,
+  Activity,
 } from "lucide-react";
 
 export const navItems = [
@@ -13,5 +14,6 @@ export const navItems = [
   { label: "Analyze", href: "/analyze", icon: BarChart3 },
   { label: "Portfolio", href: "/portfolio", icon: Briefcase },
   { label: "Paper Trading", href: "/paper-trading", icon: Award },
+  { label: "Track Record", href: "/track-record", icon: Activity },
   { label: "Ask Quantara", href: "/ask", icon: MessageSquare },
 ];

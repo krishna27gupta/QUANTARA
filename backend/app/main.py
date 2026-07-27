@@ -22,6 +22,7 @@ from ml.src import (
     SentimentEngine,
     TrendPredictor,
     find_analogs_for_symbol,
+    generate_track_record,
 )
 
 from app.config import settings
@@ -287,6 +288,36 @@ async def predict_stock(symbol: str = "RELIANCE"):
             "sentiment": sentiment_res.get("model_type"),
         },
     }
+
+
+@v1_router.get("/track-record", tags=["Model Calibration"])
+async def get_track_record():
+    """
+    Track record / calibration dashboard endpoint.
+
+    Returns honest, sample-size-aware model accuracy computed from actual
+    paper trading validation logs. Degrades gracefully when data is
+    insufficient — reports "not enough data" rather than misleading charts.
+
+    Data sources:
+      - paper_trading/closed_positions.csv (autonomous_validation.py)
+      - ml/paper_portfolio/closed_trades.csv (paper_trading.py)
+
+    This endpoint was reviewed against docs/roadmap.md (Product Vision &
+    Development Roadmap) — evidence, not verdicts.
+    """
+    workspace_root = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "..")
+    )
+    try:
+        result = generate_track_record(workspace_root)
+        return result
+    except Exception as e:
+        logger.error(f"Track record generation failed: {e}")
+        return {
+            "status": "error",
+            "message": f"Failed to compute track record: {str(e)}",
+        }
 
 
 # Paper Trading Endpoints (Step 12)

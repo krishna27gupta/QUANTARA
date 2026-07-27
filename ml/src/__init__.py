@@ -12,6 +12,7 @@ from ml.src.mlops import MLOpsInfrastructure
 from ml.src.explainability import ExplainabilityEngine
 from ml.src.training_pipeline import TrainingPipeline
 from ml.src.historical_analogs import find_analogs_for_symbol
+from ml.src.track_record import generate_track_record
 
 __all__ = [
     "DataPipeline",
@@ -28,4 +29,5 @@ __all__ = [
     "ExplainabilityEngine",
     "TrainingPipeline",
     "find_analogs_for_symbol",
+    "generate_track_record",
 ]
