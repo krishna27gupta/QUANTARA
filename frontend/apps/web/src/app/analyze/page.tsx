@@ -4,12 +4,18 @@ import React, { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { PageTransition } from "@/components/ui/Animate";
 import { StockSearch } from "@/components/analyze/StockSearch";
-import { StockHero } from "@/components/analyze/StockHero";
-import { PredictionCard } from "@/components/analyze/PredictionCard";
+import { 
+  RiskForecastCard, 
+  HistoricalContextCard, 
+  SHAPExplanationCard, 
+  TrendEvidenceCard,
+  RiskForecast,
+  TrendEvidence,
+  HistoricalContext,
+  ModelCIs
+} from "@/components/analyze/EvidencePanel";
 import { TradeSetup } from "@/components/analyze/TradeSetup";
-import { RiskAnalysis } from "@/components/analyze/RiskAnalysis";
 import { SentimentAnalysis } from "@/components/analyze/SentimentAnalysis";
-import { AIExplanation } from "@/components/analyze/AIExplanation";
 import { TechnicalIndicators } from "@/components/analyze/TechnicalIndicators";
 import { StockComparison } from "@/components/analyze/StockComparison";
 import { SimilarOpportunities } from "@/components/analyze/SimilarOpportunities";
@@ -29,27 +35,16 @@ const NIFTY_STOCKS = [
   { ticker: "ITC", name: "ITC Ltd.", sector: "Consumer", price: 425.80, dailyChange: -0.15, volume: "8.5M", marketCap: "5.3T", momentum: "Neutral", trend: "Sideways", rsi: 50, macd: "0.1 (Flat)", adx: 14, atr: 8.20, similarStocks: [{ ticker: "HINDUNILVR", name: "Hindustan Unilever", price: "₹2,340.50", change: "-0.45%", similarity: 85 }] }
 ];
 
-interface PredictionResponse {
-  signal: "BUY" | "SELL" | "HOLD";
-  confidence: number;
-  profit_probability: number;
-  expected_return: number;
-  risk: string;
-  quantara_score: number;
-  explanation: {
-    id: string;
-    title: string;
-    shortDesc: string;
-    fullExplanation: string;
-    tip: string;
-  }[];
-  model_sources: {
-    trend: string;
-    profit: string;
-    risk: string;
-    expected_return: string;
-    sentiment: string;
-  };
+interface EvidencePredictionResponse {
+  symbol: string;
+  timestamp: string;
+  risk_forecast: RiskForecast;
+  trend_evidence: TrendEvidence;
+  historical_context: HistoricalContext;
+  model_confidence_intervals: ModelCIs;
+  explanation: string[];
+  raw_ensemble_score: number;
+  model_sources: Record<string, string>;
 }
 
 function AnalyzeContent() {
@@ -60,7 +55,7 @@ function AnalyzeContent() {
   const [timeframe, setTimeframe] = useState<"1D" | "5D" | "1M" | "3M" | "1Y">("1M");
   const [activeIndicators, setActiveIndicators] = useState<string[]>(["ma20", "bb"]);
   const [isLoading, setIsLoading] = useState(true);
-  const [predictionData, setPredictionData] = useState<PredictionResponse | null>(null);
+  const [predictionData, setPredictionData] = useState<EvidencePredictionResponse | null>(null);
   const [isError, setIsError] = useState(false);
 
   // Sync initial ticker from URL parameter
@@ -187,21 +182,8 @@ function AnalyzeContent() {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* 2. STOCK HERO */}
-                <StockHero
-                  ticker={currentStock.ticker}
-                  name={currentStock.name}
-                  sector={currentStock.sector}
-                  price={currentStock.price}
-                  dailyChange={currentStock.dailyChange}
-                  volume={currentStock.volume}
-                  marketCap={currentStock.marketCap}
-                  signal={predictionData.signal}
-                  confidence={predictionData.confidence}
-                  profitProbability={predictionData.profit_probability}
-                  expectedReturn={predictionData.expected_return}
-                  score={predictionData.quantara_score}
-                />
+                {/* 2. HEADLINE RISK SIGNAL */}
+                <RiskForecastCard risk={predictionData.risk_forecast} />
 
                 {/* 3. CHART & AI PANEL SECTION */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -282,32 +264,21 @@ function AnalyzeContent() {
                   />
                 </div>
 
-                {/* 4. DUAL PANELS ROWS */}
+                {/* 4. DUAL PANELS ROWS (Evidence & Context) */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Prediction */}
-                  <PredictionCard
-                    expectedReturn={predictionData.expected_return}
-                    confidence={predictionData.confidence}
-                    currentPrice={currentStock.price}
-                    profitProbability={predictionData.profit_probability}
-                  />
+                  {/* Historical Context & Return Band */}
+                  <HistoricalContextCard ctx={predictionData.historical_context} />
 
-                  {/* Risk */}
-                  <RiskAnalysis
-                    riskLevel={predictionData.risk}
-                    riskModel={predictionData.model_sources.risk}
-                  />
-
-                  {/* Sentiment */}
-                  <SentimentAnalysis
-                    sentimentModel={predictionData.model_sources.sentiment}
+                  {/* Trend Evidence (De-emphasized) */}
+                  <TrendEvidenceCard 
+                    trend={predictionData.trend_evidence} 
+                    modelCIs={predictionData.model_confidence_intervals} 
                   />
                 </div>
 
                 {/* 5. AI EXPLANATION */}
-                <AIExplanation 
-                  ticker={ticker} 
-                  signal={predictionData.signal} 
+                <SHAPExplanationCard 
+                  symbol={ticker} 
                   rationales={predictionData.explanation}
                   modelSources={predictionData.model_sources}
                 />
@@ -316,7 +287,7 @@ function AnalyzeContent() {
                 <TechnicalIndicators
                   momentum={currentStock.momentum}
                   trend={currentStock.trend}
-                  risk={predictionData.risk}
+                  risk={predictionData.risk_forecast.risk_level}
                   rsi={currentStock.rsi}
                   macd={currentStock.macd}
                   adx={currentStock.adx}

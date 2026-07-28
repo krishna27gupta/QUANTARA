@@ -28,11 +28,12 @@ interface StockOpportunity {
   ticker: string;
   name: string;
   price: string;
-  signal: "BUY" | "SELL" | "HOLD";
-  confidence: number;
-  profitProbability: number;
-  expectedReturn: string;
   risk: "Low" | "Medium" | "High";
+  riskConfidence: number;
+  trendProbability: number;
+  returnMedian: number;
+  returnBand: [number, number];
+  analogHitRate?: number;
   sector: string;
   marketCap: "Large Cap" | "Mid Cap" | "Small Cap";
   rsi?: number;
@@ -41,17 +42,17 @@ interface StockOpportunity {
 }
 
 const ALL_STOCKS: StockOpportunity[] = [
-  { ticker: "RELIANCE", name: "Reliance Industries Ltd.", price: "₹2,845.20", signal: "BUY", confidence: 88, profitProbability: 72, expectedReturn: "+6.1%", risk: "Medium", sector: "Energy", marketCap: "Large Cap", rsi: 62, macd: "Bullish Cross", volume: "High" },
-  { ticker: "TCS", name: "Tata Consultancy Services Ltd.", price: "₹3,920.10", signal: "BUY", confidence: 78, profitProbability: 68, expectedReturn: "+4.8%", risk: "Low", sector: "IT", marketCap: "Large Cap", rsi: 54, macd: "Neutral", volume: "Medium" },
-  { ticker: "HDFCBANK", name: "HDFC Bank Ltd.", price: "₹1,612.45", signal: "BUY", confidence: 82, profitProbability: 74, expectedReturn: "+5.5%", risk: "Low", sector: "Banking", marketCap: "Large Cap", rsi: 58, macd: "Bullish", volume: "High" },
-  { ticker: "ITC", name: "ITC Ltd.", price: "₹425.80", signal: "BUY", confidence: 86, profitProbability: 80, expectedReturn: "+3.5%", risk: "Low", sector: "FMCG", marketCap: "Large Cap", rsi: 48, macd: "Strong Bullish", volume: "High" },
-  { ticker: "ASIANPAINTS", name: "Asian Paints Ltd.", price: "₹2,890.30", signal: "BUY", confidence: 81, profitProbability: 70, expectedReturn: "+4.2%", risk: "Low", sector: "Consumer", marketCap: "Large Cap", rsi: 51, macd: "Neutral", volume: "Medium" },
-  { ticker: "TRENT", name: "Trent Ltd. (Tata Group)", price: "₹4,850.00", signal: "BUY", confidence: 89, profitProbability: 75, expectedReturn: "+12.4%", risk: "High", sector: "Retail", marketCap: "Mid Cap", rsi: 72, macd: "Strong Bullish", volume: "High" },
-  { ticker: "ADANI PORTS", name: "Adani Ports & SEZ Ltd.", price: "₹1,240.15", signal: "BUY", confidence: 83, profitProbability: 67, expectedReturn: "+9.8%", risk: "High", sector: "Infrastructure", marketCap: "Large Cap", rsi: 65, macd: "Bullish Cross", volume: "High" },
-  { ticker: "BAJAJ FINANCE", name: "Bajaj Finance Ltd.", price: "₹6,950.00", signal: "BUY", confidence: 80, profitProbability: 69, expectedReturn: "+8.5%", risk: "High", sector: "Banking", marketCap: "Large Cap", rsi: 59, macd: "Bullish Crossover", volume: "High" },
-  { ticker: "M&M", name: "Mahindra & Mahindra Ltd.", price: "₹2,140.50", signal: "HOLD", confidence: 65, profitProbability: 55, expectedReturn: "+1.2%", risk: "Medium", sector: "Auto", marketCap: "Large Cap", rsi: 41, macd: "Weak Bearish", volume: "Medium" },
-  { ticker: "SUNPHARMA", name: "Sun Pharmaceutical Industries", price: "₹1,520.40", signal: "HOLD", confidence: 71, profitProbability: 60, expectedReturn: "+2.8%", risk: "Medium", sector: "Pharma", marketCap: "Large Cap", rsi: 50, macd: "Neutral", volume: "Medium" },
-  { ticker: "TATASTEEL", name: "Tata Steel Ltd.", price: "₹145.20", signal: "SELL", confidence: 60, profitProbability: 45, expectedReturn: "-3.4%", risk: "High", sector: "Metals", marketCap: "Large Cap", rsi: 29, macd: "Bearish Cross", volume: "High" }
+  { ticker: "RELIANCE", name: "Reliance Industries Ltd.", price: "₹2,845.20", risk: "Medium", riskConfidence: 88, trendProbability: 62, returnMedian: 6.1, returnBand: [1.2, 10.5], analogHitRate: 72, sector: "Energy", marketCap: "Large Cap", rsi: 62, macd: "Bullish Cross", volume: "High" },
+  { ticker: "TCS", name: "Tata Consultancy Services Ltd.", price: "₹3,920.10", risk: "Low", riskConfidence: 78, trendProbability: 58, returnMedian: 4.8, returnBand: [2.1, 8.2], analogHitRate: 68, sector: "IT", marketCap: "Large Cap", rsi: 54, macd: "Neutral", volume: "Medium" },
+  { ticker: "HDFCBANK", name: "HDFC Bank Ltd.", price: "₹1,612.45", risk: "Low", riskConfidence: 82, trendProbability: 65, returnMedian: 5.5, returnBand: [1.5, 9.8], analogHitRate: 74, sector: "Banking", marketCap: "Large Cap", rsi: 58, macd: "Bullish", volume: "High" },
+  { ticker: "ITC", name: "ITC Ltd.", price: "₹425.80", risk: "Low", riskConfidence: 86, trendProbability: 51, returnMedian: 3.5, returnBand: [0.5, 6.2], analogHitRate: 62, sector: "FMCG", marketCap: "Large Cap", rsi: 48, macd: "Strong Bullish", volume: "High" },
+  { ticker: "ASIANPAINTS", name: "Asian Paints Ltd.", price: "₹2,890.30", risk: "Medium", riskConfidence: 81, trendProbability: 49, returnMedian: 4.2, returnBand: [-1.2, 8.5], analogHitRate: 58, sector: "Consumer", marketCap: "Large Cap", rsi: 51, macd: "Neutral", volume: "Medium" },
+  { ticker: "TRENT", name: "Trent Ltd. (Tata Group)", price: "₹4,850.00", risk: "High", riskConfidence: 89, trendProbability: 68, returnMedian: 12.4, returnBand: [-4.5, 25.1], analogHitRate: 65, sector: "Retail", marketCap: "Mid Cap", rsi: 72, macd: "Strong Bullish", volume: "High" },
+  { ticker: "ADANIPORTS", name: "Adani Ports & SEZ Ltd.", price: "₹1,240.15", risk: "High", riskConfidence: 83, trendProbability: 61, returnMedian: 9.8, returnBand: [-2.1, 18.5], analogHitRate: 67, sector: "Infrastructure", marketCap: "Large Cap", rsi: 65, macd: "Bullish Cross", volume: "High" },
+  { ticker: "BAJFINANCE", name: "Bajaj Finance Ltd.", price: "₹6,950.00", risk: "High", riskConfidence: 80, trendProbability: 59, returnMedian: 8.5, returnBand: [-1.5, 15.2], analogHitRate: 64, sector: "Banking", marketCap: "Large Cap", rsi: 59, macd: "Bullish Crossover", volume: "High" },
+  { ticker: "M&M", name: "Mahindra & Mahindra Ltd.", price: "₹2,140.50", risk: "Medium", riskConfidence: 65, trendProbability: 45, returnMedian: 1.2, returnBand: [-3.5, 6.5], analogHitRate: 48, sector: "Auto", marketCap: "Large Cap", rsi: 41, macd: "Weak Bearish", volume: "Medium" },
+  { ticker: "SUNPHARMA", name: "Sun Pharmaceutical Industries", price: "₹1,520.40", risk: "Low", riskConfidence: 71, trendProbability: 52, returnMedian: 2.8, returnBand: [-1.0, 5.8], analogHitRate: 55, sector: "Pharma", marketCap: "Large Cap", rsi: 50, macd: "Neutral", volume: "Medium" },
+  { ticker: "TATASTEEL", name: "Tata Steel Ltd.", price: "₹145.20", risk: "High", riskConfidence: 92, trendProbability: 38, returnMedian: -3.4, returnBand: [-12.5, 2.1], analogHitRate: 35, sector: "Metals", marketCap: "Large Cap", rsi: 29, macd: "Bearish Cross", volume: "High" }
 ];
 
 export default function DiscoverPage() {
@@ -66,7 +67,6 @@ export default function DiscoverPage() {
   const [minConfidence, setMinConfidence] = useState(60);
   const [minExpectedReturn, setMinExpectedReturn] = useState(0);
   const [selectedCap, setSelectedCap] = useState<string | null>(null);
-  const [selectedSignal, setSelectedSignal] = useState<string | null>(null);
 
   // Time indicator state
   const [currentTime, setCurrentTime] = useState("");
@@ -157,14 +157,14 @@ export default function DiscoverPage() {
     } else {
       const stock = ALL_STOCKS.find((s) => s.ticker === ticker);
       if (stock) {
-        const isUp = !stock.expectedReturn.startsWith("-");
+        const isUp = stock.returnMedian >= 0;
         setWatchlist([
           ...watchlist,
           {
             ticker: stock.ticker,
             name: stock.name,
             price: stock.price,
-            change: stock.expectedReturn,
+            change: `${isUp ? "+" : ""}${stock.returnMedian}%`,
             up: isUp
           }
         ]);
@@ -198,7 +198,7 @@ export default function DiscoverPage() {
     let list = [...ALL_STOCKS];
     if (activeTab === "safe") {
       // Low Volatility / Risk, High Confidence
-      list = list.filter((s) => s.risk === "Low" && s.confidence >= 75);
+      list = list.filter((s) => s.risk === "Low" && s.riskConfidence >= 75);
     } else if (activeTab === "aggressive") {
       // High Volatility / Risk, High Reward
       list = list.filter((s) => s.risk === "High");
@@ -225,23 +225,15 @@ export default function DiscoverPage() {
       list = list.filter((s) => s.risk === selectedRisk);
     }
 
-    // 5. Filter by Signal
-    if (selectedSignal) {
-      list = list.filter((s) => s.signal === selectedSignal);
-    }
+    // 5. Filter by Min Confidence
+    list = list.filter((s) => s.riskConfidence >= minConfidence);
 
-    // 6. Filter by Min Confidence
-    list = list.filter((s) => s.confidence >= minConfidence);
-
-    // 7. Filter by Expected Return
+    // 6. Filter by Expected Return
     if (minExpectedReturn > 0) {
-      list = list.filter((s) => {
-        const value = parseFloat(s.expectedReturn.replace(/[+%]/g, ""));
-        return value >= minExpectedReturn;
-      });
+      list = list.filter((s) => s.returnMedian >= minExpectedReturn);
     }
 
-    // 8. Filter by Market Cap
+    // 7. Filter by Market Cap
     if (selectedCap) {
       list = list.filter((s) => s.marketCap === selectedCap);
     }
@@ -254,8 +246,7 @@ export default function DiscoverPage() {
     selectedRisk,
     minConfidence,
     minExpectedReturn,
-    selectedCap,
-    selectedSignal
+    selectedCap
   ]);
 
   // Check if any filters are active
@@ -264,18 +255,16 @@ export default function DiscoverPage() {
       selectedSector !== null ||
       selectedRisk !== null ||
       selectedCap !== null ||
-      selectedSignal !== null ||
       minConfidence > 60 ||
       minExpectedReturn > 0
     );
-  }, [selectedSector, selectedRisk, selectedCap, selectedSignal, minConfidence, minExpectedReturn]);
+  }, [selectedSector, selectedRisk, selectedCap, minConfidence, minExpectedReturn]);
 
   // Reset all filters
   const resetFilters = () => {
     setSelectedSector(null);
     setSelectedRisk(null);
     setSelectedCap(null);
-    setSelectedSignal(null);
     setMinConfidence(60);
     setMinExpectedReturn(0);
     setSearchQuery("");
@@ -455,20 +444,6 @@ export default function DiscoverPage() {
                   </select>
                 </div>
 
-                {/* Signal Selector */}
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-bold text-text-secondary uppercase tracking-wider block">Trade Signal</label>
-                  <select
-                    value={selectedSignal || ""}
-                    onChange={(e) => setSelectedSignal(e.target.value || null)}
-                    className="w-full text-xs p-2 rounded-lg border border-border bg-secondary/40 text-text-primary focus:border-accent outline-none"
-                  >
-                    <option value="">All Signals</option>
-                    <option value="BUY">BUY Setups</option>
-                    <option value="HOLD">HOLD Signals</option>
-                    <option value="SELL">SELL Triggers</option>
-                  </select>
-                </div>
               </div>
 
               {/* Sliders Range Row */}
@@ -476,7 +451,7 @@ export default function DiscoverPage() {
                 {/* Min Confidence */}
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px]">
-                    <span className="font-bold text-text-secondary uppercase tracking-wider">Min AI Confidence</span>
+                    <span className="font-bold text-text-secondary uppercase tracking-wider">Min Risk Confidence</span>
                     <span className="font-mono text-accent font-bold">{minConfidence}%</span>
                   </div>
                   <input
@@ -615,13 +590,6 @@ export default function DiscoverPage() {
                   <span className="inline-flex items-center gap-1 text-[9px] font-semibold bg-accent/10 border border-accent/20 text-accent px-2 py-0.5 rounded-full">
                     Cap: {selectedCap}
                     <X className="w-2.5 h-2.5 cursor-pointer" onClick={() => setSelectedCap(null)} />
-                  </span>
-                )}
-
-                {selectedSignal && (
-                  <span className="inline-flex items-center gap-1 text-[9px] font-semibold bg-accent/10 border border-accent/20 text-accent px-2 py-0.5 rounded-full">
-                    Signal: {selectedSignal}
-                    <X className="w-2.5 h-2.5 cursor-pointer" onClick={() => setSelectedSignal(null)} />
                   </span>
                 )}
 

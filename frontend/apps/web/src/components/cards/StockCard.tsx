@@ -17,10 +17,12 @@ export interface StockCardProps {
   ticker: string;
   name: string;
   price: string;
-  signal: "BUY" | "SELL" | "HOLD";
-  confidence: number; // e.g. 84
-  profitProbability: number; // e.g. 72
-  expectedReturn: string; // e.g. "+6.1%"
+  risk: "Low" | "Medium" | "High";
+  riskConfidence: number; // e.g. 84
+  trendProbability: number; // e.g. 54
+  returnMedian: number;
+  returnBand: [number, number]; // [lower, upper]
+  analogHitRate?: number;
   risk: "Low" | "Medium" | "High";
   sector?: string;
   marketCap?: string;
@@ -36,13 +38,12 @@ export interface StockCardProps {
 
 export function StockCard({
   ticker,
-  name,
-  price,
-  signal,
-  confidence,
-  profitProbability,
-  expectedReturn,
   risk,
+  riskConfidence,
+  trendProbability,
+  returnMedian,
+  returnBand,
+  analogHitRate,
   sector = "General",
   marketCap = "Large Cap",
   rsi = 58,
@@ -56,31 +57,13 @@ export function StockCard({
 }: StockCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const signalColors = {
-    BUY: {
-      text: "text-emerald-500",
-      bg: "bg-emerald-500/10 dark:bg-emerald-500/15",
-      border: "border-emerald-500/30",
-    },
-    SELL: {
-      text: "text-rose-500",
-      bg: "bg-rose-500/10 dark:bg-rose-500/15",
-      border: "border-rose-500/30",
-    },
-    HOLD: {
-      text: "text-amber-500",
-      bg: "bg-amber-500/10 dark:bg-amber-500/15",
-      border: "border-amber-500/30",
-    },
-  };
-
   const riskColors = {
     Low: "text-emerald-500 bg-emerald-500/5 border-emerald-500/10",
     Medium: "text-amber-500 bg-amber-500/5 border-amber-500/10",
     High: "text-rose-500 bg-rose-500/5 border-rose-500/10",
   };
 
-  const isReturnPositive = !expectedReturn.startsWith("-");
+  const isReturnPositive = returnMedian >= 0;
 
   return (
     <motion.div
@@ -100,8 +83,8 @@ export function StockCard({
         className
       )}
     >
-      {/* Glow highlight for high confidence BUY signals */}
-      {signal === "BUY" && confidence >= 80 && (
+      {/* Glow highlight for Low Risk / High Confidence */}
+      {risk === "Low" && riskConfidence >= 80 && (
         <div className="absolute top-0 left-0 w-24 h-0.5 bg-gradient-to-r from-emerald-500 via-accent to-transparent" />
       )}
 
@@ -127,16 +110,14 @@ export function StockCard({
 
         {/* Mid Side: Key Trading Metrics */}
         <div className="grid grid-cols-3 md:flex md:items-center gap-4 md:gap-8 flex-1 md:justify-end">
-          {/* Signal */}
+          {/* Risk Level (Replaces Signal) */}
           <div className="flex flex-col items-center md:items-start">
-            <span className="text-[10px] text-text-secondary font-medium">Signal</span>
+            <span className="text-[10px] text-text-secondary font-medium">Risk Forecast</span>
             <span className={cn(
               "text-xs font-bold px-2 py-0.5 rounded-lg border mt-0.5 inline-block text-center min-w-[54px]",
-              signalColors[signal].text,
-              signalColors[signal].bg,
-              signalColors[signal].border
+              riskColors[risk]
             )}>
-              {signal}
+              {risk} Risk
             </span>
           </div>
 
@@ -148,7 +129,7 @@ export function StockCard({
               isReturnPositive ? "text-emerald-500" : "text-rose-500"
             )}>
               {isReturnPositive ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-              <span>{expectedReturn}</span>
+              <span>{isReturnPositive ? "+" : ""}{returnMedian}%</span>
             </div>
           </div>
 
@@ -156,7 +137,7 @@ export function StockCard({
           <div className="flex flex-col items-center md:items-start">
             <span className="text-[10px] text-text-secondary font-medium font-caption">Confidence</span>
             <span className="text-xs font-bold text-text-primary font-mono mt-0.5">
-              {confidence}%
+              {riskConfidence}%
             </span>
           </div>
         </div>
@@ -208,21 +189,26 @@ export function StockCard({
               {/* Detailed metrics grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-secondary/20 p-4 rounded-xl border border-border/20">
                 <div>
-                  <span className="text-[10px] text-text-secondary block">Profit Probability</span>
-                  <span className="text-xs font-bold text-text-primary font-mono">{profitProbability}%</span>
+                  <span className="text-[10px] text-text-secondary block">Trend Probability</span>
+                  <span className="text-xs font-bold text-text-primary font-mono mt-0.5 block">{trendProbability}% Bullish</span>
                   <div className="w-full h-1 bg-border rounded-full mt-1.5 overflow-hidden">
                     <div 
-                      className="h-full bg-emerald-500 rounded-full" 
-                      style={{ width: `${profitProbability}%` }}
+                      className={cn("h-full rounded-full", trendProbability > 50 ? "bg-emerald-500" : "bg-rose-500")}
+                      style={{ width: `${trendProbability}%` }}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[10px] text-text-secondary block">Risk Profile</span>
-                  <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full border inline-block mt-1", riskColors[risk])}>
-                    {risk} Risk
+                  <span className="text-[10px] text-text-secondary block">Return Band (10–90)</span>
+                  <span className="text-[10px] font-mono text-text-primary mt-1 block">
+                    [{returnBand[0]}%, {returnBand[1]}%]
                   </span>
+                  {analogHitRate !== undefined && (
+                    <span className="text-[9px] text-text-secondary/80 mt-1 block">
+                      Analog Hit Rate: {analogHitRate}%
+                    </span>
+                  )}
                 </div>
 
                 <div>
