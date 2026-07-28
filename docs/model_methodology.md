@@ -1,6 +1,6 @@
 # Quantara Model Methodology Report
 
-> Auto-generated on 2026-07-25 13:46:52 UTC by `ml/src/train_all_models.py`.
+> Auto-generated on 2026-07-28 05:57:40 UTC by `ml/src/train_all_models.py`.
 > This document is fully reproducible: re-run the training pipeline to regenerate.
 
 ---
@@ -165,5 +165,9 @@ Search method: `RandomizedSearchCV` (30 iterations) with walk-forward CV splitte
 ## Data Quality Caveats
 
 See [`docs/survivorship_bias_audit.md`](survivorship_bias_audit.md) for details.
-All model metrics above are subject to survivorship bias — the training data
-contains only current NIFTY 50 constituents, not the historical point-in-time universe.
+
+Trained on **65 stocks** with point-in-time constituent filtering
+applied via `filter_point_in_time()` in `ml/src/features_engine.py`. The training
+universe includes historical NIFTY 50 drop-outs (e.g. YESBANK, VEDL, GAIL) and
+each stock's data is masked to its actual index membership window, preventing
+survivorship bias from inflating model metrics.

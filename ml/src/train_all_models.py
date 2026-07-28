@@ -36,6 +36,8 @@ def generate_methodology_report(
     risk_meta: dict,
     return_meta: dict,
     docs_dir: str,
+    datasets_dir: str = "ml/datasets",
+    workspace_root: str = ".",
 ):
     """Auto-generate docs/model_methodology.md from training results."""
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
@@ -207,14 +209,33 @@ def generate_methodology_report(
     lines.append(f"- Features dropped: {len(pi.get('features_to_drop', []))}")
     lines.append("")
 
-    # ── Data Caveats ───────────────────────────────────────────────────────
+    # ── Data Caveats (dynamically determined) ──────────────────────────────
+    n_datasets = len(glob.glob(os.path.join(datasets_dir, "*.parquet")))
+    constituents_path = os.path.join(workspace_root, "ml", "src", "historical_constituents.json")
+    pit_filter_active = os.path.exists(constituents_path)
+
     lines.append("---")
     lines.append("")
     lines.append("## Data Quality Caveats")
     lines.append("")
     lines.append("See [`docs/survivorship_bias_audit.md`](survivorship_bias_audit.md) for details.")
-    lines.append("All model metrics above are subject to survivorship bias — the training data")
-    lines.append("contains only current NIFTY 50 constituents, not the historical point-in-time universe.")
+    lines.append("")
+    if pit_filter_active and n_datasets > 50:
+        lines.append(f"Trained on **{n_datasets} stocks** with point-in-time constituent filtering")
+        lines.append("applied via `filter_point_in_time()` in `ml/src/features_engine.py`. The training")
+        lines.append("universe includes historical NIFTY 50 drop-outs (e.g. YESBANK, VEDL, GAIL) and")
+        lines.append("each stock's data is masked to its actual index membership window, preventing")
+        lines.append("survivorship bias from inflating model metrics.")
+    elif pit_filter_active:
+        lines.append(f"Trained on **{n_datasets} stocks** with point-in-time constituent filtering")
+        lines.append(f"applied. Note: the dataset size ({n_datasets}) is at or below the current NIFTY 50")
+        lines.append("count — consider expanding with historical drop-outs to further reduce")
+        lines.append("survivorship bias.")
+    else:
+        lines.append(f"⚠️ Trained on **{n_datasets} stocks** without point-in-time constituent")
+        lines.append("filtering. All model metrics above are subject to survivorship bias — the")
+        lines.append("training data may contain only current NIFTY 50 constituents, not the historical")
+        lines.append("point-in-time universe. See the audit report for remediation steps.")
     lines.append("")
 
     report_path = os.path.join(docs_dir, "model_methodology.md")
@@ -267,7 +288,10 @@ def main():
     return_meta = train_expected_return(full_df, features, models_dir)
 
     # ── Generate methodology report ───────────────────────────────────────
-    generate_methodology_report(trend_meta, profit_meta, risk_meta, return_meta, docs_dir)
+    generate_methodology_report(
+        trend_meta, profit_meta, risk_meta, return_meta, docs_dir,
+        datasets_dir=datasets_dir, workspace_root=workspace_root,
+    )
 
     logger.info("=" * 70)
     logger.info("ALL MODELS TRAINED SUCCESSFULLY")
