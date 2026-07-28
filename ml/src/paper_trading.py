@@ -261,8 +261,8 @@ class PaperTradingEngine:
                 try:
                     X = row[self.features]
                     probs = self.model.predict_proba(X)[0]
-                    prob_buy = float(probs[2]) if len(probs) == 3 else float(probs[-1])
-                    confidence = int(prob_buy * 100)
+                    prob_bullish = float(probs[1]) if len(probs) == 2 else float(probs[-1])
+                    confidence = int(prob_bullish * 100)
                     
                     if confidence > 48:  # filter confidence threshold
                         row_dict = row.iloc[0].to_dict()
@@ -275,7 +275,7 @@ class PaperTradingEngine:
                         candidates.append({
                             "symbol": symbol,
                             "confidence": confidence,
-                            "probability": round(prob_buy, 4),
+                            "probability": round(prob_bullish, 4),
                             "expected_return": expected_ret,
                             "risk": risk_label,
                             "close": float(row['Close'].iloc[0])

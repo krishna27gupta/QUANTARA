@@ -24,8 +24,8 @@ logger = logging.getLogger("quantara-ml-explainability")
 # Plain-English descriptions for each feature.
 # Keys are feature column names; values are (bullish_description, bearish_description)
 # tuples where the bullish text is used when the SHAP value is positive (pushes
-# toward BUY) and the bearish text is used when the SHAP value is negative
-# (drags the BUY probability down).
+# toward the bullish class) and the bearish text is used when the SHAP value is
+# negative (pushes toward the non-bullish class).
 _FEATURE_LABELS: Dict[str, tuple] = {
     "rsi":                       ("RSI showing strong bullish momentum",
                                   "RSI signaling weak or oversold momentum"),
@@ -110,8 +110,9 @@ class ExplainabilityEngine:
     used hardcoded thresholds on 4 features and padded output with filler phrases.
 
     How it works:
-    1. Loads models/trend_xgboost.pkl (plain XGBClassifier, 3 classes: SELL/HOLD/BUY)
-    2. For a given symbol, builds the exact same 50-feature vector the model was
+    1. Loads models/trend_xgboost.pkl (binary XGBClassifier: 1 if 5-day
+       forward return > 2%, else 0)
+    2. For a given symbol, builds the exact same feature vector the model was
        scored on via features_engine.build_live_feature_row()
     3. Runs shap.TreeExplainer to get per-feature attribution scores
     4. Returns only features with non-negligible SHAP magnitude (abs >= 1e-4),
@@ -149,9 +150,15 @@ class ExplainabilityEngine:
 
     def calculate_shap_values(self, symbol: str) -> Dict[str, float]:
         """
-        Compute real SHAP feature attributions for the BUY class (index 2) given
-        a stock symbol. Returns a dict of {feature_name: shap_value} for features
-        with abs(shap_value) >= 1e-4, sorted by descending absolute magnitude.
+        Compute real SHAP feature attributions for the positive class (bullish)
+        given a stock symbol.  Returns a dict of {feature_name: shap_value} for
+        features with abs(shap_value) >= 1e-4, sorted by descending absolute
+        magnitude.
+
+        The trained model is a binary classifier (1 = bullish, 0 = not), so
+        TreeExplainer returns a 2D array of shape (n_samples, n_features).
+        Positive SHAP values push toward class 1 (bullish); negative values
+        push toward class 0.
         """
         if self.explainer is None or not self.features:
             logger.warning("SHAP explainer not available — returning empty attributions.")
@@ -161,21 +168,47 @@ class ExplainabilityEngine:
             row = build_live_feature_row(symbol, self.workspace_root)
             X = pd.DataFrame([{f: row.get(f, 0.0) for f in self.features}])
 
-            sv = self.explainer.shap_values(X)  # shape: (1, n_features, 3) ndarray
+            sv = self.explainer.shap_values(X)
 
-            # Extract BUY class (index 2) SHAP values
-            if isinstance(sv, np.ndarray) and sv.ndim == 3:
-                buy_shap = sv[0, :, 2]
-            elif isinstance(sv, list) and len(sv) == 3:
-                buy_shap = sv[2][0]
+            # Extract SHAP values for the positive (bullish) class.
+            #
+            # Binary classifier:
+            #   - 2D ndarray of shape (n_samples, n_features) — values are
+            #     for class 1 (bullish).
+            #   - list of two 2D arrays [class_0_sv, class_1_sv] — take [1].
+            #
+            # Multi-class fallback (legacy, kept for safety):
+            #   - 3D ndarray (n_samples, n_features, n_classes) — take [:, :, -1].
+            #   - list of n_classes 2D arrays — take [-1].
+            if isinstance(sv, np.ndarray):
+                if sv.ndim == 2:
+                    # Binary classifier: shape (n_samples, n_features)
+                    bullish_shap = sv[0]
+                elif sv.ndim == 3:
+                    # Multi-class: shape (n_samples, n_features, n_classes)
+                    bullish_shap = sv[0, :, -1]
+                else:
+                    logger.warning(f"Unexpected SHAP ndarray ndim={sv.ndim}")
+                    return {}
+            elif isinstance(sv, list):
+                # list of per-class arrays
+                if len(sv) == 2:
+                    # Binary: [class_0, class_1] — take class 1
+                    bullish_shap = np.asarray(sv[1])[0]
+                elif len(sv) >= 3:
+                    # Multi-class: take last class
+                    bullish_shap = np.asarray(sv[-1])[0]
+                else:
+                    logger.warning(f"Unexpected SHAP list length: {len(sv)}")
+                    return {}
             else:
-                logger.warning(f"Unexpected SHAP output shape: {type(sv)}, ndim={getattr(sv, 'ndim', '?')}")
+                logger.warning(f"Unexpected SHAP output type: {type(sv)}")
                 return {}
 
             # Filter non-negligible and sort by absolute magnitude
             pairs = [
                 (name, float(val))
-                for name, val in zip(self.features, buy_shap)
+                for name, val in zip(self.features, bullish_shap)
                 if abs(val) >= 1e-4
             ]
             pairs.sort(key=lambda x: abs(x[1]), reverse=True)

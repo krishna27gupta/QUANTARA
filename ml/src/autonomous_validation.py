@@ -259,8 +259,8 @@ class AutonomousValidationSystem:
             try:
                 X = row[self.features]
                 probs = self.model.predict_proba(X)[0]
-                prob_buy = float(probs[2]) if len(probs) == 3 else float(probs[-1])
-                confidence = int(prob_buy * 100)
+                prob_bullish = float(probs[1]) if len(probs) == 2 else float(probs[-1])
+                confidence = int(prob_bullish * 100)
                 
                 # Risk criteria
                 row_dict = row.iloc[0].to_dict()
@@ -275,7 +275,7 @@ class AutonomousValidationSystem:
                     candidates.append({
                         "symbol": symbol,
                         "confidence": confidence,
-                        "profit_probability": int(prob_buy * 100),
+                        "profit_probability": int(prob_bullish * 100),
                         "expected_return": expected_ret,
                         "risk": risk.capitalize(),
                         "close": float(row['Close'].iloc[0]),
