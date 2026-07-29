@@ -23,7 +23,6 @@ export interface StockCardProps {
   returnMedian: number;
   returnBand: [number, number]; // [lower, upper]
   analogHitRate?: number;
-  risk: "Low" | "Medium" | "High";
   sector?: string;
   marketCap?: string;
   rsi?: number;
@@ -38,6 +37,8 @@ export interface StockCardProps {
 
 export function StockCard({
   ticker,
+  name,
+  price,
   risk,
   riskConfidence,
   trendProbability,

@@ -1,6 +1,8 @@
 import logging
 import os
 import sys
+import time
+import asyncio
 from contextlib import asynccontextmanager
 
 import pandas as pd
@@ -11,6 +13,10 @@ from fastapi.responses import JSONResponse
 # Add workspace root so we can import from ml package
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
+# Cache for /discover endpoint
+DISCOVER_CACHE = {}
+DISCOVER_CACHE_TTL = 900
 
 from ml.src import (
     DataPipeline,
@@ -204,15 +210,183 @@ async def get_market_opportunity():
         )
     )
 
+    # Determine top/bottom 3 sectors using dynamic data
+    sector_momentum = {}
+    sector_counts = {}
+    import glob
+    from app.metadata import STOCK_METADATA
+    from ml.src.features_engine import build_live_feature_row
+
+    workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    datasets_dir = os.path.join(workspace_root, "ml", "datasets")
+    parquet_files = glob.glob(os.path.join(datasets_dir, "*.parquet"))
+    symbols = [os.path.basename(f).replace(".parquet", "") for f in parquet_files]
+
+    for sym in symbols:
+        meta = STOCK_METADATA.get(sym, {"sector": "Unknown"})
+        sector = meta.get("sector", "Unknown")
+        if sector == "Unknown":
+            continue
+            
+        try:
+            row = build_live_feature_row(sym, workspace_root)
+            # using 'roc' (Rate of Change) for recent momentum
+            mom = row.get("roc", 0.0)
+            if pd.isna(mom): mom = 0.0
+            
+            sector_momentum[sector] = sector_momentum.get(sector, 0.0) + mom
+            sector_counts[sector] = sector_counts.get(sector, 0) + 1
+        except Exception:
+            continue
+            
+    avg_sector_mom = {sec: sector_momentum[sec] / sector_counts[sec] for sec in sector_counts if sector_counts[sec] > 0}
+    sorted_sectors = sorted(avg_sector_mom.items(), key=lambda x: x[1], reverse=True)
+    
+    if len(sorted_sectors) >= 6:
+        sector_leaders = [s[0] for s in sorted_sectors[:3]]
+        sector_laggards = [s[0] for s in sorted_sectors[-3:]]
+    else:
+        sector_leaders = ["Banking", "Retail", "Energy"]
+        sector_laggards = ["Metals", "FMCG", "IT"]
+
     return {
         "market_confidence": round(avg_confidence, 2),
         "opportunity_score": opp_score,
         "market_regime": market_regime,
         "market_sentiment": market_sentiment,
-        "sector_leaders": ["Banking", "Retail", "Energy"],
-        "sector_laggards": ["Metals", "FMCG", "IT"],
+        "sector_leaders": sector_leaders,
+        "sector_laggards": sector_laggards,
         "vix": round(vix, 2),
     }
+
+@v1_router.get("/discover", tags=["System"])
+async def get_discover_opportunities():
+    """
+    Run the predictors across the full 65-stock universe.
+    Cache results for 15 minutes.
+    """
+    now = time.time()
+    if "data" in DISCOVER_CACHE and now - DISCOVER_CACHE["time"] < DISCOVER_CACHE_TTL:
+        logger.info("Serving discover data from cache.")
+        return DISCOVER_CACHE["data"]
+
+    logger.info("Running predictors for 65 stocks...")
+    workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    datasets_dir = os.path.join(workspace_root, "ml", "datasets")
+    
+    # Get all 65 stocks
+    import glob
+    parquet_files = glob.glob(os.path.join(datasets_dir, "*.parquet"))
+    symbols = [os.path.basename(f).replace(".parquet", "") for f in parquet_files]
+    
+    # Imports
+    from ml.src.ensemble import EnsembleEngine
+    from ml.src.expected_return import ExpectedReturnPredictor
+    from ml.src.profit import ProfitPredictor
+    from ml.src.risk import RiskPredictor
+    from ml.src.trend import TrendPredictor
+    from ml.src.sentiment import SentimentEngine
+    from ml.src.historical_analogs import find_analogs_for_symbol
+    from ml.src.features_engine import build_live_feature_row
+    from app.metadata import STOCK_METADATA
+
+    trend_model = TrendPredictor()
+    profit_model = ProfitPredictor()
+    risk_model = RiskPredictor()
+    return_model = ExpectedReturnPredictor()
+    sentiment_model = SentimentEngine()
+    ensemble = EnsembleEngine()
+
+    async def process_symbol(symbol):
+        try:
+            # Gather predictors
+            trend_task = trend_model.predict_trend({"symbol": symbol})
+            profit_task = profit_model.predict_profitability({"symbol": symbol})
+            risk_task = risk_model.evaluate_risk({"symbol": symbol})
+            return_task = return_model.forecast_expected_return([{"symbol": symbol}])
+            sentiment_task = sentiment_model.analyze_sentiment({"symbol": symbol})
+            
+            trend_res, profit_res, risk_res, return_res, sentiment_res = await asyncio.gather(
+                trend_task, profit_task, risk_task, return_task, sentiment_task
+            )
+            
+            try:
+                analog_result = find_analogs_for_symbol(symbol, workspace_root, k=15)
+            except Exception:
+                analog_result = None
+
+            evidence = await ensemble.aggregate_predictions(
+                trend_res, profit_res, risk_res, return_res, sentiment_res,
+                historical_analogs=analog_result
+            )
+
+            # Extract features needed for the frontend
+            risk_level = evidence["risk_forecast"]["risk_level"]
+            risk_confidence = int(evidence["risk_forecast"]["risk_confidence"] * 100)
+            trend_prob = int(evidence["trend_evidence"]["bullish_probability"] * 100)
+            return_median = float(evidence["historical_context"]["expected_return_band_pct"]["median"])
+            return_lower = float(evidence["historical_context"]["expected_return_band_pct"]["lower_10th"])
+            return_upper = float(evidence["historical_context"]["expected_return_band_pct"]["upper_90th"])
+            
+            analog_hit_rate = 50
+            if analog_result and "win_rate_pct" in analog_result:
+                analog_hit_rate = int(analog_result["win_rate_pct"])
+            
+            # Additional metadata (price, rsi, macd, volume) from latest feature row
+            try:
+                row = build_live_feature_row(symbol, workspace_root)
+                price = row.get("Close", 0.0)
+                rsi = row.get("rsi", 50.0)
+                macd = row.get("macd", 0.0)
+                macd_val = "Bullish" if macd > 0 else "Bearish"
+                
+                rel_vol = row.get("relative_volume", 1.0)
+                if rel_vol > 1.2:
+                    vol_str = "High"
+                elif rel_vol < 0.8:
+                    vol_str = "Low"
+                else:
+                    vol_str = "Medium"
+                    
+            except Exception:
+                price = 0.0
+                rsi = 50.0
+                macd_val = "Neutral"
+                vol_str = "Medium"
+                
+            meta = STOCK_METADATA.get(symbol, {"name": symbol, "sector": "Unknown", "marketCap": "Mid Cap"})
+
+            return {
+                "ticker": symbol,
+                "name": meta.get("name", symbol),
+                "price": f"₹{price:.2f}",
+                "risk": risk_level,
+                "riskConfidence": risk_confidence,
+                "trendProbability": trend_prob,
+                "returnMedian": return_median,
+                "returnBand": [return_lower, return_upper],
+                "analogHitRate": analog_hit_rate,
+                "sector": meta.get("sector", "Unknown"),
+                "marketCap": meta.get("marketCap", "Mid Cap"),
+                "rsi": int(rsi),
+                "macd": macd_val,
+                "volume": vol_str
+            }
+        except Exception as e:
+            logger.error(f"Failed processing {symbol} for discover endpoint: {e}")
+            return None
+
+    # Process concurrently
+    tasks = [process_symbol(sym) for sym in symbols]
+    results = await asyncio.gather(*tasks)
+    
+    # Filter out failures
+    valid_results = [r for r in results if r is not None]
+    
+    DISCOVER_CACHE["time"] = now
+    DISCOVER_CACHE["data"] = valid_results
+    
+    return valid_results
 
 
 @v1_router.get("/predict", tags=["ML Evidence"])

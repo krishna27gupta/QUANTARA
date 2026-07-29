@@ -41,21 +41,12 @@ interface StockOpportunity {
   volume?: string;
 }
 
-const ALL_STOCKS: StockOpportunity[] = [
-  { ticker: "RELIANCE", name: "Reliance Industries Ltd.", price: "₹2,845.20", risk: "Medium", riskConfidence: 88, trendProbability: 62, returnMedian: 6.1, returnBand: [1.2, 10.5], analogHitRate: 72, sector: "Energy", marketCap: "Large Cap", rsi: 62, macd: "Bullish Cross", volume: "High" },
-  { ticker: "TCS", name: "Tata Consultancy Services Ltd.", price: "₹3,920.10", risk: "Low", riskConfidence: 78, trendProbability: 58, returnMedian: 4.8, returnBand: [2.1, 8.2], analogHitRate: 68, sector: "IT", marketCap: "Large Cap", rsi: 54, macd: "Neutral", volume: "Medium" },
-  { ticker: "HDFCBANK", name: "HDFC Bank Ltd.", price: "₹1,612.45", risk: "Low", riskConfidence: 82, trendProbability: 65, returnMedian: 5.5, returnBand: [1.5, 9.8], analogHitRate: 74, sector: "Banking", marketCap: "Large Cap", rsi: 58, macd: "Bullish", volume: "High" },
-  { ticker: "ITC", name: "ITC Ltd.", price: "₹425.80", risk: "Low", riskConfidence: 86, trendProbability: 51, returnMedian: 3.5, returnBand: [0.5, 6.2], analogHitRate: 62, sector: "FMCG", marketCap: "Large Cap", rsi: 48, macd: "Strong Bullish", volume: "High" },
-  { ticker: "ASIANPAINTS", name: "Asian Paints Ltd.", price: "₹2,890.30", risk: "Medium", riskConfidence: 81, trendProbability: 49, returnMedian: 4.2, returnBand: [-1.2, 8.5], analogHitRate: 58, sector: "Consumer", marketCap: "Large Cap", rsi: 51, macd: "Neutral", volume: "Medium" },
-  { ticker: "TRENT", name: "Trent Ltd. (Tata Group)", price: "₹4,850.00", risk: "High", riskConfidence: 89, trendProbability: 68, returnMedian: 12.4, returnBand: [-4.5, 25.1], analogHitRate: 65, sector: "Retail", marketCap: "Mid Cap", rsi: 72, macd: "Strong Bullish", volume: "High" },
-  { ticker: "ADANIPORTS", name: "Adani Ports & SEZ Ltd.", price: "₹1,240.15", risk: "High", riskConfidence: 83, trendProbability: 61, returnMedian: 9.8, returnBand: [-2.1, 18.5], analogHitRate: 67, sector: "Infrastructure", marketCap: "Large Cap", rsi: 65, macd: "Bullish Cross", volume: "High" },
-  { ticker: "BAJFINANCE", name: "Bajaj Finance Ltd.", price: "₹6,950.00", risk: "High", riskConfidence: 80, trendProbability: 59, returnMedian: 8.5, returnBand: [-1.5, 15.2], analogHitRate: 64, sector: "Banking", marketCap: "Large Cap", rsi: 59, macd: "Bullish Crossover", volume: "High" },
-  { ticker: "M&M", name: "Mahindra & Mahindra Ltd.", price: "₹2,140.50", risk: "Medium", riskConfidence: 65, trendProbability: 45, returnMedian: 1.2, returnBand: [-3.5, 6.5], analogHitRate: 48, sector: "Auto", marketCap: "Large Cap", rsi: 41, macd: "Weak Bearish", volume: "Medium" },
-  { ticker: "SUNPHARMA", name: "Sun Pharmaceutical Industries", price: "₹1,520.40", risk: "Low", riskConfidence: 71, trendProbability: 52, returnMedian: 2.8, returnBand: [-1.0, 5.8], analogHitRate: 55, sector: "Pharma", marketCap: "Large Cap", rsi: 50, macd: "Neutral", volume: "Medium" },
-  { ticker: "TATASTEEL", name: "Tata Steel Ltd.", price: "₹145.20", risk: "High", riskConfidence: 92, trendProbability: 38, returnMedian: -3.4, returnBand: [-12.5, 2.1], analogHitRate: 35, sector: "Metals", marketCap: "Large Cap", rsi: 29, macd: "Bearish Cross", volume: "High" }
-];
 
 export default function DiscoverPage() {
+  // Data state
+  const [stocks, setStocks] = useState<StockOpportunity[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
   // Navigation tabs: Top Picks, Safe Picks, Aggressive Picks
   const [activeTab, setActiveTab] = useState<"top" | "safe" | "aggressive">("top");
   
@@ -131,22 +122,32 @@ export default function DiscoverPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Initial loading simulation
+  // Fetch discover data
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1200);
-    return () => clearTimeout(timer);
-  }, []);
+    async function fetchDiscoverData() {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const res = await fetch("http://localhost:8000/api/v1/discover");
+        if (res.ok) {
+          const data = await res.json();
+          setStocks(data);
+        } else {
+          setError("Failed to fetch opportunities from the server.");
+        }
+      } catch (err) {
+        console.error("Failed to fetch opportunities:", err);
+        setError("Network error while fetching opportunities.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchDiscoverData();
+  }, [isRefreshing]); // Re-fetch when refresh is triggered
 
-  // Refresh handler (progressive skeleton loader)
+  // Refresh handler
   const handleRefresh = () => {
-    setIsRefreshing(true);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      setIsRefreshing(false);
-    }, 1500);
+    setIsRefreshing(prev => !prev);
   };
 
   // Watchlist toggle handler
@@ -155,7 +156,7 @@ export default function DiscoverPage() {
     if (isPresent) {
       setWatchlist(watchlist.filter((item) => item.ticker !== ticker));
     } else {
-      const stock = ALL_STOCKS.find((s) => s.ticker === ticker);
+      const stock = stocks.find((s) => s.ticker === ticker);
       if (stock) {
         const isUp = stock.returnMedian >= 0;
         setWatchlist([
@@ -195,7 +196,7 @@ export default function DiscoverPage() {
   // Computed and filtered list of Stocks
   const filteredStocks = useMemo(() => {
     // 1. Filter by Active Tab
-    let list = [...ALL_STOCKS];
+    let list = [...stocks];
     if (activeTab === "safe") {
       // Low Volatility / Risk, High Confidence
       list = list.filter((s) => s.risk === "Low" && s.riskConfidence >= 75);
@@ -246,7 +247,8 @@ export default function DiscoverPage() {
     selectedRisk,
     minConfidence,
     minExpectedReturn,
-    selectedCap
+    selectedCap,
+    stocks
   ]);
 
   // Check if any filters are active
@@ -646,6 +648,29 @@ export default function DiscoverPage() {
                       />
                     );
                   })
+                ) : error ? (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="py-12 border border-rose-500/30 rounded-[20px] bg-rose-500/5 text-center flex flex-col items-center justify-center gap-3"
+                  >
+                    <div className="p-3 bg-rose-500/20 rounded-2xl border border-rose-500/50 text-rose-400">
+                      <X className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-text-primary">Error loading opportunities</h4>
+                      <p className="text-xs text-text-secondary/70 mt-1 max-w-[280px] mx-auto">
+                        {error}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleRefresh}
+                      className="px-3.5 py-1.5 rounded-xl bg-rose-500 text-white text-xs font-semibold hover:bg-rose-600 transition-colors cursor-pointer"
+                    >
+                      Try Again
+                    </button>
+                  </motion.div>
                 ) : (
                   // Empty State
                   <motion.div
