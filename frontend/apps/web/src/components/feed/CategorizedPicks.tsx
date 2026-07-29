@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 interface PickItem {
   ticker: string;
   name: string;
-  signal: "BUY" | "SELL" | "HOLD";
+  evidence: "FAVORABLE" | "UNFAVORABLE" | "HOLD";
   confidence: string;
   probability: string;
   expectedReturn: string;
@@ -26,30 +26,30 @@ export function CategorizedPicks() {
 
   const pickGroups: Record<string, PickItem[]> = {
     top: [
-      { ticker: "TCS", name: "Tata Consultancy Services Ltd.", signal: "BUY", confidence: "88%", probability: "74%", expectedReturn: "+5.2%" },
-      { ticker: "RELIANCE", name: "Reliance Industries Ltd.", signal: "BUY", confidence: "92%", probability: "81%", expectedReturn: "+4.8%" },
-      { ticker: "INFY", name: "Infosys Ltd.", signal: "HOLD", confidence: "74%", probability: "62%", expectedReturn: "+1.2%" },
+      { ticker: "TCS", name: "Tata Consultancy Services Ltd.", evidence: "FAVORABLE", confidence: "88%", probability: "74%", expectedReturn: "+5.2%" },
+      { ticker: "RELIANCE", name: "Reliance Industries Ltd.", evidence: "FAVORABLE", confidence: "92%", probability: "81%", expectedReturn: "+4.8%" },
+      { ticker: "INFY", name: "Infosys Ltd.", evidence: "HOLD", confidence: "74%", probability: "62%", expectedReturn: "+1.2%" },
     ],
     safe: [
-      { ticker: "HDFCBANK", name: "HDFC Bank Ltd.", signal: "BUY", confidence: "94%", probability: "86%", expectedReturn: "+3.5%" },
-      { ticker: "ITC", name: "ITC Ltd.", signal: "BUY", confidence: "90%", probability: "82%", expectedReturn: "+3.2%" },
-      { ticker: "ICICIBANK", name: "ICICI Bank Ltd.", signal: "BUY", confidence: "86%", probability: "79%", expectedReturn: "+4.1%" },
+      { ticker: "HDFCBANK", name: "HDFC Bank Ltd.", evidence: "FAVORABLE", confidence: "94%", probability: "86%", expectedReturn: "+3.5%" },
+      { ticker: "ITC", name: "ITC Ltd.", evidence: "FAVORABLE", confidence: "90%", probability: "82%", expectedReturn: "+3.2%" },
+      { ticker: "ICICIBANK", name: "ICICI Bank Ltd.", evidence: "FAVORABLE", confidence: "86%", probability: "79%", expectedReturn: "+4.1%" },
     ],
     aggressive: [
-      { ticker: "M&M", name: "Mahindra & Mahindra Ltd.", signal: "BUY", confidence: "88%", probability: "68%", expectedReturn: "+8.5%" },
-      { ticker: "TATASTEEL", name: "Tata Steel Ltd.", signal: "SELL", confidence: "80%", probability: "70%", expectedReturn: "-6.2%" },
-      { ticker: "ADANIENT", name: "Adani Enterprises Ltd.", signal: "BUY", confidence: "72%", probability: "58%", expectedReturn: "+12.4%" },
+      { ticker: "M&M", name: "Mahindra & Mahindra Ltd.", evidence: "FAVORABLE", confidence: "88%", probability: "68%", expectedReturn: "+8.5%" },
+      { ticker: "TATASTEEL", name: "Tata Steel Ltd.", evidence: "UNFAVORABLE", confidence: "80%", probability: "70%", expectedReturn: "-6.2%" },
+      { ticker: "ADANIENT", name: "Adani Enterprises Ltd.", evidence: "FAVORABLE", confidence: "72%", probability: "58%", expectedReturn: "+12.4%" },
     ],
     personalized: [
-      { ticker: "RELIANCE", name: "Reliance Industries Ltd.", signal: "BUY", confidence: "92%", probability: "81%", expectedReturn: "+4.8%" },
-      { ticker: "HDFCBANK", name: "HDFC Bank Ltd.", signal: "BUY", confidence: "94%", probability: "86%", expectedReturn: "+3.5%" },
-      { ticker: "TCS", name: "Tata Consultancy Services Ltd.", signal: "BUY", confidence: "88%", probability: "74%", expectedReturn: "+5.2%" },
+      { ticker: "RELIANCE", name: "Reliance Industries Ltd.", evidence: "FAVORABLE", confidence: "92%", probability: "81%", expectedReturn: "+4.8%" },
+      { ticker: "HDFCBANK", name: "HDFC Bank Ltd.", evidence: "FAVORABLE", confidence: "94%", probability: "86%", expectedReturn: "+3.5%" },
+      { ticker: "TCS", name: "Tata Consultancy Services Ltd.", evidence: "FAVORABLE", confidence: "88%", probability: "74%", expectedReturn: "+5.2%" },
     ],
   };
 
   const signalColors = {
-    BUY: "text-success bg-success/10",
-    SELL: "text-danger bg-danger/10",
+    FAVORABLE: "text-success bg-success/10",
+    UNFAVORABLE: "text-danger bg-danger/10",
     HOLD: "text-amber-500 bg-amber-500/10",
   };
 
@@ -98,8 +98,8 @@ export function CategorizedPicks() {
                   <h4 className="font-bold text-sm font-mono text-text-primary">{pick.ticker}</h4>
                   <span className="text-[10px] text-text-secondary truncate max-w-[120px] block">{pick.name}</span>
                 </div>
-                <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-lg border border-border/20", signalColors[pick.signal])}>
-                  {pick.signal}
+                <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-lg border border-border/20", signalColors[pick.evidence])}>
+                  {pick.evidence}
                 </span>
               </div>
 

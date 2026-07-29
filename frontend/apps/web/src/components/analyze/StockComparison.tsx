@@ -9,12 +9,12 @@ interface CompareItem {
   ticker: string;
   name: string;
   price: string;
-  signal: "BUY" | "SELL" | "HOLD";
+  evidence: "FAVORABLE" | "UNFAVORABLE" | "HOLD";
   confidence: number;
   profitProbability: number;
   expectedReturn: string;
   risk: "Low" | "Medium" | "High";
-  recommendation: string;
+  assessment: string;
 }
 
 export interface StockComparisonProps {
@@ -30,15 +30,15 @@ export function StockComparison({ niftyStocks, defaultTickerA = "RELIANCE", defa
   const stockA = niftyStocks.find((s) => s.ticker === tickerA) || niftyStocks[0];
   const stockB = niftyStocks.find((s) => s.ticker === tickerB) || niftyStocks[1];
 
-  const getSignalBadge = (signal: "BUY" | "SELL" | "HOLD") => {
+  const getSignalBadge = (evidence: "FAVORABLE" | "UNFAVORABLE" | "HOLD") => {
     const styles = {
-      BUY: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
-      SELL: "text-rose-500 bg-rose-500/10 border-rose-500/20",
+      FAVORABLE: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+      UNFAVORABLE: "text-rose-500 bg-rose-500/10 border-rose-500/20",
       HOLD: "text-amber-500 bg-amber-500/10 border-amber-500/20",
     };
     return (
-      <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-md border", styles[signal])}>
-        {signal}
+      <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-md border", styles[evidence])}>
+        {evidence}
       </span>
     );
   };
@@ -47,11 +47,11 @@ export function StockComparison({ niftyStocks, defaultTickerA = "RELIANCE", defa
     // Return comparison decision
     if (!stockA || !stockB) return "";
     
-    if (stockA.signal === "BUY" && stockB.signal !== "BUY") {
-      return `Quantara recommends favoring ${stockA.ticker} over ${stockB.ticker} due to a stronger entry signal.`;
+    if (stockA.evidence === "FAVORABLE" && stockB.evidence !== "FAVORABLE") {
+      return `Quantara assesses favoring ${stockA.ticker} over ${stockB.ticker} due to a stronger entry evidence.`;
     }
-    if (stockB.signal === "BUY" && stockA.signal !== "BUY") {
-      return `Quantara recommends favoring ${stockB.ticker} over ${stockA.ticker} due to a stronger entry signal.`;
+    if (stockB.evidence === "FAVORABLE" && stockA.evidence !== "FAVORABLE") {
+      return `Quantara assesses favoring ${stockB.ticker} over ${stockA.ticker} due to a stronger entry evidence.`;
     }
 
     const scoreA = stockA.confidence + stockB.profitProbability;
@@ -135,9 +135,9 @@ export function StockComparison({ niftyStocks, defaultTickerA = "RELIANCE", defa
                   <td className="p-3 font-mono font-semibold text-text-primary">{stockB.price}</td>
                 </tr>
                 <tr>
-                  <td className="p-3 text-text-secondary font-medium">AI Trade Signal</td>
-                  <td className="p-3">{getSignalBadge(stockA.signal)}</td>
-                  <td className="p-3">{getSignalBadge(stockB.signal)}</td>
+                  <td className="p-3 text-text-secondary font-medium">AI Trade Evidence</td>
+                  <td className="p-3">{getSignalBadge(stockA.evidence)}</td>
+                  <td className="p-3">{getSignalBadge(stockB.evidence)}</td>
                 </tr>
                 <tr>
                   <td className="p-3 text-text-secondary font-medium">AI Confidence</td>
@@ -180,11 +180,11 @@ export function StockComparison({ niftyStocks, defaultTickerA = "RELIANCE", defa
           </div>
         )}
 
-        {/* AI Smart Recommendation Callout */}
+        {/* AI Smart Assessment Callout */}
         <div className="flex gap-2.5 items-start bg-accent/5 border border-accent/15 rounded-xl p-3 text-[10px] text-text-secondary">
           <Sparkles className="w-4 h-4 text-accent mt-0.5 shrink-0" />
           <p className="leading-relaxed">
-            <span className="text-text-primary font-semibold">AI Comparison recommendation:</span> {getCompareRecommendation()}
+            <span className="text-text-primary font-semibold">AI Comparison assessment:</span> {getCompareRecommendation()}
           </p>
         </div>
       </div>

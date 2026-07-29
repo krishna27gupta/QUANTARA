@@ -182,7 +182,7 @@ function AnalyzeContent() {
               </div>
             ) : (
               <div className="space-y-6">
-                {/* 2. HEADLINE RISK SIGNAL */}
+                {/* 2. HEADLINE RISK EVIDENCE */}
                 <RiskForecastCard risk={predictionData.risk_forecast} />
 
                 {/* 3. CHART & AI PANEL SECTION */}

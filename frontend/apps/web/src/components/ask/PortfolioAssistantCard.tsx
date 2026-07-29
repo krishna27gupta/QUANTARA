@@ -8,13 +8,13 @@ import { cn } from "@/lib/utils";
 export interface PortfolioAssistantCardProps {
   strengths: string[];
   weaknesses: string[];
-  recommendations: string[];
+  assessments: string[];
 }
 
 export function PortfolioAssistantCard({
   strengths,
   weaknesses,
-  recommendations,
+  assessments,
 }: PortfolioAssistantCardProps) {
   return (
     <div className="p-5 rounded-2xl border border-border bg-card/60 glass shadow-sm space-y-4 max-w-full overflow-hidden text-xs">
@@ -60,13 +60,13 @@ export function PortfolioAssistantCard({
           </ul>
         </div>
 
-        {/* Recommendations */}
+        {/* Assessments */}
         <div className="p-3 bg-blue-500/5 border border-blue-500/10 rounded-xl space-y-2">
           <span className="text-[10px] font-bold text-accent uppercase tracking-wider flex items-center gap-1">
             <Lightbulb className="w-3.5 h-3.5" /> Suggestions
           </span>
           <ul className="space-y-1.5 pl-1">
-            {recommendations.map((r, idx) => (
+            {assessments.map((r, idx) => (
               <li key={idx} className="text-[10px] text-text-primary/90 flex gap-1 items-start leading-relaxed">
                 <span className="text-accent shrink-0 mt-0.5">→</span>
                 <span>{r}</span>

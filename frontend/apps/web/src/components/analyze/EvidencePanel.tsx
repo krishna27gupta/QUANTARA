@@ -149,7 +149,7 @@ export function RiskForecastCard({ risk }: { risk: RiskForecast }) {
             </div>
             <div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary block">
-                Risk Forecast <span className="text-accent">← Primary Signal</span>
+                Risk Forecast <span className="text-accent">← Primary Evidence</span>
               </span>
               <p className="text-[9px] text-text-secondary/70 mt-0.5">
                 Only statistically validated model (45.9% vs 33.3% random)
@@ -443,7 +443,7 @@ export function TrendEvidenceCard({
           <Activity className="w-4 h-4 text-text-secondary/60" />
           <div>
             <span className="text-[10px] font-bold uppercase tracking-wider text-text-secondary block">
-              Trend Signal <span className="text-text-secondary/40">(weak — near-random)</span>
+              Trend Evidence <span className="text-text-secondary/40">(weak — near-random)</span>
             </span>
           </div>
         </div>
@@ -494,8 +494,8 @@ export function TrendEvidenceCard({
           )}
         </div>
         <p className="text-[9px] text-text-secondary/50 leading-relaxed">
-          An AUC near 0.5 means the trend signal is indistinguishable from random guessing.
-          The interval above shows the range of uncertainty — do not treat it as a reliable signal.
+          An AUC near 0.5 means the trend evidence is indistinguishable from random guessing.
+          The interval above shows the range of uncertainty — do not treat it as a reliable evidence.
         </p>
       </div>
     </motion.div>

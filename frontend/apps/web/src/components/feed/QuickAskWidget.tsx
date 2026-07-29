@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export function QuickAskWidget() {
   const prompts = [
-    "Should I buy Reliance?",
+    "Should I favor Reliance?",
     "What is the safest trade today?",
     "Which banking stocks look good?",
     "Build me a ₹50000 portfolio.",

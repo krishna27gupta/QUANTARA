@@ -11,7 +11,7 @@ interface SimilarStock {
   price: string;
   change: string;
   similarity: number; // e.g. 94
-  signal?: string;
+  evidence?: string;
 }
 
 export interface SimilarOpportunitiesProps {
@@ -26,8 +26,8 @@ export function SimilarOpportunities({
   onSelect,
 }: SimilarOpportunitiesProps) {
   const signalStyles = {
-    BUY: "text-emerald-500 bg-emerald-500/10",
-    SELL: "text-rose-500 bg-rose-500/10",
+    FAVORABLE: "text-emerald-500 bg-emerald-500/10",
+    UNFAVORABLE: "text-rose-500 bg-rose-500/10",
     HOLD: "text-amber-500 bg-amber-500/10",
   };
 
@@ -58,9 +58,9 @@ export function SimilarOpportunities({
             <div className="space-y-1.5">
               <div className="flex items-center gap-2">
                 <span className="font-mono font-bold text-xs text-text-primary">{item.ticker}</span>
-                {item.signal && (
-                  <span className={cn("text-[8px] font-bold px-1 rounded-md", signalStyles[item.signal as keyof typeof signalStyles])}>
-                    {item.signal}
+                {item.evidence && (
+                  <span className={cn("text-[8px] font-bold px-1 rounded-md", signalStyles[item.evidence as keyof typeof signalStyles])}>
+                    {item.evidence}
                   </span>
                 )}
               </div>

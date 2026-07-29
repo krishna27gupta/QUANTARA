@@ -14,7 +14,7 @@ interface RationaleItem {
 
 export interface AIResponseCardProps {
   ticker: string;
-  signal: "BUY" | "SELL" | "HOLD";
+  evidence: "FAVORABLE" | "UNFAVORABLE" | "HOLD";
   confidence: number;
   profitProbability: number;
   expectedReturn: string;
@@ -24,7 +24,7 @@ export interface AIResponseCardProps {
 
 export function AIResponseCard({
   ticker,
-  signal,
+  evidence,
   confidence,
   profitProbability,
   expectedReturn,
@@ -34,8 +34,8 @@ export function AIResponseCard({
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const signalColors = {
-    BUY: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
-    SELL: "text-rose-500 bg-rose-500/10 border-rose-500/20",
+    FAVORABLE: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+    UNFAVORABLE: "text-rose-500 bg-rose-500/10 border-rose-500/20",
     HOLD: "text-amber-500 bg-amber-500/10 border-amber-500/20",
   };
 
@@ -43,14 +43,14 @@ export function AIResponseCard({
 
   return (
     <div className="p-5 rounded-2xl border border-border bg-card/60 glass shadow-sm space-y-4 max-w-full overflow-hidden text-xs">
-      {/* Ticker & Signal Header */}
+      {/* Ticker & Evidence Header */}
       <div className="flex items-center justify-between border-b border-border/40 pb-3">
         <div className="flex items-center gap-2">
           <span className="font-mono font-bold text-sm text-text-primary">{ticker}</span>
           <span className="text-[10px] text-text-secondary">AI Diagnostic</span>
         </div>
-        <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-lg border", signalColors[signal])}>
-          {signal} Recommendation
+        <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded-lg border", signalColors[evidence])}>
+          {evidence} Assessment
         </span>
       </div>
 
@@ -86,7 +86,7 @@ export function AIResponseCard({
       {/* Rationale Checklist (Why?) */}
       <div className="space-y-2">
         <span className="text-[9px] font-bold text-text-secondary uppercase tracking-wider block flex items-center gap-1">
-          <Sparkles className="w-3.5 h-3.5 text-accent" /> Why recommend this?
+          <Sparkles className="w-3.5 h-3.5 text-accent" /> Why assess this?
         </span>
         <div className="space-y-1.5">
           {rationales.map((item) => {

@@ -71,7 +71,7 @@ export default function HomePage() {
     ticker: "RELIANCE",
     name: "Reliance Industries Ltd.",
     price: "₹2,845.20",
-    signal: "BUY" as const,
+    evidence: "FAVORABLE" as const,
     confidence: "92%",
     probability: "81%",
     expectedReturn: "+4.8%",
@@ -162,7 +162,7 @@ export default function HomePage() {
                   <div className="space-y-1">
                     <span className="text-[10px] text-text-secondary block font-semibold uppercase tracking-wider">Recommended Actions</span>
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="text-xs font-semibold px-2 py-1 rounded-lg bg-success/10 text-success border border-success/20">Buy RELIANCE</span>
+                      <span className="text-xs font-semibold px-2 py-1 rounded-lg bg-success/10 text-success border border-success/20">Favorable RELIANCE</span>
                       <span className="text-xs font-semibold px-2 py-1 rounded-lg bg-success/10 text-success border border-success/20">Watch TCS</span>
                       <span className="text-xs font-semibold px-2 py-1 rounded-lg bg-danger/10 text-danger border border-danger/20">Avoid Metals</span>
                     </div>

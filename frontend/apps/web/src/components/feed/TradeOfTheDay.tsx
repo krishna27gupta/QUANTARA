@@ -11,7 +11,7 @@ export interface TradeOfTheDayProps {
   ticker: string;
   name: string;
   price: string;
-  signal: "BUY" | "SELL" | "HOLD";
+  evidence: "FAVORABLE" | "UNFAVORABLE" | "HOLD";
   confidence: string;
   probability: string;
   expectedReturn: string;
@@ -27,7 +27,7 @@ export function TradeOfTheDay({
   ticker,
   name,
   price,
-  signal,
+  evidence,
   confidence,
   probability,
   expectedReturn,
@@ -41,8 +41,8 @@ export function TradeOfTheDay({
   const [expanded, setExpanded] = useState(false);
 
   const signalColors = {
-    BUY: "text-success bg-success/15 border-success/20",
-    SELL: "text-danger bg-danger/15 border-danger/20",
+    FAVORABLE: "text-success bg-success/15 border-success/20",
+    UNFAVORABLE: "text-danger bg-danger/15 border-danger/20",
     HOLD: "text-amber-500 bg-amber-500/15 border-amber-500/20",
   };
 
@@ -70,8 +70,8 @@ export function TradeOfTheDay({
               NSE
             </span>
           </div>
-          <span className={cn("text-xs font-bold px-3 py-1 rounded-xl border", signalColors[signal])}>
-            {signal}
+          <span className={cn("text-xs font-bold px-3 py-1 rounded-xl border", signalColors[evidence])}>
+            {evidence}
           </span>
         </div>
 

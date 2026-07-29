@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 interface CompareAsset {
   ticker: string;
-  signal: "BUY" | "SELL" | "HOLD";
+  evidence: "FAVORABLE" | "UNFAVORABLE" | "HOLD";
   confidence: number;
   expectedReturn: string;
   risk: "Low" | "Medium" | "High";
@@ -23,10 +23,10 @@ export function ComparisonCard({
   assetB,
   recommendationText,
 }: ComparisonCardProps) {
-  const getSignalBadge = (sig: "BUY" | "SELL" | "HOLD") => {
+  const getSignalBadge = (sig: "FAVORABLE" | "UNFAVORABLE" | "HOLD") => {
     const styles = {
-      BUY: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
-      SELL: "text-rose-500 bg-rose-500/10 border-rose-500/20",
+      FAVORABLE: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+      UNFAVORABLE: "text-rose-500 bg-rose-500/10 border-rose-500/20",
       HOLD: "text-amber-500 bg-amber-500/10 border-amber-500/20",
     };
     return (
@@ -65,9 +65,9 @@ export function ComparisonCard({
           </thead>
           <tbody className="divide-y divide-border/20 text-[10px]">
             <tr>
-              <td className="p-2.5 text-text-secondary font-medium">AI Signal</td>
-              <td className="p-2.5">{getSignalBadge(assetA.signal)}</td>
-              <td className="p-2.5">{getSignalBadge(assetB.signal)}</td>
+              <td className="p-2.5 text-text-secondary font-medium">AI Evidence</td>
+              <td className="p-2.5">{getSignalBadge(assetA.evidence)}</td>
+              <td className="p-2.5">{getSignalBadge(assetB.evidence)}</td>
             </tr>
             <tr>
               <td className="p-2.5 text-text-secondary font-medium">Confidence</td>
@@ -92,9 +92,9 @@ export function ComparisonCard({
         </table>
       </div>
 
-      {/* Rationale recommendation paragraph */}
+      {/* Rationale assessment paragraph */}
       <div className="bg-accent/5 border border-accent/15 rounded-xl p-3 text-[10px] text-text-secondary leading-relaxed">
-        <span className="text-text-primary font-semibold block mb-0.5">AI Comparison Recommendation:</span>
+        <span className="text-text-primary font-semibold block mb-0.5">AI Comparison Assessment:</span>
         {recommendationText}
       </div>
     </div>

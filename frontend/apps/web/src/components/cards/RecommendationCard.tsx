@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 
 export interface RecommendationCardProps {
   ticker: string;
-  type: "BUY" | "SELL" | "HOLD";
+  type: "FAVORABLE" | "UNFAVORABLE" | "HOLD";
   reason: string;
   score: string;
   className?: string;
@@ -22,8 +22,8 @@ export function RecommendationCard({
 }: RecommendationCardProps) {
   
   const typeColors = {
-    BUY: "bg-success/15 text-success border-success/30",
-    SELL: "bg-danger/15 text-danger border-danger/30",
+    FAVORABLE: "bg-success/15 text-success border-success/30",
+    UNFAVORABLE: "bg-danger/15 text-danger border-danger/30",
     HOLD: "bg-amber-500/15 text-amber-500 border-amber-500/30",
   };
 

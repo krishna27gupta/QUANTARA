@@ -228,7 +228,7 @@ export default function TrackRecordPage() {
             <div className="border-b border-border/40 p-5 bg-secondary/20">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <Target className="w-5 h-5 text-accent" />
-                Trend & Profitability Signal
+                Trend & Profitability Evidence
               </h2>
             </div>
             <div className="p-6">

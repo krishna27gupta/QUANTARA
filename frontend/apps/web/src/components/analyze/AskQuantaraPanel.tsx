@@ -45,7 +45,7 @@ export function AskQuantaraPanel({ currentTicker, sectorName = "Banking", onComp
   }, [messages, isTyping]);
 
   const presetQuestions = [
-    `Should I buy ${currentTicker}?`,
+    `Should I favor ${currentTicker}?`,
     `Why is ${currentTicker} bullish?`,
     `Compare ${currentTicker} and TCS`,
     `Explain RSI`
@@ -70,8 +70,8 @@ export function AskQuantaraPanel({ currentTicker, sectorName = "Banking", onComp
       let responseText = "";
       const query = text.toLowerCase();
 
-      if (query.includes("should i buy")) {
-        responseText = `Quantara's indicators flag a strong entry signal for ${currentTicker}. The setup reports an expected positive return and a high confidence score, supported by positive MACD crossovers and rising daily volumes. However, ensure the stop loss at optimal boundaries is adhered to.`;
+      if (query.includes("should i favor")) {
+        responseText = `Quantara's indicators flag a strong entry evidence for ${currentTicker}. The setup reports an expected positive return and a high confidence score, supported by positive MACD crossovers and rising daily volumes. However, ensure the stop loss at optimal boundaries is adhered to.`;
       } else if (query.includes("why is") || query.includes("bullish")) {
         responseText = `${currentTicker} is displaying bullish behavior due to three key factors: (1) Strong institutional inflows over the past 48 hours, (2) MACD showing a golden cross on the daily timeframe, and (3) Sector strength in ${sectorName} leading index momentum.`;
       } else if (query.includes("compare")) {

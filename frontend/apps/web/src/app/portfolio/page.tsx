@@ -66,7 +66,7 @@ export default function PortfolioPage() {
                     <tr className="bg-secondary/25 border-b border-border/40 text-[10px] font-bold text-text-secondary uppercase">
                       <th className="p-4">Symbol</th>
                       <th className="p-4">Shares</th>
-                      <th className="p-4">Buy Avg</th>
+                      <th className="p-4">Favorable Avg</th>
                       <th className="p-4">Current Price</th>
                       <th className="p-4 text-right">Value</th>
                       <th className="p-4 text-right">Gain/Loss</th>

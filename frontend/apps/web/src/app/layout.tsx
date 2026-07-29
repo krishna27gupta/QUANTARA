@@ -50,6 +50,13 @@ export default function RootLayout({
                   <main className="flex-1 p-6 overflow-y-auto">
                     <ProtectedRoute>{children}</ProtectedRoute>
                   </main>
+
+                  {/* Global Disclaimer */}
+                  <div className="w-full p-4 border-t border-border/40 bg-card/30 text-center mt-auto">
+                    <p className="text-[10px] text-text-secondary/70 max-w-4xl mx-auto leading-relaxed">
+                      Quantara provides analysis and historical context to support your own research. It does not provide investment advice or recommendations. Consult a SEBI-registered adviser before making investment decisions.
+                    </p>
+                  </div>
                 </div>
                 
                 {/* Mobile Bottom Navigation */}

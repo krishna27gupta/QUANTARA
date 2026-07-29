@@ -45,7 +45,7 @@ interface ClosedTrade {
   trade_id: string;
   date: string;
   symbol: string;
-  signal: string;
+  evidence: string;
   entry_price: number;
   exit_price: number;
   pnl: number;
@@ -81,9 +81,9 @@ export default function PaperTradingPage() {
   ]);
 
   const [closedTrades, setClosedTrades] = useState<ClosedTrade[]>([
-    { trade_id: "cls1", date: "2025-12-28", symbol: "INDUSINDBK", signal: "SELL", entry_price: 1420.00, exit_price: 1476.80, pnl: 2840.00, pnl_percent: 4.00, status: "TARGET_HIT" },
-    { trade_id: "cls2", date: "2025-12-24", symbol: "BEL", signal: "SELL", entry_price: 190.00, exit_price: 186.20, pnl: -380.00, pnl_percent: -2.00, status: "STOP_LOSS" },
-    { trade_id: "cls3", date: "2025-12-20", symbol: "RELIANCE", signal: "SELL", entry_price: 2810.00, exit_price: 2835.40, pnl: 1270.00, pnl_percent: 0.90, status: "TIME_EXIT" }
+    { trade_id: "cls1", date: "2025-12-28", symbol: "INDUSINDBK", evidence: "UNFAVORABLE", entry_price: 1420.00, exit_price: 1476.80, pnl: 2840.00, pnl_percent: 4.00, status: "TARGET_HIT" },
+    { trade_id: "cls2", date: "2025-12-24", symbol: "BEL", evidence: "UNFAVORABLE", entry_price: 190.00, exit_price: 186.20, pnl: -380.00, pnl_percent: -2.00, status: "STOP_LOSS" },
+    { trade_id: "cls3", date: "2025-12-20", symbol: "RELIANCE", evidence: "UNFAVORABLE", entry_price: 2810.00, exit_price: 2835.40, pnl: 1270.00, pnl_percent: 0.90, status: "TIME_EXIT" }
   ]);
 
   const [equityCurve, setEquityCurve] = useState<EquityPoint[]>([]);

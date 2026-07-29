@@ -111,7 +111,7 @@ export function StockCard({
 
         {/* Mid Side: Key Trading Metrics */}
         <div className="grid grid-cols-3 md:flex md:items-center gap-4 md:gap-8 flex-1 md:justify-end">
-          {/* Risk Level (Replaces Signal) */}
+          {/* Risk Level (Replaces Evidence) */}
           <div className="flex flex-col items-center md:items-start">
             <span className="text-[10px] text-text-secondary font-medium">Risk Forecast</span>
             <span className={cn(

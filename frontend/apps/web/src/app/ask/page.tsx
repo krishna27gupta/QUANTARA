@@ -61,7 +61,7 @@ export default function AskPage() {
   }, [messages, isTyping]);
 
   const presetPrompts = [
-    "Should I buy Reliance?",
+    "Should I favor Reliance?",
     "Build me a ₹50,000 portfolio.",
     "Compare Reliance and TCS.",
     "Explain RSI.",
@@ -96,12 +96,12 @@ export default function AskPage() {
 
       const q = text.toLowerCase();
 
-      if (q.includes("buy reliance") || q.includes("should i buy")) {
+      if (q.includes("favor reliance") || q.includes("should i favor")) {
         content = "Here is the quantitative scan report for RELIANCE. All momentum indicators support entry at the current support floor.";
         widget = "stock";
         widgetData = {
           ticker: "RELIANCE",
-          signal: "BUY",
+          evidence: "FAVORABLE",
           confidence: 88,
           profitProbability: 72,
           expectedReturn: "+6.1%",
@@ -117,7 +117,7 @@ export default function AskPage() {
         widgetData = {
           strengths: ["Highly diversified sectors", "Favorable risk-to-reward ratios"],
           weaknesses: ["Heavy concentration in Banking limits options", "Low cash reserves for dynamic entries"],
-          recommendations: ["Reduce HDFC Bank allocation slightly", "Add Defensive sectors like FMCG (ITC)"]
+          assessments: ["Reduce HDFC Bank allocation slightly", "Add Defensive sectors like FMCG (ITC)"]
         };
       } else if (q.includes("rsi") || q.includes("explain")) {
         content = "RSI (Relative Strength Index) is a momentum oscillator. Let me break down the concepts:";
@@ -137,9 +137,9 @@ export default function AskPage() {
         content = "Here is a side-by-side opportunities scan comparing RELIANCE and TCS:";
         widget = "comparison";
         widgetData = {
-          assetA: { ticker: "RELIANCE", signal: "BUY", confidence: 88, expectedReturn: "+6.1%", risk: "Medium" },
-          assetB: { ticker: "TCS", signal: "BUY", confidence: 78, expectedReturn: "+4.8%", risk: "Low" },
-          recommendationText: "Quantara recommends favoring RELIANCE due to higher momentum indicators, but TCS remains an outstanding lower-volatility defensive choice."
+          assetA: { ticker: "RELIANCE", evidence: "FAVORABLE", confidence: 88, expectedReturn: "+6.1%", risk: "Medium" },
+          assetB: { ticker: "TCS", evidence: "FAVORABLE", confidence: 78, expectedReturn: "+4.8%", risk: "Low" },
+          recommendationText: "Quantara assesses favoring RELIANCE due to higher momentum indicators, but TCS remains an outstanding lower-volatility defensive choice."
         };
       } else if (q.includes("hold") || q.includes("exit") || q.includes("enter") || q.includes("book")) {
         content = "I have analyzed your request based on your current holding limits and swing parameters:";
@@ -151,7 +151,7 @@ export default function AskPage() {
           expectedOutcome: "Technical rebound from EMA bounds"
         };
       } else {
-        content = `Based on your preference for Banking and IT sectors, I recommend monitoring TCS and HDFC BANK. Both maintain low volatility setups ideal for swing trades up to ${memory.holdingPeriod} days.`;
+        content = `Based on your preference for Banking and IT sectors, I assess monitoring TCS and HDFC BANK. Both maintain low volatility setups ideal for swing trades up to ${memory.holdingPeriod} days.`;
       }
 
       // Stream character by character simulation
@@ -194,7 +194,7 @@ export default function AskPage() {
   };
 
   const handleSelectTrade = (ticker: string) => {
-    handleTriggerSend(`Should I buy ${ticker}?`);
+    handleTriggerSend(`Should I favor ${ticker}?`);
   };
 
   return (
