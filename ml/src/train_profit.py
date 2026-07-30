@@ -117,26 +117,25 @@ def train_profit(full_df: pd.DataFrame, features: list, models_dir: str) -> dict
     cv = TimeSeriesWalkForwardCV(date_index)
 
     # ── Hyperparameter Tuning (RandomForest) ──────────────────────────────
-    logger.info("Hyperparameter tuning RandomForest via RandomizedSearchCV...")
-    rf_base = RandomForestClassifier(class_weight='balanced', random_state=42, n_jobs=-1)
-    rf_search = RandomizedSearchCV(
-        rf_base, RF_PARAM_DIST, n_iter=20, cv=cv, scoring='roc_auc',
-        random_state=42, n_jobs=1, refit=False,
-    )
-    rf_search.fit(X, y)
-    rf_best_params = rf_search.best_params_
-    logger.info(f"RF best params: {rf_best_params}")
+    logger.info("Using hardcoded best params for RandomForest to save time...")
+    rf_best_params = {
+        'n_estimators': 200,
+        'min_samples_split': 10,
+        'min_samples_leaf': 20,
+        'max_features': 'sqrt',
+        'max_depth': 8
+    }
 
     # ── Hyperparameter Tuning (XGBoost) ───────────────────────────────────
-    logger.info("Hyperparameter tuning XGBoost via RandomizedSearchCV...")
-    xgb_base = xgb.XGBClassifier(random_state=42, eval_metric='logloss', verbosity=0)
-    xgb_search = RandomizedSearchCV(
-        xgb_base, XGB_PARAM_DIST, n_iter=30, cv=cv, scoring='roc_auc',
-        random_state=42, n_jobs=-1, refit=False,
-    )
-    xgb_search.fit(X, y)
-    xgb_best_params = xgb_search.best_params_
-    logger.info(f"XGBoost best params: {xgb_best_params}")
+    logger.info("Using hardcoded best params for XGBoost to save time...")
+    xgb_best_params = {
+        'subsample': 0.7,
+        'n_estimators': 200,
+        'min_child_weight': 3,
+        'max_depth': 3,
+        'learning_rate': 0.01,
+        'colsample_bytree': 0.6
+    }
 
     # ── Per-Fold Evaluation ───────────────────────────────────────────────
     fold_results = []

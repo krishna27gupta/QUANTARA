@@ -160,8 +160,8 @@
       "recall": 0.6565380675998634,
       "f1": 0.45058871770839437,
       "auc": 0.5341457640272477,
-      "auc_ci_lower": 0.5250435427371314,
-      "auc_ci_upper": 0.5427845604491219,
+      "auc_ci_lower": 0.5210855580437059,
+      "auc_ci_upper": 0.5478011617693703,
       "auc_p_value_vs_random": 0.0,
       "auc_excludes_0_5": true
     },
@@ -172,8 +172,8 @@
       "recall": 0.0,
       "f1": 0.0,
       "auc": 0.5291390560021452,
-      "auc_ci_lower": 0.5198462599910363,
-      "auc_ci_upper": 0.5383070738745793,
+      "auc_ci_lower": 0.5149833135981418,
+      "auc_ci_upper": 0.543615432811387,
       "auc_p_value_vs_random": 0.0,
       "auc_excludes_0_5": true
     }
