@@ -52,6 +52,7 @@ def evaluate_model(name: str, df: pd.DataFrame, features: list, target_col: str,
 
     X = df[features]
     y = df[target_col].values
+    groups = df['ticker'].values
     date_index = df.index
 
     # Full 5-fold Walk-Forward CV
@@ -60,6 +61,7 @@ def evaluate_model(name: str, df: pd.DataFrame, features: list, target_col: str,
     # We will pool out-of-fold predictions to compute a single Bootstrapped AUC
     oof_preds = []
     oof_y = []
+    oof_groups = []
     oof_X = [] # for permutation importance on the pooled OOF set
     
     params = {'n_estimators': 100, 'max_depth': 5, 'learning_rate': 0.05, 'verbose': -1, 'random_state': 42}
@@ -67,6 +69,7 @@ def evaluate_model(name: str, df: pd.DataFrame, features: list, target_col: str,
     for fold_idx, (train_idx, test_idx) in enumerate(cv.split()):
         X_train, y_train = X.iloc[train_idx], y[train_idx]
         X_test, y_test = X.iloc[test_idx], y[test_idx]
+        test_groups = groups[test_idx]
         
         if is_multiclass:
             # For Risk model, compute terciles on train, apply to both
@@ -84,6 +87,7 @@ def evaluate_model(name: str, df: pd.DataFrame, features: list, target_col: str,
             
             oof_preds.extend(preds)
             oof_y.extend(y_test)
+            oof_groups.extend(test_groups)
             oof_X.append(X_test)
         else:
             y_train = y_train.astype(int)
@@ -95,10 +99,12 @@ def evaluate_model(name: str, df: pd.DataFrame, features: list, target_col: str,
             
             oof_preds.extend(test_probs)
             oof_y.extend(y_test)
+            oof_groups.extend(test_groups)
             oof_X.append(X_test)
             
     oof_preds = np.array(oof_preds)
     oof_y = np.array(oof_y)
+    oof_groups = np.array(oof_groups)
     oof_X_df = pd.concat(oof_X)
     
     # Fit a final model on all data for permutation importance
@@ -120,7 +126,7 @@ def evaluate_model(name: str, df: pd.DataFrame, features: list, target_col: str,
         y_final = y.astype(int)
         final_model.fit(X, y_final)
         scoring = 'roc_auc'
-        ci = bootstrap_auc_ci(oof_y, oof_preds, n_iter=500)
+        ci = bootstrap_auc_ci(oof_y, oof_preds, groups=oof_groups, n_iter=500)
         metric_val = ci["point_auc"]
         ci_str = f"[{ci['ci_lower']:.4f}, {ci['ci_upper']:.4f}]"
         excludes_0_5 = ci["excludes_0_5"]
@@ -231,6 +237,8 @@ def main():
     
     with open(report_path, "w") as f:
         f.write("# Feature Experiments Report\n\n")
+        f.write("> [!IMPORTANT]\n")
+        f.write("> **Methodology Update**: This report supersedes previous versions due to a statistical methodology error in the bootstrap function. The original CI calculation assumed rows were independent, which is invalid for panel data. The revised Bootstrapped AUC now correctly performs block/cluster resampling at the ticker level.\n\n")
         f.write("This report evaluates the addition of cross-sectional and a market-return-volume interaction proxy feature.\n")
         f.write("Features added: `market_return_volume_interaction`, `cross_sectional_rank_65`, `sector_rank`.\n\n")
         

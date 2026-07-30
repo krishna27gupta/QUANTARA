@@ -191,9 +191,9 @@ def train_profit(full_df: pd.DataFrame, features: list, models_dir: str) -> dict
     rf_test_probs = rf_final.predict_proba(X_test_final)[:, 1]
     xgb_test_probs = xgb_final.predict_proba(X_test_final)[:, 1]
 
-    logger.info("Computing bootstrapped AUC confidence intervals...")
-    rf_ci = bootstrap_auc_ci(y_test_final, rf_test_probs)
-    xgb_ci = bootstrap_auc_ci(y_test_final, xgb_test_probs)
+    logger.info("Computing bootstrapped AUC confidence intervals (1000 resamples)...")
+    rf_ci = bootstrap_auc_ci(y_test_final, rf_test_probs, groups=df['ticker'].values[final_test_mask])
+    xgb_ci = bootstrap_auc_ci(y_test_final, xgb_test_probs, groups=df['ticker'].values[final_test_mask])
 
     logger.info(f"RF AUC: {rf_ci['point_auc']:.4f} [{rf_ci['ci_lower']:.4f}, {rf_ci['ci_upper']:.4f}] "
                 f"p={rf_ci['p_value_vs_random']:.4f} excludes_0.5={rf_ci['excludes_0_5']}")

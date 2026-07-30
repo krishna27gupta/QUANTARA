@@ -160,8 +160,8 @@ def train_trend(full_df: pd.DataFrame, features: list, models_dir: str, workspac
     lgb_test_probs = lgb_final.predict_proba(X_test_final)[:, 1]
 
     logger.info("Computing bootstrapped AUC confidence intervals (1000 resamples)...")
-    xgb_ci = bootstrap_auc_ci(y_test_final, xgb_test_probs)
-    lgb_ci = bootstrap_auc_ci(y_test_final, lgb_test_probs)
+    xgb_ci = bootstrap_auc_ci(y_test_final, xgb_test_probs, groups=df['ticker'].values[final_test_mask])
+    lgb_ci = bootstrap_auc_ci(y_test_final, lgb_test_probs, groups=df['ticker'].values[final_test_mask])
 
     logger.info(f"XGBoost AUC: {xgb_ci['point_auc']:.4f} [{xgb_ci['ci_lower']:.4f}, {xgb_ci['ci_upper']:.4f}] "
                 f"p={xgb_ci['p_value_vs_random']:.4f} excludes_0.5={xgb_ci['excludes_0_5']}")

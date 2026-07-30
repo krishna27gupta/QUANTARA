@@ -96,7 +96,7 @@ def evaluate_variant(name: str, df: pd.DataFrame, features: list):
     test_probs = model.predict_proba(X_test_final)[:, 1]
 
     logger.info(f"[{name}] Computing bootstrapped AUC confidence intervals...")
-    ci = bootstrap_auc_ci(y_test_final, test_probs, n_iter=1000)
+    ci = bootstrap_auc_ci(y_test_final, test_probs, groups=df['ticker'].values[final_test_mask], n_iter=1000)
     
     logger.info(f"[{name}] Computing permutation importance...")
     perm_result = permutation_importance_with_control(
@@ -210,8 +210,10 @@ def main():
     os.makedirs(os.path.dirname(report_path), exist_ok=True)
     
     with open(report_path, "w") as f:
-        f.write("# Label Experiments Report\n\n")
-        f.write("This report evaluates multiple alternative label definitions against the existing feature set.\n")
+        f.write("# Label Definitions Experiment Report\n\n")
+        f.write("> [!IMPORTANT]\n")
+        f.write("> **Methodology Update**: This report supersedes previous versions due to a statistical methodology error in the bootstrap function. The original CI calculation assumed rows were independent, which is invalid for panel data. The revised Bootstrapped AUC now correctly performs block/cluster resampling at the ticker level.\n\n")
+        f.write("This report ranks alternative label formulations against the original `+4% / -2% / 5-day` baseline.\n\n")
         f.write("A model's 95% Confidence Interval excluding 0.5 suggests a statistically significant edge. ")
         f.write("Finding no edge is a valid and useful result, indicating the market is too efficient at that horizon or parameters.\n\n")
         

@@ -73,6 +73,7 @@ class TimeSeriesWalkForwardCV:
 def bootstrap_auc_ci(
     y_true: np.ndarray,
     y_score: np.ndarray,
+    groups: np.ndarray,
     n_iter: int = 1000,
     alpha: float = 0.05,
     random_state: int = 42,
@@ -98,13 +99,23 @@ def bootstrap_auc_ci(
     rng = np.random.RandomState(random_state)
     y_true = np.asarray(y_true)
     y_score = np.asarray(y_score)
-    n = len(y_true)
+    groups = np.asarray(groups)
+    
+    unique_groups = np.unique(groups)
+    n_groups = len(unique_groups)
 
     point_auc = roc_auc_score(y_true, y_score)
 
     boot_aucs = []
+    
+    # Pre-compute indices for each group for fast lookup
+    group_indices = {g: np.where(groups == g)[0] for g in unique_groups}
+    
     for _ in range(n_iter):
-        indices = rng.choice(n, size=n, replace=True)
+        sampled_groups = rng.choice(unique_groups, size=n_groups, replace=True)
+        # Flatten all indices from the sampled groups
+        indices = np.concatenate([group_indices[g] for g in sampled_groups])
+        
         y_t = y_true[indices]
         y_s = y_score[indices]
         # Skip degenerate resamples (all same class)
