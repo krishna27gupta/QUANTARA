@@ -122,9 +122,8 @@ def main():
     market_returns = compute_market_returns(datasets_dir)
 
     combined = []
-    for file in parquet_files[:5]: # Take a subset or all? 
-        # I should probably take all to get accurate results, but let's see how fast it runs. 
-        # Since I use final fold only, it should be reasonably fast. Let's use all.
+    # Using the full 65-stock universe
+    for file in parquet_files:
         ticker = os.path.basename(file).replace(".parquet", "")
         try:
             df = load_and_engineer(ticker, datasets_dir, market_returns, workspace_root=workspace_root)
