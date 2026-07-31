@@ -48,8 +48,8 @@ class AutonomousValidationSystem:
         self.max_positions = 5
         self.max_allocation = 0.20
         self.max_risk_pct = 0.02
-        self.target_pct = 0.04
-        self.max_hold_days = 5
+        self.target_pct = 0.02
+        self.max_hold_days = 1
         self.prev_closed_count = 0
         
         # Load model and metadata

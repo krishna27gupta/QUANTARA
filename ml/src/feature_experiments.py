@@ -11,7 +11,7 @@ from walk_forward_cv import (
     TimeSeriesWalkForwardCV, FOLD_BOUNDARIES,
     bootstrap_auc_ci, permutation_importance_with_control,
 )
-from train_profit import compute_first_touch_label
+from label_experiments import compute_dynamic_touch_label
 from train_risk import compute_forward_realized_vol
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s - %(message)s")
@@ -191,7 +191,7 @@ def main():
             
             # Compute Targets per ticker
             df['target_trend'] = ((df['Close'].shift(-5) - df['Close']) / df['Close'] > 0.02).astype(int)
-            df['target_profit'] = compute_first_touch_label(df)
+            df['target_profit'] = compute_dynamic_touch_label(df, 5, pd.Series(0.04, index=df.index), pd.Series(-0.02, index=df.index))
             df['target_risk'] = compute_forward_realized_vol(df)
             
             combined.append(df)

@@ -7,7 +7,7 @@ Walk-forward cross-validated profit classifier with:
   - Permutation importance with shuffled-label control for feature pruning
   - Bootstrapped AUC confidence intervals (1000 resamples)
 
-Target: binary — 1 if +4% touched before -2% within 5 trading days, else 0.
+Target: binary — 1 if +2% touched before -2% within 1 trading day, else 0.
 Models: RandomForest + XGBoost.
 """
 import os
@@ -25,6 +25,7 @@ from sklearn.metrics import (
 from sklearn.model_selection import RandomizedSearchCV
 
 from features_engine import compute_market_returns, load_and_engineer, get_feature_columns
+from label_experiments import compute_dynamic_touch_label
 from walk_forward_cv import (
     TimeSeriesWalkForwardCV, FOLD_BOUNDARIES,
     bootstrap_auc_ci, permutation_importance_with_control,
@@ -33,9 +34,9 @@ from walk_forward_cv import (
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s - %(message)s")
 logger = logging.getLogger("quantara-train-profit")
 
-TAKE_PROFIT = 0.04
+TAKE_PROFIT = 0.02
 STOP_LOSS = -0.02
-HOLD_DAYS = 5
+HOLD_DAYS = 1
 
 RF_PARAM_DIST = {
     "n_estimators": [100, 200, 300],
@@ -55,44 +56,6 @@ XGB_PARAM_DIST = {
 }
 
 
-def compute_first_touch_label(df: pd.DataFrame) -> pd.Series:
-    """For each row, walk forward up to HOLD_DAYS and determine which level is touched first."""
-    close = df['Close'].values
-    high = df['High'].values
-    low = df['Low'].values
-    n = len(df)
-    labels = np.full(n, np.nan)
-
-    COST_BPS = 0.0025
-
-    for i in range(n - HOLD_DAYS):
-        raw_entry = close[i]
-        entry = raw_entry * (1 + COST_BPS)
-        tp_level_raw = entry * (1 + TAKE_PROFIT) / (1 - COST_BPS)
-        sl_level_raw = entry * (1 + STOP_LOSS) / (1 - COST_BPS)
-
-        outcome = None
-        for d in range(1, HOLD_DAYS + 1):
-            hi = high[i + d]
-            lo = low[i + d]
-            hit_tp = hi >= tp_level_raw
-            hit_sl = lo <= sl_level_raw
-            if hit_tp and hit_sl:
-                outcome = 0
-                break
-            elif hit_tp:
-                outcome = 1
-                break
-            elif hit_sl:
-                outcome = 0
-                break
-        if outcome is None:
-            final_exit = close[min(i + HOLD_DAYS, n - 1)] * (1 - COST_BPS)
-            outcome = 1 if final_exit > entry else 0
-        labels[i] = outcome
-    return pd.Series(labels, index=df.index)
-
-
 def train_profit(full_df: pd.DataFrame, features: list, models_dir: str) -> dict:
     """
     Train profit classifiers with full walk-forward CV rigor.
@@ -103,7 +66,9 @@ def train_profit(full_df: pd.DataFrame, features: list, models_dir: str) -> dict
 
     # ── Target ────────────────────────────────────────────────────────────
     df = full_df.copy()
-    df['target'] = compute_first_touch_label(df)
+    tp_series = pd.Series(TAKE_PROFIT, index=df.index)
+    sl_series = pd.Series(STOP_LOSS, index=df.index)
+    df['target'] = compute_dynamic_touch_label(df, HOLD_DAYS, tp_series, sl_series)
     df = df.dropna(subset=['target'] + features)
 
     X = df[features]
@@ -117,25 +82,26 @@ def train_profit(full_df: pd.DataFrame, features: list, models_dir: str) -> dict
     cv = TimeSeriesWalkForwardCV(date_index)
 
     # ── Hyperparameter Tuning (RandomForest) ──────────────────────────────
-    logger.info("Using hardcoded best params for RandomForest to save time...")
-    rf_best_params = {
-        'n_estimators': 200,
-        'min_samples_split': 10,
-        'min_samples_leaf': 20,
-        'max_features': 'sqrt',
-        'max_depth': 8
-    }
+    logger.info("Hyperparameter tuning RandomForest via RandomizedSearchCV...")
+    rf_base = RandomForestClassifier(class_weight='balanced', random_state=42, n_jobs=-1)
+    rf_search = RandomizedSearchCV(
+        rf_base, RF_PARAM_DIST, n_iter=20, cv=cv, scoring='roc_auc',
+        random_state=42, n_jobs=1, refit=False,
+    )
+    rf_search.fit(X, y)
+    rf_best_params = rf_search.best_params_
+    logger.info(f"RF best params: {rf_best_params}")
 
     # ── Hyperparameter Tuning (XGBoost) ───────────────────────────────────
-    logger.info("Using hardcoded best params for XGBoost to save time...")
-    xgb_best_params = {
-        'subsample': 0.7,
-        'n_estimators': 200,
-        'min_child_weight': 3,
-        'max_depth': 3,
-        'learning_rate': 0.01,
-        'colsample_bytree': 0.6
-    }
+    logger.info("Hyperparameter tuning XGBoost via RandomizedSearchCV...")
+    xgb_base = xgb.XGBClassifier(random_state=42, eval_metric='logloss', verbosity=0)
+    xgb_search = RandomizedSearchCV(
+        xgb_base, XGB_PARAM_DIST, n_iter=30, cv=cv, scoring='roc_auc',
+        random_state=42, n_jobs=-1, refit=False,
+    )
+    xgb_search.fit(X, y)
+    xgb_best_params = xgb_search.best_params_
+    logger.info(f"XGBoost best params: {xgb_best_params}")
 
     # ── Per-Fold Evaluation ───────────────────────────────────────────────
     fold_results = []
@@ -269,7 +235,7 @@ def main():
             logger.error(f"Failed on {ticker}: {e}")
 
     full_df = pd.concat(combined)
-    full_df = full_df.dropna()
+    full_df = full_df.dropna(subset=get_feature_columns(full_df))
     features = get_feature_columns(full_df)
 
     train_profit(full_df, features, models_dir)

@@ -29,8 +29,8 @@ class PaperTradingEngine:
         self.max_positions = 5
         self.max_allocation = 0.20  # 20%
         self.max_risk_pct = 0.02    # 2% stop-loss threshold
-        self.target_pct = 0.04      # 4% take-profit target
-        self.max_hold_days = 5
+        self.target_pct = 0.02      # 2% take-profit target
+        self.max_hold_days = 1
         
         self.models_dir = models_dir
         self.portfolio_dir = "ml/paper_portfolio"

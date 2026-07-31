@@ -70,8 +70,13 @@ Search method: `RandomizedSearchCV` (30 iterations) with walk-forward CV splitte
 
 ## 2. Profit Classifier
 
-**Label:** 1 if +4% touched before -2% within 5 days, else 0
-**Base win rate:** 33.76%
+**Label:** 1 if +2% touched before -2% within 1 trading day, else 0
+
+> [!WARNING]
+> **Deprecation Notice for Legacy 5-Day Label**
+> The original baseline label (1 if +4% touched before -2% within 5 days) has been officially deprecated. While it showed apparent promise during cross-validation, it completely failed true out-of-sample holdout validation (AUC 0.5007, failing to exclude 0.5). It has been replaced by the 1-Day Hold (+2%/-2%) variant which successfully excluded 0.5 in true holdout (AUC 0.5287) and demonstrated far superior fold-over-fold stability.
+
+**Base win rate:** [To be populated by training script]
 
 ### Hyperparameter Search
 

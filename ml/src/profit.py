@@ -30,7 +30,7 @@ class BaseProfitPredictor(ABC):
 class ProfitPredictor(BaseProfitPredictor):
     """
     RandomForest + XGBoost ensemble predicting probability that a trade taken today
-    hits +4% before -2% within a 5-day holding window. Returns evidence with AUC CI,
+    hits +2% before -2% within a 1-day holding window. Returns evidence with AUC CI,
     not a bare probability.
     """
 
@@ -90,7 +90,7 @@ class ProfitPredictor(BaseProfitPredictor):
                 "profit_probability": round(prob, 4),
                 "rf_probability": round(prob_rf, 4),
                 "xgb_probability": round(prob_xgb, 4),
-                "label_definition": "P(price touches +4% before -2% within 5 trading days)",
+                "label_definition": "P(price touches +2% before -2% within 1 trading day)",
                 "base_win_rate_pct": self.base_win_rate,
                 "auc_confidence_interval": self.auc_ci,
             }

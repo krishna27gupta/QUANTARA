@@ -4,29 +4,29 @@ Date: 2025-12-31
 
 Trades Opened: 5
 
-Trades Closed: 1
+Trades Closed: 4
 
-Portfolio Value: ₹96235.34
+Portfolio Value: ₹88788.89
 
-Total Return: -3.76%
+Total Return: -11.21%
 
-Win Rate: 47.06%
+Win Rate: 33.73%
 
-Sharpe Ratio: -4.4987
+Sharpe Ratio: -10.8779
 
-Sortino Ratio: -5.9557
+Sortino Ratio: -15.2632
 
-Maximum Drawdown: -3.76%
+Maximum Drawdown: -11.21%
 
-Best Trade: BANKBARODA (+3.48%)
+Best Trade: TATASTEEL (+1.50%)
 
-Worst Trade: IOC (-2.49%)
+Worst Trade: YESBANK (-2.51%)
 
 Open Positions: 4
 
-Closed Positions: 68
+Closed Positions: 249
 
-Today's Signals: AMBUJACEM, TRENT, ICICIBANK, HDFCBANK, RELIANCE
+Today's Signals: ADANIENT, YESBANK, BEL, ACC, JIOFIN
 
 Market Regime: Bullish Swing
 
